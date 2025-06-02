@@ -1,0 +1,13 @@
+package com.kickauction.kickauction;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class KickauctionApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
