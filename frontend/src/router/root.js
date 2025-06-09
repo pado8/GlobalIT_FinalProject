@@ -5,6 +5,7 @@ const { createBrowserRouter } = require("react-router-dom");
 const Loading = <div>Loading....</div>
 const Main = lazy(() => import("../pages/MainPage"))
 const Community = lazy(() => import("../pages/CommunityPage"))
+const SellerList = lazy(() => import("../pages/SellerListPage"))
 
 const root = createBrowserRouter([
     {
@@ -12,6 +13,9 @@ const root = createBrowserRouter([
     },
     {
         path: "community", element: <Suspense fallback={Loading}><Community /></Suspense>
+    },
+    {
+        path: "sellerlist", element: <Suspense fallback={Loading}><SellerList /></Suspense>
     },
 ])
 
