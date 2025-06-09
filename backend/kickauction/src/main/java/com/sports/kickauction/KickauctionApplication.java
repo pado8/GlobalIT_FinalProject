@@ -1,4 +1,4 @@
-package com.kickauction.kickauction;
+package com.sports.kickauction;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
