@@ -1,4 +1,4 @@
-package com.kickauction.kickauction;
+package com.sports.kickauction;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
