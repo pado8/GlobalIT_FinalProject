@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 
 const MainPage = () => {
-    return (
-        <div id="wrap">
-            <div>MainPage</div>
-            <Link to={'/community'}>커뮤니티 게시판</Link>
-        </div>
-    );
+  return (
+    <div id="wrap">
+      <div>MainPage</div>
+      <Link to={"/community"}>커뮤니티 게시판</Link>
+      <div style={{ height: "2000px", backgroundColor: "lightgray" }}></div>
+    </div>
+  );
 };
 
 export default MainPage;
