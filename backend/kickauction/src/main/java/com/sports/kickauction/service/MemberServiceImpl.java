@@ -1,12 +1,12 @@
-package com.kickauction.kickauction.service;
+package com.sports.kickauction.service;
 
 import org.springframework.stereotype.Service;
 
-import com.kickauction.kickauction.dto.MemberSellerDTO;
-import com.kickauction.kickauction.entity.Member;
-import com.kickauction.kickauction.entity.Seller;
-import com.kickauction.kickauction.repository.MemberRepository;
-import com.kickauction.kickauction.repository.SellerRepository;
+import com.sports.kickauction.dto.MemberSellerDTO;
+import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.entity.Seller;
+import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.repository.SellerRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

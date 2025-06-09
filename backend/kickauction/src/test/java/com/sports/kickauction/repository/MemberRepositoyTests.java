@@ -1,17 +1,18 @@
-package com.kickauction.kickauction.repository;
+package com.sports.kickauction.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.kickauction.kickauction.entity.Member;
-import com.kickauction.kickauction.entity.Seller;
+import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.entity.Seller;
+
 
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
-public class MemberRepositoyTest {
-  @Autowired
+public class MemberRepositoyTests {
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired

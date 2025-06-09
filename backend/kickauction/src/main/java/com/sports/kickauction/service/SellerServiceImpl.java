@@ -1,4 +1,4 @@
-package com.kickauction.kickauction.service;
+package com.sports.kickauction.service;
 
 
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.kickauction.kickauction.dto.SellerReadDTO;
 import com.kickauction.kickauction.entity.Seller;
 import com.kickauction.kickauction.entity.SellerIntro;
-import com.kickauction.kickauction.repository.SellerRepository;
+import com.sports.kickauction.repository.SellerRepository;
 
 @Service
 @RequiredArgsConstructor

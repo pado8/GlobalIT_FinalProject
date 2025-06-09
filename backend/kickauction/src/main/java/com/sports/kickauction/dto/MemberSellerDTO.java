@@ -1,4 +1,4 @@
-package com.kickauction.kickauction.dto;
+package com.sports.kickauction.dto;
 
 import lombok.*;
 

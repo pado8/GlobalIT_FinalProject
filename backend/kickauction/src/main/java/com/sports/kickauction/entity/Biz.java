@@ -1,4 +1,4 @@
-package com.kickauction.kickauction.entity;
+package com.sports.kickauction.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,27 +9,27 @@ import lombok.ToString;
 
 
 @Entity
-@Table(name = "review")
+@Table(name = "biz")
 @Getter
 @ToString
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-public class Review extends BaseEntity{
+@NoArgsConstructor 
+public class Biz extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long rno;
+    private Long bno;
 
     @ManyToOne
     @JoinColumn(name = "mno")
     private Member member;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ono")
     private Order order;
 
-    private String rtitle;
-    private String rcontent;
-    private String rimage;
+    private int price;
+    private String bcontent;
+    private String banswer;
 }

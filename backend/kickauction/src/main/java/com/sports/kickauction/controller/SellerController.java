@@ -1,12 +1,12 @@
-package com.kickauction.kickauction.controller;
+package com.sports.kickauction.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kickauction.kickauction.dto.SellerReadDTO;
-import com.kickauction.kickauction.service.SellerService;
+import com.sports.kickauction.dto.SellerReadDTO;
+import com.sports.kickauction.service.SellerService;
 
 import lombok.RequiredArgsConstructor;
 

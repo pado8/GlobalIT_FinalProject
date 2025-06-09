@@ -1,8 +1,10 @@
-package com.kickauction.kickauction.repository;
+package com.sports.kickauction.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.kickauction.kickauction.entity.Member;
+import com.sports.kickauction.entity.Member;
+
+
 
 public interface MemberRepository extends JpaRepository<Member,Long>{
 
