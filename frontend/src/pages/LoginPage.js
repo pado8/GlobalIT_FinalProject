@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import "../pages/LoginPage.css";
+import logo from "../assets/img/kickauction_logo.png";
+import emailicon from "../assets/img/icon-email.svg";
+import pwicon from "../assets/img/icon-password.svg";
+import socialg from "../assets/img/social_g.png";
+import socialk from "../assets/img/social_k.png";
 
 function LoginPage() {
   const [userid, setUserid] = useState("");
@@ -9,45 +15,59 @@ function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // 세션 쿠키를 포함해서 전송
+        credentials: "include",
         body: JSON.stringify({ userid, passwd }),
       });
-
       if (!res.ok) throw new Error("로그인 실패");
-
-      navigate("/"); // 로그인 성공 시 메인 페이지로 이동
+      navigate("/");
     } catch (err) {
       setError("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>로그인</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>아이디</label>
-          <br />
-          <input type="text" value={userid} onChange={(e) => setUserid(e.target.value)} required />
+    <div className="login_container">
+      <div className="login_smallcontainer">
+        <img src={logo} alt="킥옥션 로고" className="login_logo" />
+
+        <form class="form_1" onSubmit={handleLogin}>
+          <div class="section_1">
+            <img src={emailicon} alt="사용자 아이콘" className="email_icon"></img>
+            <input type="text" className="login_input" placeholder="이메일 주소" value={userid} onChange={(e) => setUserid(e.target.value)} required />
+          </div>
+          <div class="section_1">
+            <img src={pwicon} alt="비밀번호 아이콘" className="password_icon"></img>
+            <input type="password" className="login_input" placeholder="비밀번호" value={passwd} onChange={(e) => setPasswd(e.target.value)} required />
+          </div>
+          {error && <p className="login_error">{error}</p>}
+
+          <div className="login_remember">
+            <label>
+              <input type="checkbox" />
+              이메일 기억하기
+            </label>
+          </div>
+
+          <button type="submit" className="login_button">
+            로그인
+          </button>
+        </form>
+
+        <div className="social_login_icons">
+          <img src={socialk}></img>
+          <img src={socialg}></img>
         </div>
-        <div style={{ marginTop: "1rem" }}>
-          <label>비밀번호</label>
-          <br />
-          <input type="password" value={passwd} onChange={(e) => setPasswd(e.target.value)} required />
+
+        <div className="login_help">
+          <Link to="/find-id">아이디/비밀번호 찾기</Link>
+          <span>|</span>
+          <Link to="/signup">킥옥션 회원가입</Link>
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" style={{ marginTop: "1rem" }}>
-          로그인
-        </button>
-      </form>
-      <p style={{ marginTop: "1rem" }}>
-        계정이 없으신가요? <Link to="/signup">회원가입</Link>
-      </p>
+      </div>
     </div>
   );
 }
