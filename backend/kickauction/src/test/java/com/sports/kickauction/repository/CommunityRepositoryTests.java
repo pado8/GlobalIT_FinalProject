@@ -69,18 +69,9 @@ public class CommunityRepositoryTests {
 
     @Test
     void testDelete() {
-        Long tno = 1L;
-        communityRepository.deleteById(tno);
+        Long pno = 1L;
+        communityRepository.deleteById(pno);
     }
-
-    // @Test
-    // public void testPaging() {
-    // // import org.springframework.data.domain.Pageable;
-    // Pageable pageable = PageRequest.of(0, 10, Sort.by("tno").descending());
-    // Page<Community> result = communityRepository.findAll(pageable);
-    // log.info(result.getTotalElements());
-    // result.getContent().stream().forEach(todo -> log.info(todo));
-    // }
 
     @Test
     public void testRegister() {
@@ -97,8 +88,8 @@ public class CommunityRepositoryTests {
 
     @Test
     public void testGet() {
-        Long tno = 101L;
-        CommunityDTO communityDTO = communityService.get(tno);
+        Long pno = 101L;
+        CommunityDTO communityDTO = communityService.get(pno);
         log.info(communityDTO);
     }
 
