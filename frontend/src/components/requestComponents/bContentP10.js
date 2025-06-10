@@ -27,7 +27,7 @@ const List = ({ title, quotes, type }) => (
   </section>
 );
 
-// 👉 객체로 묶어서 export
+// 객체로 묶어서 export
 const OrderList = {
   Active,
   List,

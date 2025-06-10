@@ -10,19 +10,19 @@ const OrderModifyPage = lazy(() => import("../pages/request/OrderModifyPage"))
 
     return [
         {
-            path: "request", element: <Suspense fallback={Loading}><OrderMyPage /></Suspense>
+            path: "list", element: <Suspense fallback={Loading}><OrderMyPage /></Suspense>
         },
         {
-            path: "", element: <Navigate replace to="request" />
+            path: "", element: <Navigate replace to="list" />
         },
         {
-            path: "request/read:pno", element: <Suspense fallback={Loading}><OrderReadPage /></Suspense>
+            path: "read/:pno", element: <Suspense fallback={Loading}><OrderReadPage /></Suspense>
         },
         {
-            path: "request/write", element: <Suspense fallback={Loading}><OrderCreatePage /></Suspense>
+            path: "write", element: <Suspense fallback={Loading}><OrderCreatePage /></Suspense>
         },
         {
-            path: "request/modify:tno", element: <Suspense fallback={Loading}><OrderModifyPage /></Suspense>
+            path: "modify/:tno", element: <Suspense fallback={Loading}><OrderModifyPage /></Suspense>
         }
     ]
 }

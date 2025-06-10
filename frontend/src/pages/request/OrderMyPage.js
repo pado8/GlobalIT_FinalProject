@@ -1,8 +1,8 @@
+import { Link,Outlet } from 'react-router-dom';
+import OrderList from "../../components/requestComponents/bContentP10";
+import Hero from "../../components/requestComponents/bHero";
 
-import OrderList from "../../components/requetComponents/bContentP10";
-import Hero from "../../components/requetComponents/bHero";
-
-// 10번 페이지
+// 10-견적목록(마이페이지)
 
 const { Active, List } = OrderList;
 
@@ -30,11 +30,10 @@ const OrderMyPage = () => {
     notion: "이번에는 어디서 할까?"
   };
 
+  const pno = 12345;
+
   return (
     <div>
-      <a href="/request">견적 작성</a> &nbsp;
-      <a href="/request">견적 수정</a> &nbsp;
-      <a href="/request">마이페이지</a>
       {/* <Header /> */}
       <main className="max-w-4xl mx-auto mt-10 p-4">
         <Hero {...myPageHero} />
