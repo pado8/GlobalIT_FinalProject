@@ -24,6 +24,10 @@ const root = createBrowserRouter([
         path: "community", element: <Suspense fallback={Loading}><Community /></Suspense>,
         children: communityRouter(),
       },
+      {
+        path: "sellerlist", element: <Suspense fallback={Loading}><SellerList /></Suspense>,
+        children: communityRouter(),
+      },
     ],
   },
 ]);
