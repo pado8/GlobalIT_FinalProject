@@ -1,16 +1,17 @@
 import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "../components/layout.js";
+
+import Layout from "../components/Layout";
+import communityRouter from "../router/communityRouter";
 
 const Main = lazy(() => import("../pages/MainPage"));
-const Community = lazy(() => import("../pages/CommunityPage"));
+const Community = lazy(() => import("../pages/community/CommunityPage"));
 const Login = lazy(() => import("../pages/LoginPage"));
 const Signup = lazy(() => import("../pages/SignupPage"));
 
 const Loading = <div>Loading...</div>;
-
 const root = createBrowserRouter([
-  //주석:: 로그인,회원가입은 네비게이션 바 미적용
+    //주석:: 로그인,회원가입은 네비게이션 바 미적용
   {
     path: "login",
     element: (
@@ -41,12 +42,8 @@ const root = createBrowserRouter([
         ),
       },
       {
-        path: "community",
-        element: (
-          <Suspense fallback={Loading}>
-            <Community />
-          </Suspense>
-        ),
+        path: "community", element: <Suspense fallback={Loading}><Community /></Suspense>,
+        children: communityRouter(),
       },
     ],
   },
