@@ -25,7 +25,7 @@ function LoginPage() {
       if (!res.ok) throw new Error("로그인 실패");
       navigate("/");
     } catch (err) {
-      setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+      setError("이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.");
     }
   };
 
@@ -63,7 +63,7 @@ function LoginPage() {
         </div>
 
         <div className="login_help">
-          <Link to="/find-id">아이디/비밀번호 찾기</Link>
+          <Link to="/findid">아이디/비밀번호 찾기</Link>
           <span>|</span>
           <Link to="/signup">킥옥션 회원가입</Link>
         </div>

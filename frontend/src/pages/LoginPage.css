@@ -53,13 +53,14 @@
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
-  margin-top: 1.35rem;
+  margin-top: 1.55rem;
 }
 
 .login_button:hover {
   background-color: #398085;
 }
 
+/* 주석:: 로그인 실패시 에러메시지 */
 .login_error {
   color: red;
   font-size: 0.9rem;
@@ -67,7 +68,7 @@
 }
 
 .login_remember {
-  margin-top: 0.85rem;
+  margin-top: 1rem;
   text-align: left;
   font-size: 1rem;
 }
