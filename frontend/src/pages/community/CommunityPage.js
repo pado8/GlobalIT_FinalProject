@@ -8,8 +8,8 @@ const CommunityPage = () => {
     return (
         <div id="communityPage">
             Community Page
-            <div onClick={handleClickList}></div>
-            <div onClick={handleClickAdd}></div>
+            <div onClick={handleClickList}>List</div>
+            <div onClick={handleClickAdd}>Add</div>
             <div><Outlet /></div>
         </div>
     );

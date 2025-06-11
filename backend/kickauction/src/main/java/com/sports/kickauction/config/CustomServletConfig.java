@@ -1,23 +1,27 @@
 package com.sports.kickauction.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import com.sports.kickauction.controller.formatter.LocalDateFormatter;
 
 @Configuration
-public class CustomServletConfig implements WebMvcConfigurer{
+public class CustomServletConfig implements WebMvcConfigurer {
 
-  
-  //server에서 cors 허용. reactjs서버주소가 다르기 때문에 설정.
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatter(new LocalDateFormatter());
+    }
 
-    registry.addMapping("/**")
-            .allowedOrigins("http://localhost:3000") //모든 주소허용. http://localhost:3000 리액트서버만허용
-            .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .maxAge(300)
-            .allowedHeaders("Authorization", "Cache-Control", "Content-Type");
-  }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .maxAge(300)
+                .allowedHeaders("Authorization", "Cache-Control", "Content-Type");
+    }
 
 }
