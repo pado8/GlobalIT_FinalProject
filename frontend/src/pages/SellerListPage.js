@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/SellerListPage.css";
 
 const SellerListPage = () => {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
+
+  const goToRegister = () => navigate("/sellerlist/register");
 
   const Data = Array.from({ length: 12 }).map((_, index) => ({
     id: index + 1,
@@ -17,7 +21,7 @@ const SellerListPage = () => {
     <div id="wrap">
       <div className="header">
         <h2>업체정보</h2>
-        <button className="register-btn">업체소개 등록</button>
+        <button className="register-btn" onClick={goToRegister}>업체소개 등록</button>
       </div>
 
       <div className="card-container">
