@@ -16,13 +16,13 @@ const OrderModifyPage = lazy(() => import("../pages/request/OrderModifyPage"))
             path: "", element: <Navigate replace to="list" />
         },
         {
-            path: "read/:pno", element: <Suspense fallback={Loading}><OrderReadPage /></Suspense>
+            path: "read", element: <Suspense fallback={Loading}><OrderReadPage /></Suspense>
         },
         {
             path: "write", element: <Suspense fallback={Loading}><OrderCreatePage /></Suspense>
         },
         {
-            path: "modify/:tno", element: <Suspense fallback={Loading}><OrderModifyPage /></Suspense>
+            path: "modify", element: <Suspense fallback={Loading}><OrderModifyPage /></Suspense>
         }
     ]
 }
