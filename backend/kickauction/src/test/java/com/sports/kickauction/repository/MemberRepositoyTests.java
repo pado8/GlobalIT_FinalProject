@@ -28,9 +28,9 @@ public class MemberRepositoyTests {
                 .userId("testuser01")
                 .userPw("1234")
                 .userName("홍길동")
-                .phone("010-1111-2222")
+                .phone("01011112222")
                 .role(1)
-                .social("none")
+                .social(0)
                 .build();
 
         memberRepository.save(member);  // 먼저 저장 (PK 생성)
