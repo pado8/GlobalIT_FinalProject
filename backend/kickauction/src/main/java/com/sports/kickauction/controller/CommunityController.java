@@ -21,7 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/api/todo")
+@RequestMapping("/api/community")
 public class CommunityController {
     private final CommunityService service;
 
@@ -47,7 +47,7 @@ public class CommunityController {
     public Map<String, String> modify(
             @PathVariable(name = "pno") Long pno,
             @RequestBody CommunityDTO communityDTO) {
-        communityDTO.setId(pno);
+        communityDTO.setPno(pno);
         log.info("Modify: " + communityDTO);
         service.modify(communityDTO);
         return Map.of("RESULT", "SUCCESS");
