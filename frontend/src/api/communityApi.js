@@ -2,10 +2,10 @@ import axios from "axios"
 
 //서버 주소
 export const API_SERVER_HOST = 'http://localhost:8080'
-const prefix = `${API_SERVER_HOST}/api/todo`
+const prefix = `${API_SERVER_HOST}/api/community`
 
-export const getOne = async (tno) => {
-    const res = await axios.get(`${prefix}/${tno}`)
+export const getOne = async (pno) => {
+    const res = await axios.get(`${prefix}/${pno}`, {params: { t: Date.now() } })
     return res.data
 }
 
@@ -15,17 +15,17 @@ export const getList = async (pageParam) => {
     return res.data
 }
 
-export const postAdd = async (todoObj) => {
-    const res = await axios.post(`${prefix}/`, todoObj)
+export const postWrite = async (communityObj) => {
+    const res = await axios.post(`${prefix}/`, communityObj)
     return res.data
 }
 
-export const deleteOne = async (tno) => {
-    const res = await axios.delete(`${prefix}/${tno}`)
+export const deleteOne = async (pno) => {
+    const res = await axios.delete(`${prefix}/${pno}`)
     return res.data
 }
 
-export const putOne = async (todo) => {
-    const res = await axios.put(`${prefix}/${todo.tno}`, todo)
+export const updateOne = async (pno, communityDTO) => {
+    const res = await axios.put(`${prefix}/${pno}`, communityDTO)
     return res.data
-}
+};

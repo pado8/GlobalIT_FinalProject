@@ -8,7 +8,6 @@ const CommunityRead = lazy(() => import("../pages/community/ReadPage"))
 const CommunityWrite = lazy(() => import("../pages/community/WritePage"))
 const CommunityModify = lazy(() => import("../pages/community/ModifyPage"))
 
-
     return [
         {
             path: "list", element: <Suspense fallback={Loading}><CommunityList /></Suspense>

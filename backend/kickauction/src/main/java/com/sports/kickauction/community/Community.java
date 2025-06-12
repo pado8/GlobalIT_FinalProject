@@ -2,7 +2,6 @@ package com.sports.kickauction.community;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,54 +13,47 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Community {
-    /** 글ID (자동 증가) */
+    /** 글ID (pno) */
     @Id
     @Column(name = "pno")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long pno;
 
-    /** 회원번호 (외래키) */
+    /** 회원번호 (mno) */
     @Column(name = "mno", nullable = false)
-    private Long memberId;
+    private Long mno;
 
-    /** 제목 */
-    @Column(name = "ptitle", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'title'")
-    private String title;
+    /** 제목 (ptitle) */
+    @Column(name = "ptitle", nullable = false, length = 255)
+    private String ptitle;
 
-    /** 내용 */
+    /** 내용 (pcontent) */
     @Column(name = "pcontent", columnDefinition = "TEXT")
-    private String content;
+    private String pcontent;
 
-    /** 작성일 */
+    /** 작성일 (pregdate) */
     @Column(name = "pregdate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdDate;
+    private LocalDateTime pregdate;
 
-    /** 조회수 */
-    @Column(name = "view", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer viewCount;
+    /** 조회수 (view) */
+    @Column(name = "view", nullable = false)
+    private Integer view;
 
-    /** 이미지 URL */
+    /** 이미지 URL (pimage) */
     @Column(name = "pimage", length = 255)
-    private String imageUrl;
+    private String pimage;
 
-    public void changeTitle(String title) {
-        this.title = title;
+    // 편의 메서드 (선택)
+    public void changePtitle(String ptitle) {
+        this.ptitle = ptitle;
     }
-
-    public void changeContent(String content) {
-        this.content = content;
+    public void changePcontent(String pcontent) {
+        this.pcontent = pcontent;
     }
-
-    public void changeCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void changeViewCount(Integer view) {
+        this.view = view;
     }
-
-    public void changeViewCount(Integer viewCount) {
-        this.viewCount = viewCount;
+    public void changePimage(String pimage) {
+        this.pimage = pimage;
     }
-
-    public void changeImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
 }

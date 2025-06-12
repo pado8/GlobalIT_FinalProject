@@ -4,12 +4,12 @@ import { useCallback } from "react";
 const CommunityPage = () => {
     const navigate = useNavigate()
     const handleClickList = useCallback(() => { navigate({ pathname: 'list' }) })
-    const handleClickAdd = useCallback(() => { navigate({ pathname: 'add' }) })
+    const handleClickWrite = useCallback(() => { navigate({ pathname: 'write' }) })
     return (
         <div id="communityPage">
             Community Page
             <div onClick={handleClickList}>List</div>
-            <div onClick={handleClickAdd}>Add</div>
+            <div onClick={handleClickWrite}>Write</div>
             <div><Outlet /></div>
         </div>
     );
