@@ -124,7 +124,7 @@ const initialFields = {
   request: ""
 };
 
-const bContentP09 = () => {
+const BContentP09 = () => {
   const navigate = useNavigate();
   const { ono } = useParams();
   const [formData, setFormData] = useState(initialFields);
@@ -191,4 +191,4 @@ const bContentP09 = () => {
   );
 };
 
-export default bContentP09;
+export default BContentP09;

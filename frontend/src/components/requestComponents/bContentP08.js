@@ -91,7 +91,7 @@ const renderField = (field) => {
   }
 };
 
-const bContentP08 = () => {
+const BContentP08 = () => {
   const navigate = useNavigate(); // useNavigate 훅
 
   const handleSubmit = (e) => {
@@ -132,4 +132,4 @@ const bContentP08 = () => {
   );
 };
 
-export default bContentP08;
+export default BContentP08;
