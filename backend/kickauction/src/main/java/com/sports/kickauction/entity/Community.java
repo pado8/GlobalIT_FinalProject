@@ -1,4 +1,4 @@
-package com.sports.kickauction.community;
+package com.sports.kickauction.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
