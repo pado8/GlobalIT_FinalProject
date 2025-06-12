@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor 
-public class Seller extends BaseEntity{
+public class Seller {
 
     @Id
     private Long mno;

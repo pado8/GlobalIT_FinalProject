@@ -33,8 +33,8 @@ public class UploadController {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @PostMapping("/uploadAjax")
-    public List<UploadResultDTO> upload(@RequestParam("uploadFiles") MultipartFile[] files) {
+    @PostMapping(value = "/uploadAjax", consumes = "multipart/form-data")
+    public List<UploadResultDTO> upload(@RequestParam("files") MultipartFile[] files) {
 
         List<UploadResultDTO> resultList = new ArrayList<>();
 
