@@ -5,12 +5,7 @@ const ReadPage = () => {
     const { pno } = useParams()
 
     return (
-        <div id="readPage">
-            <div>
-                community Read Page Component {pno}
-            </div>
-            <ReadComponent key={pno} pno={Number(pno)}></ReadComponent>
-        </div>
+        <ReadComponent key={pno} pno={Number(pno)}></ReadComponent>
     );
 }
 

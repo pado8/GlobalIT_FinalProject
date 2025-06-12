@@ -1,28 +1,24 @@
 const PageComponent = ({ serverData, movePage }) => {
 
     return (
-        <div className="m-6 flex justify-center">
+        <div className="pagination">
             {serverData.prev ?
-                <div
-                    className="m-2 p-2 w-16 text-center  font-bold text-blue-400 "
-                    onClick={() => movePage({ page: serverData.prevPage })}>
-                    Prev </div> : <></>}
+                <div className="page_btn" onClick={() => movePage({ page: serverData.prevPage })}>
+                    이전
+                </div> : <></>
+            }
 
             {serverData.pageNumList.map(pageNum =>
-                <div
-                    key={pageNum}
-                    className={`m-2 p-2 w-12  text-center rounded shadow-md text-white ${serverData.current === pageNum ? 'bg-gray-500' : 'bg-blue-400'}`}
-                    onClick={() => movePage({ page: pageNum })}>
+                <div key={pageNum} className={`page_btn ${serverData.current === pageNum ? 'active' : ''}`} onClick={() => movePage({ page: pageNum })}>
                     {pageNum}
                 </div>
             )}
 
             {serverData.next ?
-                <div
-                    className="m-2 p-2 w-16 text-center font-bold text-blue-400"
-                    onClick={() => movePage({ page: serverData.nextPage })}>
-                    Next
-                </div> : <></>}
+                <div className="page_btn" onClick={() => movePage({ page: serverData.nextPage })}>
+                    다음
+                </div> : <></>
+            }
         </div>
     );
 }

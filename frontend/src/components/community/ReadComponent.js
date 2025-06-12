@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getOne, deleteOne } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "./ResultModal";
+import "./ReadComponent.css";
 
 const initState = {
     pno: 0,
