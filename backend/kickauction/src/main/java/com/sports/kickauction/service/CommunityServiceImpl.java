@@ -11,9 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sports.kickauction.community.Community;
 import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.PageResponseDTO;
+import com.sports.kickauction.entity.Community;
 import com.sports.kickauction.dto.CommunityDTO;
 import com.sports.kickauction.repository.CommunityRepository;
 
