@@ -32,11 +32,11 @@ public class CommunityRepositoryTests {
         // 1번부터 100번까지 루프
         IntStream.rangeClosed(1, 100).forEach(i -> {
             Community community = Community.builder()
-                    .memberId((long) (i % 10 + 1)) // 예시로 1~10 회원 돌아가며 설정
-                    .title("Title..." + i)
-                    .content("Content..." + i)
-                    .viewCount(0)
-                    .imageUrl(null)
+                    .mno((long) (i % 10 + 1)) // 예시로 1~10 회원 돌아가며 설정
+                    .ptitle("Title..." + i)
+                    .pcontent("Content..." + i)
+                    .view(0)
+                    .pimage(null)
                     .build();
             communityRepository.save(community);
         });
@@ -57,10 +57,10 @@ public class CommunityRepositoryTests {
                 .orElseThrow(() -> new IllegalArgumentException("pno 30번이 존재하지 않습니다."));
 
         // 원하는 값으로 수정
-        community.changeTitle("수정된 제목 30");
-        community.changeContent("수정된 내용 30");
+        community.changePtitle("수정된 제목 30");
+        community.changePcontent("수정된 내용 30");
         community.changeViewCount(999);
-        community.changeImageUrl("modified30.png");
+        community.changePimage("modified30.png");
 
         // 수정 반영
         communityRepository.save(community);
@@ -76,11 +76,11 @@ public class CommunityRepositoryTests {
     @Test
     public void testRegister() {
         CommunityDTO communityDTO = CommunityDTO.builder()
-                .memberId(1L)
-                .title("서비스 테스트")
-                .content("테스트 내용")
-                .viewCount(0)
-                .imageUrl(null)
+                .mno(1L)
+                .ptitle("서비스 테스트")
+                .pcontent("테스트 내용")
+                .view(0)
+                .pimage(null)
                 .build();
         Long pno = communityService.register(communityDTO);
         log.info("생성된 게시글 번호: " + pno);
