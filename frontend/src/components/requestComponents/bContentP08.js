@@ -67,9 +67,21 @@ const renderField = (field) => {
         {field.options.map((option, idx) => (<option key={idx}>{option}</option>))}
       </select>);
     case "radio":
-      return (<div className="flex gap-4 mt-1">
-        {field.options.map((option, idx) => (<label key={idx}><input type="radio" name={field.name} /> {option}</label>))}
-      </div>);
+        return (
+            <div className="flex gap-4 mt-1">
+                {field.options.map((option, idx) => (
+                    <label key={idx}>
+                        <input
+                            type="radio"
+                            name={field.name}
+                            value={option} // value 속성 추가
+                            // checked={selectedValue === option} // (선택 사항) 상태 관리 시 현재 선택된 값 표시
+                            // onChange={handleRadioChange} // (필수) onChange 핸들러 추가
+                        /> {option}
+                    </label>
+                ))}
+            </div>
+        );
     case "text":
       return (<input type="text" name={field.name} className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`} placeholder={field.placeholder} />);
     case "textarea":
@@ -79,26 +91,18 @@ const renderField = (field) => {
   }
 };
 
-const OrderForm = () => {
+const bContentP08 = () => {
   const navigate = useNavigate(); // useNavigate 훅
 
-  // ⭐ 폼 제출 시 실행될 함수
   const handleSubmit = (e) => {
     e.preventDefault(); // 페이지 새로고침 방지
 
-    // ⭐ 여기에서 폼 유효성 검사 로직을 추가합니다.
-    // 예를 들어, 모든 필수 필드가 채워져 있는지 확인하는 로직
-    // 현재 코드는 유효성 검사 로직이 없으므로, 간단하게 console.log만 해봅니다.
-    // 실제 사용 시에는 이 부분에 유효성 검사 코드가 들어가야 합니다.
     console.log("폼이 제출되었습니다!");
 
-    // ⭐ 유효성 검사를 통과했다면, 원하는 경로로 이동합니다.
-    // 예시: 견적 등록이 완료된 후 보여줄 페이지 경로
-    navigate('/request'); // ⭐ 이동할 경로 지정 (예: /order-success 또는 /my-quotes)
+    navigate('/request');
   };
 
   return (
-    // ⭐ <form> 태그로 전체 폼을 감싸고 onSubmit 핸들러 연결
     <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
       {/* 왼쪽 폼 */}
       <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
@@ -124,8 +128,8 @@ const OrderForm = () => {
           등록하기
         </button>
       </div>
-    </form> // ⭐ 닫는 </form> 태그
+    </form>
   );
 };
 
-export default OrderForm;
+export default bContentP08;

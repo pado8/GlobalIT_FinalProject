@@ -1,5 +1,5 @@
 // 견적 신청
-import OrderForm from "../../components/requestComponents/bContentP08";
+import bContentP08 from "../../components/requestComponents/bContentP08";
 import Hero from "../../components/requestComponents/bHero";
 
   const createHero = {
@@ -10,7 +10,7 @@ import Hero from "../../components/requestComponents/bHero";
 
 
 const OrderCreatePage = () => {
-  console.log("OrderForm: ", OrderForm);
+  console.log("OrderForm: ", bContentP08);
   console.log("Hero: ", Hero);
   return (
     <>
@@ -20,7 +20,7 @@ const OrderCreatePage = () => {
         // style={{ backgroundImage: "url('/stadium-bg.jpg')" }}
       >
         <Hero {...createHero} />
-        <OrderForm />
+        <bContentP08 />
       </div>
       {/* <Footer /> */}
     </>

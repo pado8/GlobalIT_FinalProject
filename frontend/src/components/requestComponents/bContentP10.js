@@ -14,8 +14,8 @@ const List = ({ title, quotes, type }) => (
   <section className="mt-6">
     <h2 className="font-bold text-lg mb-2">{title}</h2>
     <ul className="space-y-2">
-      {quotes.map((quote, index) => (
-        <li key={index} className="bg-gray-100 p-3 rounded flex justify-between items-center">
+      {quotes.map((quote, ono) => (
+        <li key={ono} className="bg-gray-100 p-3 rounded flex justify-between items-center">
           <span>{quote.title}</span>
           {type === 'closed' && <button className="text-blue-600">리뷰작성</button>}
           {type === 'cancelled' && (

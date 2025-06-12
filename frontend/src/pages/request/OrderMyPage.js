@@ -30,7 +30,6 @@ const OrderMyPage = () => {
     notion: "이번에는 어디서 할까?"
   };
 
-  const pno = 12345;
 
   return (
     <div>

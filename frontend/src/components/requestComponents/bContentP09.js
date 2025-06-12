@@ -124,16 +124,16 @@ const initialFields = {
   request: ""
 };
 
-const OrderModifyForm = () => {
+const bContentP09 = () => {
   const navigate = useNavigate();
-  const { Ono } = useParams();
+  const { ono } = useParams();
   const [formData, setFormData] = useState(initialFields);
 
   useEffect(() => {
-    axios.get(`/api/orders/${Ono}`)
+    axios.get(`/api/orders/${ono}`)
       .then((res) => setFormData(res.data))
       .catch((err) => console.error("견적 정보 불러오기 실패:", err));
-  }, [Ono]);
+  }, [ono]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -142,7 +142,7 @@ const OrderModifyForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.patch(`/api/orders/${Ono}`, formData)
+    axios.patch(`/api/orders/${ono}`, formData)
       .then(() => {
         alert("수정 완료되었습니다!");
         navigate("/request");
@@ -191,5 +191,4 @@ const OrderModifyForm = () => {
   );
 };
 
-export default OrderModifyForm;
-// export default OrderModifyPage
+export default bContentP09;

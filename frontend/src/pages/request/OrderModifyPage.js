@@ -1,5 +1,5 @@
 // 견적 수정 페이지
-import OrderModifyForm from "../../components/requestComponents/bContentP09";
+import bContentP09 from "../../components/requestComponents/bContentP09";
 import Hero from "../../components/requestComponents/bHero";
 
 const modifyHero = {
@@ -12,7 +12,7 @@ const OrderModifyPage = () => {
   return (
     <div className="bg-cover bg-center min-h-screen pt-12">
       <Hero {...modifyHero} />
-      <OrderModifyForm />
+      <bContentP09 />
     </div>
   );
 };
