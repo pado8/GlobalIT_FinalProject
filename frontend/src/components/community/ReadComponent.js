@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { getOne } from "../../api/communityApi";
+import { getOne, deleteOne } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
+import ResultModal from "./ResultModal";
+import "./ReadComponent.css";
 
 const initState = {
     pno: 0,
@@ -15,6 +17,8 @@ const initState = {
 const ReadComponent = ({ pno }) => {
     const [community, setCommunity] = useState(initState);
     const { moveToList, moveToModify } = useCustomMove();
+    //모달 창을 위한 상태 
+    const [result, setResult] = useState(null)
 
     useEffect(() => {
         getOne(pno).then((data) => {
@@ -23,8 +27,23 @@ const ReadComponent = ({ pno }) => {
         });
     }, [pno]);
 
+    const handleClickDelete = () => { //버튼 클릭시 
+
+        deleteOne(pno).then(data => {
+            console.log("delete result: " + data)
+            setResult('Deleted')
+        })
+
+    }
+
+    //모달 창이 close될때 
+    const closeModal = () => {
+        moveToList()
+    }
+
     return (
-        <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+        <div id="readComponent">
+            {result ? <ResultModal title={'처리결과'} content={result} callbackFn={closeModal}></ResultModal> : <></>}
             {makeDiv("글 번호", community.pno)}
             {makeDiv("작성자 (회원번호)", community.mno)}
             {makeDiv("제목", community.ptitle)}
@@ -33,23 +52,25 @@ const ReadComponent = ({ pno }) => {
 
             {/* 이미지가 있을 때만 출력 */}
             {community.pimage && (
-                <div className="flex justify-center mb-4">
+                <div>
                     <img
                         src={community.pimage}
                         alt="첨부 이미지"
-                        className="max-w-full h-auto rounded shadow-md"
                     />
                 </div>
             )}
 
             {makeDiv("조회수", community.view)}
 
-            <div className="flex justify-end p-4">
-                <button type="button" className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500" onClick={moveToList} >
+            <div>
+                <button type="button" onClick={moveToList} >
                     목록
                 </button>
-                <button type="button" className="rounded p-4 m-2 text-xl w-32 text-white bg-red-500" onClick={() => moveToModify(pno)} >
+                <button type="button" onClick={() => moveToModify(pno)} >
                     수정
+                </button>
+                <button type="button" onClick={handleClickDelete} >
+                    삭제
                 </button>
             </div>
         </div>
@@ -57,10 +78,10 @@ const ReadComponent = ({ pno }) => {
 };
 
 const makeDiv = (label, value) => (
-    <div className="flex justify-center">
-        <div className="relative mb-4 flex w-full flex-wrap items-stretch">
-            <div className="w-1/5 p-6 text-right font-bold">{label}</div>
-            <div className="w-4/5 p-6 rounded-r border border-solid shadow-md">
+    <div>
+        <div>
+            <div>{label}</div>
+            <div>
                 {value}
             </div>
         </div>

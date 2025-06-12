@@ -1,10 +1,17 @@
-import { useNavigate } from "react-router-dom";
-const ModifyPage = ({ pno }) => {
-    const navigate = useNavigate()
-    const moveToRead = () => { navigate({ pathname: `/community/read/${pno}` }) }
-    const moveToList = () => { navigate({ pathname: `/community/list` }) }
+import { useParams } from "react-router-dom";
+import ModifyComponent from "../../components/community/ModifyComponent";
+
+const ModifyPage = () => {
+    const { pno } = useParams()
+
     return (
-        <div id="modifyPage"> community Modify Page </div>
+        <div id="ModifyPage">
+            <div>
+                Todo Modify Page
+            </div>
+            <ModifyComponent pno={pno} />
+        </div>
     );
 }
+
 export default ModifyPage;

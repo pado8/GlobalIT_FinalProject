@@ -10,10 +10,11 @@ const SellerList = lazy(() => import("../pages/SellerListPage"));
 const SellerRegister = lazy(() => import("../pages/SellerRegisterPage"));
 const Login = lazy(() => import("../pages/LoginPage"));
 const Signup = lazy(() => import("../pages/SignupPage"));
+const Signups = lazy(() => import("../pages/SignupPageSeller"));
 
 const Loading = <div>Loading...</div>;
 const root = createBrowserRouter([
-    //주석:: 로그인,회원가입은 네비게이션 바 미적용
+  //주석:: 로그인,회원가입은 네비게이션 바 미적용
   {
     path: "login",
     element: (
@@ -27,6 +28,14 @@ const root = createBrowserRouter([
     element: (
       <Suspense fallback={Loading}>
         <Signup />
+      </Suspense>
+    ),
+  },
+  {
+    path: "signups",
+    element: (
+      <Suspense fallback={Loading}>
+        <Signups />
       </Suspense>
     ),
   },
@@ -44,7 +53,12 @@ const root = createBrowserRouter([
         ),
       },
       {
-        path: "community", element: <Suspense fallback={Loading}><Community /></Suspense>,
+        path: "community",
+        element: (
+          <Suspense fallback={Loading}>
+            <Community />
+          </Suspense>
+        ),
         children: communityRouter(),
       },
       {

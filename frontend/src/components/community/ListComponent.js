@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getList } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import PageComponent from "./PageComponent";
+import { useNavigate } from "react-router-dom";
+import "./ListComponent.css";
+
 
 const initState = {
     dtoList: [],
@@ -20,30 +23,57 @@ const ListComponent = () => {
     const { page, size, refresh, moveToList, moveToRead } = useCustomMove()//refresh
     //serverData는 나중에 사용
     const [serverData, setServerData] = useState(initState)
+    const navigate = useNavigate()
+    const handleClickWrite = useCallback(() => {
+        navigate('/community/write');
+    }, [navigate])
 
     useEffect(() => {
         getList({ page, size }).then(data => {
+            console.log("=== 서버에서 온 community 리스트 ===", data.dtoList);
             console.log(data)
             setServerData(data)
         })
+            .catch(err => console.error(err));
     }, [page, size, refresh])
 
     return (
-        <div className="border-2 border-blue-100 mt-10 mr-2 ml-2">
-            <div className="flex flex-wrap mx-auto justify-center p-6">
+        <div id="listComponent">
+            <div className="list_header">
+                <div className="list_title">커뮤니티</div>
+                <div className="search_box">
+                    <input type="text" placeholder="게시글 검색..." />
+                    <button className="btn">🔍 검색</button>
+                </div>
+                <div className="btn" onClick={handleClickWrite}>✏️ 글쓰기</div>
+            </div>
+            <div className="board_table">
+                <div className="table_header">
+                    <div>번호</div>
+                    <div>제목</div>
+                    <div className="hide_mobile">작성자</div>
+                    <div className="hide_mobile">작성일</div>
+                    <div>조회수</div>
+                </div>
                 {serverData.dtoList.map(community =>
-                    <div key={community.pno} className="w-full min-w-[400px]  p-2 m-2 rounded shadow-md">
-                        <div className="flex ">
-                            <div className="font-extrabold text-2xl p-2 w-1/12">
+                    <div key={community.pno} className="table_row" onClick={() => moveToRead(community.pno)}>
+                        {/* <div> */}
+                            <div className="post_number">
                                 {community.pno}
                             </div>
-                            <button className="text-1xl m-1 p-2 w-8/12 font-extrabold" onClick={() => moveToRead(community.pno)}>
-                                {community.title}
-                            </button>
-                            <div className="text-1xl m-1 p-2 w-2/10 font-medium">
+                            <div className="post_title">
+                                {community.ptitle}
+                            </div>
+                            <div className="post_meta hide_mobile">
+                                {community.mno}
+                            </div>
+                            <div className="post_meta hide_mobile">
                                 {community.dueDate}
                             </div>
-                        </div>
+                            <div className="post_meta">
+                                {community.view}
+                            </div>
+                        {/* </div> */}
                     </div>
                 )}
             </div>

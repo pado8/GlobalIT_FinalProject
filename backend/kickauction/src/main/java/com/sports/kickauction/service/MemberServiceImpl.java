@@ -2,45 +2,35 @@ package com.sports.kickauction.service;
 
 import org.springframework.stereotype.Service;
 
-import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
-import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.repository.MemberRepository;
-import com.sports.kickauction.repository.SellerRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-  
-  private final MemberRepository memberRepository;
-  private final SellerRepository sellerRepository;
-  
-  @Transactional
-  @Override
-  public Long registerMember(MemberSellerDTO dto) {
-    Member member = Member.builder()
-                .userId(dto.getUserId())
-                .userPw(dto.getUserPw())
-                .userName(dto.getUserName())
-                .phone(dto.getPhone())
-                .role(1)
-                .social("none")
-                .build();
+    
+    private final MemberRepository memberRepository;
 
-        memberRepository.save(member);
+    @Override
+    public Member register(Member member) {
+        return memberRepository.save(member);
+    }
 
-        Seller seller = Seller.builder()
-                .member(member)
-                .sname(dto.getSname())
-                .slocation(dto.getSlocation())
-                .build();
+    @Override
+    public boolean existsByUserId(String userId) {
+        return memberRepository.existsByUserId(userId);
+    }
 
-        sellerRepository.save(seller);
+    @Override
+    public boolean existsByUserName(String userName) {
+        return memberRepository.existsByUserName(userName);
+    }
 
-        return member.getMno();
-  }
+    @Override
+    public boolean existsByPhone(String phone) {
+        return memberRepository.existsByPhone(phone);
+    }
 
 }
