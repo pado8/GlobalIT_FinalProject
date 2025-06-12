@@ -3,6 +3,7 @@ package com.sports.kickauction.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Seller;
@@ -20,6 +21,7 @@ public class MemberRepositoyTests {
 
     @Test
     @Transactional
+    @Rollback(false)
     public void testRegisterMemberAndSeller() {
         // 1. Member 생성
         Member member = Member.builder()

@@ -51,7 +51,7 @@ const root = createBrowserRouter([
         path: "sellerlist", element: <Suspense fallback={Loading}><SellerList /></Suspense>
       },
       {
-        path: "sellerlist/register", element: <Suspense fallback={Loading}><SellerRegister /></Suspense>
+        path: "sellerlist/register", element: <Suspense fallback={Loading}><SellerRegister mno={2}/></Suspense>
       },
     ],
   },

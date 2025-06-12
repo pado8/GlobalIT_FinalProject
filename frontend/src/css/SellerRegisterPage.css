@@ -157,3 +157,8 @@
   font-size: 1.2rem;
   cursor: pointer;
 }
+
+.info-title,.content-title{
+  display: flex;
+  font-size: 22px;
+}

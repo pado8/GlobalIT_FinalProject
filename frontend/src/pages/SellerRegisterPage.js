@@ -1,220 +1,126 @@
+// SellerRegisterPage.js (이미지 업로드 + 최종 등록까지 포함)
+
 import { useRef, useState } from "react";
+import axios from "axios";
+import { API_SERVER_HOST } from "../api/common";
 import "../css/SellerRegisterPage.css";
 
-const SellerRegisterPage = () => {
+const uploadUrl = `${API_SERVER_HOST}/api/uploadAjax`;
+const registerUrl = `${API_SERVER_HOST}/api/seller/register`;
+
+const SellerRegisterPage = ({ mno }) => {
   const [formData, setFormData] = useState({
+    simage: [], // [0] = 대표이미지, 이후 = 소개이미지
     introContent: "",
-    simage: "",
-    info: "",
-    introImages: [],
+    info: ""
   });
+  const [introPreviews, setIntroPreviews] = useState([]);
   const [slideIndex, setSlideIndex] = useState(0);
   const [enlargedImage, setEnlargedImage] = useState(null);
 
-  const fileInputRef = useRef(null);
-  const introFileInputRef = useRef(null);
+  const fileInputRef = useRef();
+  const introInputRef = useRef();
 
-  const handleImageClick = () => fileInputRef.current.click();
+  const handleUpload = async (files, isMain = false) => {
+    const uploadForm = new FormData();
+    for (let file of files) uploadForm.append("files", file);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({ ...prev, simage: reader.result }));
-    };
-    reader.readAsDataURL(file);
-  };
+    try {
+      const res = await axios.post(uploadUrl, uploadForm);
+      const paths = res.data.map((dto) => `${dto.folderPath}/${dto.uuid}_${dto.fileName}`);
 
-  const handleImageCancel = () => {
-    setFormData((prev) => ({ ...prev, simage: "" }));
-    fileInputRef.current.value = null;
-  };
-
-  const handleIntroImageClick = () => {
-    introFileInputRef.current.value = null;
-    introFileInputRef.current.click();
-  };
-
-  const handleIntroImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    const readers = files.map((file) => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(readers).then((base64s) => {
       setFormData((prev) => {
-        const updated = [...prev.introImages, ...base64s];
-        const nextIndex = updated.length > 3 ? Math.floor((updated.length - 1) / 3) * 3 : 0;
-        setSlideIndex(nextIndex);
-        return { ...prev, introImages: updated };
+        if (isMain) return { ...prev, simage: [paths[0], ...prev.simage.slice(1)] };
+        return { ...prev, simage: [...prev.simage, ...paths] };
       });
-    });
+
+      if (!isMain) {
+        const previewUrls = Array.from(files).map((file) => URL.createObjectURL(file));
+        setIntroPreviews((prev) => [...prev, ...previewUrls]);
+      }
+    } catch (err) {
+      alert("업로드 실패");
+    }
   };
 
-  const handleIntroImageDelete = (indexToDelete) => {
-    setFormData((prev) => {
-      const newImages = prev.introImages.filter((_, idx) => idx !== indexToDelete);
-      const maxSlideIndex = Math.max(0, Math.floor((newImages.length - 1) / 3) * 3);
-      const newSlideIndex = Math.min(slideIndex, maxSlideIndex);
-      setSlideIndex(newSlideIndex);
-      return { ...prev, introImages: newImages };
-    });
+  const handleMainChange = (e) => {
+    const file = e.target.files[0];
+    if (file) handleUpload([file], true);
   };
 
-  const handlePrevSlide = () => {
-    setSlideIndex((prev) => Math.max(prev - 3, 0));
+  const handleIntroChange = (e) => {
+    handleUpload(Array.from(e.target.files), false);
   };
 
-  const handleNextSlide = () => {
-  const nextIndex = slideIndex + 3;
-  if (nextIndex < formData.introImages.length) {
-    setSlideIndex(nextIndex);
-  }
-};
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("전송될 데이터:", formData);
+  const handleSubmit = async () => {
+    try {
+      const { simage, info, introContent } = formData;
+      await axios.post(`${registerUrl}/${mno}`, {
+        simage,
+        info,
+        introContent
+      });
+      alert("등록 완료");
+    } catch (e) {
+      alert("등록 실패");
+    }
   };
 
   return (
     <div className="container">
-      <div className="seller-register-wrapper">
-        {/* 대표 이미지 */}
-        <div className="main-simage" onClick={handleImageClick}>
-          {formData.simage ? (
-            <img
-              src={formData.simage}
-              alt="대표"
-              className="preview-image"
-              onClick={(e) => {
-                e.stopPropagation();             // 클릭 버블 방지
-                setEnlargedImage(formData.simage);
-              }}
-            />
-          ) : (
-            <div className="clickable-content">
-              <div className="img-placeholder">🖼️</div>
-              <div className="click-text">대표 이미지를 설정해주세요!</div>
-            </div>
-          )}
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={handleImageChange}
-          style={{ display: "none" }}
-        />
-        {formData.simage && (
-          <button className="btn cancel" onClick={handleImageCancel}>취소</button>
+      <div className="main-simage" onClick={() => fileInputRef.current.click()}>
+        {formData.simage[0] ? (
+          <img
+            src={`${API_SERVER_HOST}/display?file=${formData.simage[0]}`}
+            alt="대표"
+            onClick={(e) => {
+              e.stopPropagation();
+              setEnlargedImage(`${API_SERVER_HOST}/display?file=${formData.simage[0]}`);
+            }}
+          />
+        ) : (
+          <div className="img-placeholder">대표 이미지 설정</div>
         )}
+      </div>
+      <input type="file" hidden ref={fileInputRef} onChange={handleMainChange} accept="image/*" />
 
-        <h2 className="title">업체이름</h2>
-        <p className="subtitle_one">연락처</p>
-        <p className="subtitle_two">업체주소</p>
+      <div className="slider">
+        {introPreviews.slice(slideIndex, slideIndex + 3).map((src, idx) => (
+          <img
+            key={idx}
+            src={src}
+            alt={`소개 ${idx}`}
+            onClick={() => setEnlargedImage(src)}
+          />
+        ))}
+        {slideIndex > 0 && <button onClick={() => setSlideIndex(slideIndex - 3)}>&lt;</button>}
+        {slideIndex + 3 < introPreviews.length && (
+          <button onClick={() => setSlideIndex(slideIndex + 3)}>&gt;</button>
+        )}
+      </div>
+      <input type="file" hidden ref={introInputRef} onChange={handleIntroChange} multiple accept="image/*" />
+      <button onClick={() => introInputRef.current.click()}>소개 이미지 추가</button>
 
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          ref={introFileInputRef}
-          onChange={handleIntroImageChange}
-          style={{ display: "none" }}
-        />
+      <input
+        type="text"
+        placeholder="업체 정보"
+        value={formData.info}
+        onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))}
+      />
+      <textarea
+        placeholder="업체 소개"
+        value={formData.introContent}
+        onChange={(e) => setFormData((prev) => ({ ...prev, introContent: e.target.value }))}
+      />
 
-        {/* 슬라이더 */}
-        <div className="slider">
-          {/* 왼쪽 화살표 */}
-          {slideIndex > 0 && (
-            <button onClick={handlePrevSlide} className="arrow-btn">
-              &lt;
-            </button>
-          )}
+      <button onClick={handleSubmit}>등록</button>
 
-          {formData.introImages
-            .slice(slideIndex, slideIndex + 3)
-            .map((img, idx) => {
-              const actualIndex = slideIndex + idx;
-              return (
-                <div className="img-box" key={actualIndex}>
-                  <img
-                    src={img}
-                    alt={`소개 ${actualIndex}`}
-                    className="preview-image" 
-                    onClick={() => setEnlargedImage(img)}
-                  />
-                  <button
-                    className="delete-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleIntroImageDelete(actualIndex);
-                    }}
-                  >
-                    ❌
-                  </button>
-                </div>
-              );
-            })}
-
-          {/* 오른쪽 화살표 */}
-          {slideIndex + 3 < formData.introImages.length && (
-            <button onClick={handleNextSlide} className="arrow-btn">
-              &gt;
-            </button>
-          )}
-        </div>
-
-        <div className="image-section">
-          <button className="btn blue" onClick={handleIntroImageClick}>
-            업체소개 이미지를 설정해주세요!
-          </button>
-          <button className="btn cancel" onClick={() => {
-            setFormData((prev) => ({ ...prev, introImages: [] }));
-            setSlideIndex(0);
-          }}>전체취소</button>
-        </div>
-
-        <input
-          name="info"
-          placeholder="업체정보를 작성해주세요!"
-          value={formData.info}
-          onChange={handleChange}
-          className="input-field"
-        />
-
-        <textarea
-          name="introContent"
-          placeholder="업체소개 글을 작성해주세요!"
-          value={formData.introContent}
-          onChange={handleChange}
-          className="textarea"
-        />
-
-              {enlargedImage && (
+      {enlargedImage && (
         <div className="image-modal" onClick={() => setEnlargedImage(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={enlargedImage} alt="확대된 이미지" />
-            <button className="close-btn" onClick={() => setEnlargedImage(null)}>✖</button>
-          </div>
+          <img src={enlargedImage} alt="확대 이미지" />
         </div>
       )}
-
-        <button className="btn register" onClick={handleSubmit}>등록</button>
-      </div>
     </div>
-
-    
   );
 };
 

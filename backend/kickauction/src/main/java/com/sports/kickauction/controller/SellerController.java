@@ -1,8 +1,11 @@
 package com.sports.kickauction.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,43 +45,53 @@ public class SellerController {
         return sellerService.getSellerByMno(mno);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/register/{mno}")
 public ResponseEntity<?> registerSeller(
-    @RequestPart("simage") MultipartFile[] simage,        // 대표 + 소개 이미지 통합 배열
-    @RequestPart("info") String info,                     // 업체 정보
-    @RequestPart("introContent") String introContent      // 업체 소개글
+    @PathVariable Long mno,
+    @RequestPart(value = "simage", required = false) MultipartFile[] simage,
+    @RequestPart("info") String info,
+    @RequestPart("introContent") String introContent
 ) {
-    // 이미지 파일 저장
     List<String> savedFilePaths = new ArrayList<>();
 
-    for (MultipartFile file : simage) {
-        if (!file.getContentType().startsWith("image")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지 파일만 업로드 가능");
-        }
+    if (simage != null) {
+        for (MultipartFile file : simage) {
+            if (file.getContentType() == null || !file.getContentType().startsWith("image")) {
+                return ResponseEntity.badRequest().body("이미지 파일만 업로드 가능");
+            }
 
-        try {
-            String originalName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String saveName = uuid + "_" + originalName;
-
-            Path savePath = Paths.get("C:/upload", saveName);
-            file.transferTo(savePath.toFile());
-
-            savedFilePaths.add(saveName);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 실패");
+            try {
+                String saveName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                String folderPath = makeFolder();
+                Path savePath = Paths.get(uploadBasePath, folderPath, saveName);
+                file.transferTo(savePath.toFile());
+                savedFilePaths.add(folderPath + "/" + saveName);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 실패");
+            }
         }
     }
 
-    // DTO 생성
     SellerRegisterDTO dto = new SellerRegisterDTO();
-    dto.setSimage(savedFilePaths); // 대표 + 소개 이미지 배열
+    dto.setSimage(savedFilePaths);
     dto.setIntroContent(introContent);
     dto.setInfo(info);
+    sellerService.registerSeller(mno, dto);
 
-    
-
-    // TODO: 서비스 로직 처리
     return ResponseEntity.ok("등록 완료");
+}
+
+    private String makeFolder() {
+    String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    String folderPath = str.replace("/", File.separator);
+
+    File uploadPathFolder = new File(uploadBasePath, folderPath);
+
+    if (!uploadPathFolder.exists()) {
+        uploadPathFolder.mkdirs(); // 필요한 하위 디렉토리까지 생성
+    }
+
+    return folderPath; // 날짜 경로만 반환 (ex: 2025/06/12)
 }
 }
