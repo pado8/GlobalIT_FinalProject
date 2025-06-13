@@ -8,42 +8,20 @@ import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
 
 function LoginPage() {
-  const [userid, setUserid] = useState("");
-  const [passwd, setPasswd] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ userid, passwd }),
-      });
-      if (!res.ok) throw new Error("로그인 실패");
-      navigate("/");
-    } catch (err) {
-      setError("이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.");
-    }
-  };
-
   return (
     <div className="login_container">
       <div className="login_smallcontainer">
         <img src={logo} alt="킥옥션 로고" className="login_logo" />
 
-        <form class="form_1" onSubmit={handleLogin}>
+        <form class="form_1" method="POST" action="http://localhost:8080/login">
           <div class="section_1">
             <img src={emailicon} alt="사용자 아이콘" className="email_icon"></img>
-            <input type="text" className="login_input" placeholder="이메일 주소" value={userid} onChange={(e) => setUserid(e.target.value)} required />
+            <input type="text" name="username" className="login_input" placeholder="이메일 주소" required />
           </div>
           <div class="section_1">
             <img src={pwicon} alt="비밀번호 아이콘" className="password_icon"></img>
-            <input type="password" className="login_input" placeholder="비밀번호" value={passwd} onChange={(e) => setPasswd(e.target.value)} required />
+            <input type="password" name="password" className="login_input" placeholder="비밀번호" required />
           </div>
-          {error && <p className="login_error">{error}</p>}
 
           <div className="login_remember">
             <label>
@@ -65,7 +43,7 @@ function LoginPage() {
         <div className="login_help">
           <Link to="/findid">아이디/비밀번호 찾기</Link>
           <span>|</span>
-          <Link to="/signup">킥옥션 회원가입</Link>
+          <Link to="/presignup">킥옥션 회원가입</Link>
         </div>
       </div>
     </div>
