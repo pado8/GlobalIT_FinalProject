@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../login/SignupPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
-import socialg from "../../assets/img/social_g.png";
-import socialk from "../../assets/img/social_k.png";
 
 function SignupPage() {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState(location.state?.email || "");
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
@@ -16,8 +17,6 @@ function SignupPage() {
   const [emailError, setEmailError] = useState("");
   const [pwError, setPwError] = useState("");
   const [pw2Error, setPw2Error] = useState("");
-
-  const navigate = useNavigate();
 
   //주석: 이메일 적합 검사
   const validateEmail = (value) => {
@@ -67,7 +66,7 @@ function SignupPage() {
         <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <button type="button" className="change_toseller" onClick={() => navigate("/signups")}>
+        <button type="button" className="change_toseller" onClick={() => navigate("/presignups")}>
           ↩ ㅤ업체 가입하기
         </button>
         <form className="signup_form" onSubmit={handleSubmit}>
@@ -78,15 +77,13 @@ function SignupPage() {
               className="email_input input"
               placeholder="이메일"
               value={email}
+              readOnly
               onChange={(e) => {
                 setEmail(e.target.value);
                 validateEmail(e.target.value);
               }}
               required
             />
-            <button type="button" className="email_duplicheck">
-              중복확인
-            </button>
           </div>
 
           {emailError && <p className="email_error">{emailError}</p>}
@@ -99,6 +96,7 @@ function SignupPage() {
             </button>
           </div>
 
+          {/* 주석: 비밀번호 & 비밀번호 확인     */}
           <div className="signup_input_container">
             <input type="password" className="password_input input" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
@@ -106,6 +104,7 @@ function SignupPage() {
             <input type="password" className="password_check_input input" placeholder="비밀번호 재입력" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} required />
           </div>
 
+          {/* 주석: 전화번호 */}
           <div className="signup_input_container">
             <input type="tel" className="tel_input input" placeholder="전화번호" value={phone} onChange={(e) => setPhone(e.target.value)} required />
             <button type="button" className="check_button">
@@ -117,15 +116,6 @@ function SignupPage() {
 
           <button type="submit" className="login_button">
             가입하기
-          </button>
-
-          <button type="button" className="social_signup_k">
-            <img class="socialicon" src={socialk}></img>
-            카카오 계정으로 회원가입
-          </button>
-          <button type="button" className="social_signup_g">
-            <img class="socialicon" src={socialg}></img>
-            구글 계정으로 회원가입
           </button>
         </form>
       </div>
