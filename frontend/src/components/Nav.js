@@ -21,8 +21,8 @@ const Nav = () => {
         <li className={location.pathname === "/bid" ? "active" : ""}>
           <Link to="/bid">견적 입찰</Link>
         </li>
-        <li className={location.pathname === "/companylist" ? "active" : ""}>
-          <Link to="/companylist">등록된 업체 목록</Link>
+        <li className={location.pathname === "/sellerlist" ? "active" : ""}>
+          <Link to="/sellerlist">등록된 업체 목록</Link>
         </li>
         <li className={location.pathname === "/community" ? "active" : ""}>
           <Link to="/community">자유게시판</Link>
