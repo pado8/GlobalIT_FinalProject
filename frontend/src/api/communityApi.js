@@ -5,7 +5,7 @@ import { API_SERVER_HOST } from "./common";
 const prefix = `${API_SERVER_HOST}/api/community`
 
 export const getOne = async (pno) => {
-    const res = await axios.get(`${prefix}/${pno}`, {params: { t: Date.now() } })
+    const res = await axios.get(`${prefix}/${pno}`, { params: { t: Date.now() } })
     return res.data
 }
 
@@ -16,7 +16,12 @@ export const getList = async (pageParam) => {
 }
 
 export const postWrite = async (communityObj) => {
-    const res = await axios.post(`${prefix}/`, communityObj)
+    // FormData로 전송할 때는 headers에 multipart 설정
+    const res = await axios.post(
+        prefix,
+        communityObj,
+        { headers: { "Content-Type": "multipart/form-data" } }
+    )
     return res.data
 }
 

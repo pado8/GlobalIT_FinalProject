@@ -46,26 +46,26 @@ const ReadComponent = ({ pno }) => {
     }
 
     return (
-        <div id="readComponent">
+        <div id={styles.readComponent}>
             {result ? <ResultModal title={'처리결과'} content={result} callbackFn={closeModal}></ResultModal> : <></>}
             <div className={styles.btn_box}>
-                <button type="button" class={styles.back_to_list} onClick={moveToList} >
+                <button type="button" className={styles.btn} onClick={moveToList} >
                     ← 목록으로 돌아가기
                 </button>
                 <div>
-                    <button type="button" class={styles.back_to_list} onClick={() => moveToModify(pno)} >
+                    <button type="button" className={styles.btn} onClick={() => moveToModify(pno)} >
                         수정
                     </button>
-                    <button type="button" class={styles.back_to_list} onClick={handleClickDelete} >
+                    <button type="button" className={styles.btn} onClick={handleClickDelete} >
                         삭제
                     </button>
                 </div>
             </div>
-            <div className={styles.post_container}>
-                <div class={styles.post_header}>
-                    <h1 class={styles.post_title}>{community.ptitle}</h1>
-                    <div class={styles.post_meta}>
-                        <div class={styles.post_info}>
+            <div className={styles.read_container}>
+                <div className={styles.read_header}>
+                    <h1 className={styles.read_title}>{community.ptitle}</h1>
+                    <div className={styles.read_meta}>
+                        <div className={styles.read_info}>
                             <span>👤 {community.mno}</span>
                             <span>📅 {community.pregdate}</span>
                             <span>👁 {community.view}</span>
@@ -74,14 +74,15 @@ const ReadComponent = ({ pno }) => {
                     </div>
                 </div>
 
-                <div class={styles.post_content}>
+                <div className={styles.read_content}>
 
                     {community.pcontent}
                     {/* 이미지가 있을 때만 출력 */}
                     {community.pimage && (
                         <div>
                             <img
-                                src={community.pimage}
+                                // process.env.REACT_APP_API_URL에 "http://localhost:8080" 등을 담아두시면 편합니다.
+                                src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${community.pimage}`}
                                 alt="첨부 이미지"
                             />
                         </div>
@@ -89,31 +90,24 @@ const ReadComponent = ({ pno }) => {
                 </div>
             </div>
 
-            <div class={styles.comments_section}>
-                <div class={styles.comments_header}>
+            <div className={styles.comments_section}>
+                <div className={styles.comments_header}>
                     💬 댓글 8개
                 </div>
-                <div class={`${styles.comment_form} ${styles.clearfix}`}>
-                    <textarea class={styles.comment_input} placeholder="댓글을 입력하세요..."></textarea>
-                    <button class={styles.comment_submit} onclick={submitComment()}>댓글 작성</button>
+                <div className={`${styles.comment_form} ${styles.clearfix}`}>
+                    <textarea className={styles.comment_input} placeholder="댓글을 입력하세요..."></textarea>
+                    <button className={styles.comment_submit} onClick={submitComment()}>댓글 작성</button>
                 </div>
             </div>
 
+            <div className={styles.navigation}>
+                <button className={styles.nav_btn}>← 이전 글: 골키퍼 장갑 관리 꿀팁</button>
+                <button className={styles.nav_btn}>다음 글: 축구공 대여 역경매 →</button>
+            </div>
 
 
         </div >
     );
 };
-
-const makeDiv = (label, value) => (
-    <div>
-        <div>
-            <div>{label}</div>
-            <div>
-                {value}
-            </div>
-        </div>
-    </div>
-);
 
 export default ReadComponent;

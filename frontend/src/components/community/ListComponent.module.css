@@ -7,6 +7,26 @@
      gap: 1rem;
  }
 
+.btn {
+    background: linear-gradient(135deg, #1771A7 0%, #15689A 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
+}
+
  .search_box {
      display: flex;
      gap: 0.5rem;
@@ -14,7 +34,7 @@
      max-width: 400px;
  }
 
- .search_box input {
+ .search_box .search_input {
      flex: 1;
      padding: 12px 16px;
      border: 2px solid #e0e6ed;
@@ -23,30 +43,10 @@
      transition: border-color 0.3s ease;
  }
 
- .search_box input:focus {
+ .search_box .search_input:focus {
      outline: none;
      border-color: #1F9CE7;
      box-shadow: 0 0 0 3px rgba(31, 156, 231, 0.1);
- }
-
- .search_btn,.write_btn {
-     background: linear-gradient(135deg, #1771A7 0%, #15689A 100%);
-     color: white;
-     border: none;
-     padding: 12px 24px;
-     border-radius: 12px;
-     font-weight: 600;
-     cursor: pointer;
-     transition: all 0.3s ease;
-     text-decoration: none;
-     display: inline-flex;
-     align-items: center;
-     gap: 8px;
- }
-
- .btn:hover {
-     transform: translateY(-2px);
-     box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
  }
 
  .board_table {
