@@ -1,7 +1,7 @@
-#wrap {
+#wrap-container {
   max-width: 1200px;
   margin: 0 auto;
-  margin-top: 40px;
+  margin-top: 10px;
   padding: 20px;
 }
 
@@ -74,6 +74,12 @@
   background-color: #ddd;
   border-radius: 50%;
   margin-bottom: 8px;
+}
+
+.image img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
 }
 
 .info .name {
@@ -162,17 +168,57 @@
   width: 100px;
 }
 
+.seller-image img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
 .image-slider {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 8px;
   margin: 16px 0;
+}
+
+.image-slider button {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 18px;
+  background-color: #15689A;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.image-slider button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.slider-button {
+  background: #15689A;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 .img-box {
   width: 100px;
   height: 100px;
   background: #ddd;
+  border-radius: 8px;
+}
+
+.img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px;
 }

@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sports.kickauction.dto.PageRequestDTO;
+import com.sports.kickauction.dto.PageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
 import com.sports.kickauction.dto.SellerRegisterDTO;
 import com.sports.kickauction.service.SellerService;
@@ -38,7 +40,13 @@ public class SellerController {
     
     private final SellerService sellerService;
     
-    @GetMapping("/{mno}")
+    @GetMapping("/list")
+    public ResponseEntity<PageResponseDTO<SellerReadDTO>> getSellerList(PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<SellerReadDTO> result = sellerService.getSellerList(pageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/detail/{mno}")
     public SellerReadDTO getSeller(@PathVariable Long mno) {
         return sellerService.getSellerByMno(mno);
     }

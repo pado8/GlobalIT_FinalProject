@@ -1,54 +1,65 @@
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getSellerList, getSellerDetail } from "../api/SellerApi";
+import { getImageUrl } from "../api/UploadImageApi";
 import "../css/SellerListPage.css";
 
 const SellerListPage = () => {
   const navigate = useNavigate();
+  const [sellerList, setSellerList] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  const [selectedSeller, setSelectedSeller] = useState(null);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [enlargedImage, setEnlargedImage] = useState(null);
 
+  useEffect(() => {
+    getSellerList()
+      .then(setSellerList)
+      .catch(err => console.error("리스트 불러오기 실패", err));
+  }, []);
+
+  const openModal = async (mno) => {
+    try {
+      const detail = await getSellerDetail(mno);
+      setSelectedSeller(detail);
+      setSlideIndex(0);
+      setModalOpen(true);
+    } catch (err) {
+      console.error("상세 불러오기 실패", err);
+    }
+  };
+
+  const closeModal = () => setModalOpen(false);
   const goToRegister = () => navigate("/sellerlist/register");
 
-  const Data = Array.from({ length: 12 }).map((_, index) => ({
-    id: index + 1,
-    name: `업체이름 ${index + 1}`,
-    address: `업체주소 ${index + 1}`,
-    count: Math.floor(Math.random() * 100),
-  }));
-
   return (
-    <div id="wrap">
+    <div id="wrap-container">
       <div className="header">
         <h2>업체정보</h2>
         <button className="register-btn" onClick={goToRegister}>업체소개 등록</button>
       </div>
 
       <div className="card-container">
-        {Data.map((item) => (
-          <div className="card" key={item.id} onClick={openModal}>
+        {sellerList.map((seller, idx) => (
+          <div className="card" key={idx} onClick={() => openModal(seller.mno)}>
             <div className="card-header">
-              <div className="image">이미지</div>
-              <div className="count">선정 횟수: {item.count}</div>
+              <div className="image">
+                <img src={getImageUrl(seller.simage[0])} alt="대표" />
+              </div>
+              <div className="count">선정 횟수: {seller.selectCount || 0}</div>
             </div>
             <div className="info">
-              <div className="name">{item.name}</div>
-              <div className="address">{item.address}</div>
+              <div className="name">{seller.sname}</div>
+              <div className="address">{seller.slocation}</div>
             </div>
             <button className="detail-btn">상세정보</button>
           </div>
         ))}
       </div>
 
-      <div className="pagination">
-        <button>1</button>
-      </div>
-
-      {/* ✅ 모달 삽입 */}
-      {modalOpen && (
+      {modalOpen && selectedSeller && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content"
-          onClick={(e) =>e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>상세정보</h3>
               <button onClick={closeModal}>✕</button>
@@ -56,30 +67,66 @@ const SellerListPage = () => {
 
             <div className="modal-body">
               <div className="seller-top">
-                <div className="seller-image">이미지</div>
+                <div className="seller-image" onClick={() => setEnlargedImage(getImageUrl(selectedSeller.simage[0]))}>
+                  <img src={getImageUrl(selectedSeller.simage[0])} alt="대표" />
+                </div>
                 <div className="seller-info">
-                  <strong>업체이름</strong><br />
-                  연락처<br />
-                  업체주소<br />
-                  선정횟수: 1
+                  <strong>{selectedSeller.sname}</strong><br />
+                  연락처: {selectedSeller.phone}<br />
+                  주소: {selectedSeller.slocation}<br />
                 </div>
               </div>
 
+              {selectedSeller.simage.length > 1 && (
               <div className="image-slider">
-                <button>{"<"}</button>
-                <div className="img-box">이미지</div>
-                <div className="img-box">이미지</div>
-                <div className="img-box">이미지</div>
-                <button>{">"}</button>
+                {selectedSeller.simage.length - 1 > 3 && slideIndex > 0 && (
+                  <button
+                    onClick={() => setSlideIndex(prev => Math.max(prev - 3, 0))}
+                    className="slider-button"
+                  >
+                    {"<"}
+                  </button>
+                )}
+
+                {selectedSeller.simage
+                  .slice(1)
+                  .slice(slideIndex, slideIndex + 3)
+                  .map((img, i) => (
+                    <div className="img-box" key={i} onClick={() => setEnlargedImage(getImageUrl(img))}>
+                      <img src={getImageUrl(img)} alt={`소개 ${i}`} />
+                    </div>
+                  ))}
+
+                {selectedSeller.simage.length - 1 > 3 && slideIndex + 3 < selectedSeller.simage.length - 1 && (
+                  <button
+                    onClick={() => setSlideIndex(prev => prev + 3)}
+                    className="slider-button"
+                  >
+                    {">"}
+                  </button>
+                )}
               </div>
+            )}
+
 
               <div className="seller-detail">
-                <p><strong>업체정보</strong> <br></br>스포츠 장비 대여</p>
-                <p><strong>업체소개</strong><br />
-                  10년 경력의 스포츠 장비 대여 전문 업체입니다.<br />
-                  서울 전지역 당일 방문 가능!
-                </p>
+                <p><strong>업체정보</strong><br />{selectedSeller.info}</p>
+                <p><strong>업체소개</strong><br />{selectedSeller.introContent}</p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {enlargedImage && (
+        <div className="modal-overlay" onClick={() => setEnlargedImage(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>이미지 보기</h3>
+              <button onClick={() => setEnlargedImage(null)}>✕</button>
+            </div>
+            <div className="modal-body" style={{ textAlign: "center" }}>
+              <img src={enlargedImage} alt="확대 이미지" style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: "12px" }} />
             </div>
           </div>
         </div>
