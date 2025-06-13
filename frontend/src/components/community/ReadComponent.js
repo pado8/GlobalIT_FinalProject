@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getOne, deleteOne } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "./ResultModal";
-import "./ReadComponent.css";
+import styles from "./ReadComponent.module.css";
 
 const initState = {
     pno: 0,
@@ -36,6 +36,10 @@ const ReadComponent = ({ pno }) => {
 
     }
 
+    const submitComment = () => {
+        // 댓글 작성 아직 미구현
+    }
+
     //모달 창이 close될때 
     const closeModal = () => {
         moveToList()
@@ -44,36 +48,60 @@ const ReadComponent = ({ pno }) => {
     return (
         <div id="readComponent">
             {result ? <ResultModal title={'처리결과'} content={result} callbackFn={closeModal}></ResultModal> : <></>}
-            {makeDiv("글 번호", community.pno)}
-            {makeDiv("작성자 (회원번호)", community.mno)}
-            {makeDiv("제목", community.ptitle)}
-            {makeDiv("내용", community.pcontent)}
-            {makeDiv("작성일", community.pregdate)}
-
-            {/* 이미지가 있을 때만 출력 */}
-            {community.pimage && (
+            <div className={styles.btn_box}>
+                <button type="button" class={styles.back_to_list} onClick={moveToList} >
+                    ← 목록으로 돌아가기
+                </button>
                 <div>
-                    <img
-                        src={community.pimage}
-                        alt="첨부 이미지"
-                    />
+                    <button type="button" class={styles.back_to_list} onClick={() => moveToModify(pno)} >
+                        수정
+                    </button>
+                    <button type="button" class={styles.back_to_list} onClick={handleClickDelete} >
+                        삭제
+                    </button>
                 </div>
-            )}
-
-            {makeDiv("조회수", community.view)}
-
-            <div>
-                <button type="button" onClick={moveToList} >
-                    목록
-                </button>
-                <button type="button" onClick={() => moveToModify(pno)} >
-                    수정
-                </button>
-                <button type="button" onClick={handleClickDelete} >
-                    삭제
-                </button>
             </div>
-        </div>
+            <div className={styles.post_container}>
+                <div class={styles.post_header}>
+                    <h1 class={styles.post_title}>{community.ptitle}</h1>
+                    <div class={styles.post_meta}>
+                        <div class={styles.post_info}>
+                            <span>👤 {community.mno}</span>
+                            <span>📅 {community.pregdate}</span>
+                            <span>👁 {community.view}</span>
+                            {/* <span>💬 댓글 8</span> 아직 미구현*/}
+                        </div>
+                    </div>
+                </div>
+
+                <div class={styles.post_content}>
+
+                    {community.pcontent}
+                    {/* 이미지가 있을 때만 출력 */}
+                    {community.pimage && (
+                        <div>
+                            <img
+                                src={community.pimage}
+                                alt="첨부 이미지"
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div class={styles.comments_section}>
+                <div class={styles.comments_header}>
+                    💬 댓글 8개
+                </div>
+                <div class={`${styles.comment_form} ${styles.clearfix}`}>
+                    <textarea class={styles.comment_input} placeholder="댓글을 입력하세요..."></textarea>
+                    <button class={styles.comment_submit} onclick={submitComment()}>댓글 작성</button>
+                </div>
+            </div>
+
+
+
+        </div >
     );
 };
 
