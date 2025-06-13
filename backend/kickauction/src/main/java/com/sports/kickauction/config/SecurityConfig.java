@@ -32,12 +32,13 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // 주석: csrf - test단계 비활성화 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/","presignup","presignups","/signup","signups","/login","/api/members/**").permitAll() 
+                .requestMatchers("/", "/login", "/signup", "/api/**", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login
-                .loginPage("/login")
+                .loginPage("/login").permitAll()
                 .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error")
                 .permitAll()
             )
             .logout(logout -> logout

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import "../login/LoginPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
 import emailicon from "../../assets/img/icon_email.svg";
@@ -8,6 +8,10 @@ import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
 
 function LoginPage() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const loginError = searchParams.get("error");
+
   return (
     <div className="login_container">
       <div className="login_smallcontainer">
@@ -29,6 +33,8 @@ function LoginPage() {
               이메일 기억하기
             </label>
           </div>
+
+          {loginError && <p className="login_error">이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.</p>}
 
           <button type="submit" className="login_button">
             로그인
