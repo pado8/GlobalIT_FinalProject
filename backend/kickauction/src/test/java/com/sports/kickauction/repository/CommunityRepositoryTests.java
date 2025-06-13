@@ -73,7 +73,7 @@ public class CommunityRepositoryTests {
         communityRepository.deleteById(pno);
     }
 
-    @Test
+   @Test
     public void testRegister() {
         CommunityDTO communityDTO = CommunityDTO.builder()
                 .mno(1L)
@@ -82,8 +82,9 @@ public class CommunityRepositoryTests {
                 .view(0)
                 .pimage(null)
                 .build();
-        Long pno = communityService.register(communityDTO);
-        log.info("생성된 게시글 번호: " + pno);
+        // MultipartFile이 없는 경우 null을 넘겨줍니다.
+        CommunityDTO savedDto = communityService.register(communityDTO, null);
+        log.info("생성된 게시글 번호: {}", savedDto.getPno());
     }
 
     @Test
