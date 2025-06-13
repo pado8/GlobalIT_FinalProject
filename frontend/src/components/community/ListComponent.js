@@ -35,14 +35,14 @@ const ListComponent = () => {
   }, [page, size, refresh]);
 
   return (
-    <div className={styles.list_component}>
+    <div id={styles.list_component}>
       <div className={styles.list_header}>
         <div className={styles.list_title}>커뮤니티</div>
         <div className={styles.search_box}>
-          <input type="text" placeholder="게시글 검색..." className={styles.search_input} />
-          <button className={styles.search_btn}>🔍 검색</button>
+          <input className={styles.search_input} name="search_input" type="text" placeholder="게시글 검색..." />
+          <button className={styles.btn}>🔍 검색</button>
         </div>
-        <div className={styles.write_btn} onClick={handleClickWrite}>
+        <div className={styles.btn} onClick={handleClickWrite}>
           ✏️ 글쓰기
         </div>
       </div>
