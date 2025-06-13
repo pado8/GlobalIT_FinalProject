@@ -1,21 +1,23 @@
+import styles from "./ListComponent.module.css";
+
 const PageComponent = ({ serverData, movePage }) => {
 
     return (
-        <div className="pagination">
+        <div className={styles.pagination}>
             {serverData.prev ?
-                <div className="page_btn" onClick={() => movePage({ page: serverData.prevPage })}>
+                <div className={styles.page_btn} onClick={() => movePage({ page: serverData.prevPage })}>
                     이전
                 </div> : <></>
             }
 
             {serverData.pageNumList.map(pageNum =>
-                <div key={pageNum} className={`page_btn ${serverData.current === pageNum ? 'active' : ''}`} onClick={() => movePage({ page: pageNum })}>
+                <div key={pageNum} className={`${styles.page_btn} ${serverData.current === pageNum ? styles.active : ''}`} onClick={() => movePage({ page: pageNum })}>
                     {pageNum}
                 </div>
             )}
 
             {serverData.next ?
-                <div className="page_btn" onClick={() => movePage({ page: serverData.nextPage })}>
+                <div className={styles.page_btn} onClick={() => movePage({ page: serverData.nextPage })}>
                     다음
                 </div> : <></>
             }

@@ -29,7 +29,7 @@
      box-shadow: 0 0 0 3px rgba(31, 156, 231, 0.1);
  }
 
- .btn {
+ .search_btn,.write_btn {
      background: linear-gradient(135deg, #1771A7 0%, #15689A 100%);
      color: white;
      border: none;
