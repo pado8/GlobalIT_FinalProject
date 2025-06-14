@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../pages/SignupPage.css";
-import logo from "../assets/img/kickauction_logo.png";
-import socialg from "../assets/img/social_g.png";
-import socialk from "../assets/img/social_k.png";
+import "../login/SignupPage.css";
+import logo from "../../assets/img/kickauction_logo.png";
+import socialg from "../../assets/img/social_g.png";
+import socialk from "../../assets/img/social_k.png";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ function SignupPage() {
         <img src={logo} alt="킥옥션 로고" className="signup_logo" />
         <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>판매업체 회원가입</h2>
 
-        <button type="button" className="change_touser" onClick={() => navigate("/signup")}>
+        <button type="button" className="change_touser" onClick={() => navigate("/presignup")}>
           ↩ ㅤ일반 유저 가입하기
         </button>
 

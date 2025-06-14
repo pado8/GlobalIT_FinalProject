@@ -43,8 +43,16 @@
   padding-right: 100px;
 }
 
-/* 업체명- */
-
+.email_input_pre {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-bottom: 1px solid #ccc;
+  border-radius: 6px;
+  width: 60%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  display: block;
+}
 /* 주석:: 중복확인  */
 .email_duplicheck,
 .nickname_duplicheck,
@@ -105,6 +113,24 @@
   background-color: #2077d3;
 }
 
+/* 주석: 구분선 */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #575656;
+  margin: 1.5rem 0;
+  font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0.75rem;
+}
+
 /* 주석:: 소셜 회원가입 */
 .social_signup_k {
   width: 85%;
@@ -157,6 +183,20 @@
   margin: 1rem auto;
 }
 
+.pre_signup_button {
+  width: 15%;
+  background-color: #4ba9af;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 0.9rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  margin: 1rem auto;
+}
+
 .login_button:hover {
   background-color: #4ba9af;
 }
@@ -175,4 +215,17 @@
   font-size: 0.9rem;
   font-weight: 400;
   margin: -1.1rem auto 0;
+}
+
+/* 주석: 중복확인 후 로그인버튼 */
+.login_link_button {
+  background: none;
+  border: none;
+  border-radius: 5px;
+  background-color: #000000;
+  color: rgb(255, 255, 255);
+  font-size: 0.85rem;
+  margin: 0.25rem auto 0;
+  cursor: pointer;
+  width: 25%;
 }

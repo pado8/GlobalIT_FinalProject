@@ -41,6 +41,7 @@ public void insertDummySellersWithIntro() {
                 .phone("0109999" + String.format("%04d", i))
                 .role(1)
                 .social(0)
+                .social(0)
                 .build();
         memberRepository.save(member);
 
