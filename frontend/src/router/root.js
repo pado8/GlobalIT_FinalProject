@@ -8,7 +8,7 @@ import requestRouter from "../router/requestRouter";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
-const Login = lazy(() => import("../pages/LoginPage"));
+const Login = lazy(() => import("../pages/login/LoginPage"));
 const PreSignup = lazy(() => import("../pages/login/PreSignupPage"));
 const Signup = lazy(() => import("../pages/login/SignupPage"));
 const Signups = lazy(() => import("../pages/login/SignupPageSeller"));

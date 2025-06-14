@@ -1,7 +1,5 @@
 import axios from "axios";
 import { API_SERVER_HOST } from "./common";
-import axios from "axios";
-import { API_SERVER_HOST } from "./common";
 
 const prefix = `${API_SERVER_HOST}/api/seller`;
 
