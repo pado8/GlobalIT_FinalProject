@@ -145,8 +145,8 @@ const SellerListPage = () => {
               <h3>이미지 보기</h3>
               <button onClick={() => setEnlargedImage(null)}>✕</button>
             </div>
-            <div className="modal-body" style={{ textAlign: "center" }}>
-              <img src={enlargedImage} alt="확대 이미지" style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: "12px" }} />
+            <div className="modal-body" >
+              <img src={enlargedImage} alt="확대 이미지"/>
             </div>
           </div>
         </div>

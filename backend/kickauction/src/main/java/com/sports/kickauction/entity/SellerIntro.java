@@ -21,9 +21,7 @@ public class SellerIntro {
     private Long mno;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
     @JoinColumn(name = "mno")
-    @ToString.Exclude
     private Seller seller;
 
     private String introContent;

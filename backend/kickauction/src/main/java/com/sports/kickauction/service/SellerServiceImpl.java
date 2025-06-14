@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import com.sports.kickauction.dto.SellerPageRequestDTO;
 import com.sports.kickauction.dto.SellerPageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
@@ -16,6 +18,7 @@ import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.repository.SellerRepository;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -27,46 +30,40 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public SellerReadDTO getSellerByMno(Long mno) {
-        Seller seller = sellerRepository.findById(mno).orElse(null);
-        if (seller != null && seller.getSellerIntro() != null) {
-            SellerIntro intro = seller.getSellerIntro();
+        SellerIntro intro = sellerIntroRepository.findById(mno)
+                .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
 
-            return SellerReadDTO.builder()
-                    .mno(seller.getMno())
-                    .sname(seller.getSname())
-                    .slocation(seller.getSlocation())
-                    .introContent(intro.getIntroContent())
-                    .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
-                    .hiredCount(intro.getHiredCount())
-                    .info(intro.getInfo())
-                    .phone(seller.getMember().getPhone())
-                    .build();
-        }
-        return null;
+        Seller seller = intro.getSeller();
+
+        return SellerReadDTO.builder()
+                .mno(seller.getMno())
+                .sname(seller.getSname())
+                .slocation(seller.getSlocation())
+                .introContent(intro.getIntroContent())
+                .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
+                .hiredCount(intro.getHiredCount())
+                .info(intro.getInfo())
+                .phone(seller.getMember().getPhone())
+                .build();
     }
 
     @Transactional
     @Override
     public void registerSeller(Long mno, SellerRegisterDTO dto) {
-        try {
-            Seller seller = sellerRepository.findById(mno)
-                    .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
+        Seller seller = sellerRepository.findById(mno)
+                .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
 
-            String simageCombined = String.join(",", dto.getSimage());
+        String simageCombined = String.join(",", dto.getSimage());
 
-            SellerIntro sellerIntro = SellerIntro.builder()
-                    .seller(seller)
-                    .introContent(dto.getIntroContent())
-                    .info(dto.getInfo())
-                    .simage(simageCombined)
-                    .hiredCount(0)
-                    .build();
+        SellerIntro sellerIntro = SellerIntro.builder()
+                .seller(seller)
+                .introContent(dto.getIntroContent())
+                .info(dto.getInfo())
+                .simage(simageCombined)
+                .hiredCount(0)
+                .build();
 
-            sellerIntroRepository.save(sellerIntro);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        sellerIntroRepository.save(sellerIntro);
     }
 
     @Override
@@ -76,18 +73,18 @@ public class SellerServiceImpl implements SellerService {
 
         Page<SellerIntro> result = sellerIntroRepository.findAll(pageable);
 
-        List<SellerReadDTO> dtoList = result.stream().map(entity -> {
-            Seller seller = entity.getSeller();
+        List<SellerReadDTO> dtoList = result.stream().map(intro -> {
+            Seller seller = intro.getSeller();
 
             return SellerReadDTO.builder()
                     .mno(seller.getMno())
                     .sname(seller.getSname())
                     .slocation(seller.getSlocation())
                     .phone(seller.getMember().getPhone())
-                    .introContent(entity.getIntroContent())
-                    .info(entity.getInfo())
-                    .simage(entity.getSimage() != null ? entity.getSimage().split(",") : new String[0])
-                    .hiredCount(entity.getHiredCount())
+                    .introContent(intro.getIntroContent())
+                    .info(intro.getInfo())
+                    .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
+                    .hiredCount(intro.getHiredCount())
                     .build();
         }).collect(Collectors.toList());
 
