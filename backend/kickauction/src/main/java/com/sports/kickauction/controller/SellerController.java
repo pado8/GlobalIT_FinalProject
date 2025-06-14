@@ -43,6 +43,6 @@ public class SellerController {
     return ResponseEntity.ok("등록 완료");
     }
    
-    }
+}
    
 
