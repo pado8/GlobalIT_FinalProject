@@ -1,19 +1,13 @@
 package com.sports.kickauction.service;
 
-
-
 import lombok.RequiredArgsConstructor;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import com.sports.kickauction.dto.SellerPageRequestDTO;
 import com.sports.kickauction.dto.SellerPageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
@@ -22,7 +16,6 @@ import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.repository.SellerRepository;
-
 import jakarta.transaction.Transactional;
 
 @Service
@@ -32,51 +25,49 @@ public class SellerServiceImpl implements SellerService {
     private final SellerRepository sellerRepository;
     private final SellerIntroRepository sellerIntroRepository;
 
-@Override
-public SellerReadDTO getSellerByMno(Long mno) {
-    Seller seller = sellerRepository.findById(mno).orElse(null);
-    if (seller != null && seller.getSellerIntro() != null) {
-        SellerIntro intro = seller.getSellerIntro();
+    @Override
+    public SellerReadDTO getSellerByMno(Long mno) {
+        Seller seller = sellerRepository.findById(mno).orElse(null);
+        if (seller != null && seller.getSellerIntro() != null) {
+            SellerIntro intro = seller.getSellerIntro();
 
-        return SellerReadDTO.builder()
-                .mno(seller.getMno())
-                .sname(seller.getSname())
-                .slocation(seller.getSlocation())
-                .introContent(intro.getIntroContent())
-                .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
-                .hiredCount(intro.getHiredCount())
-                .info(intro.getInfo())
-                .phone(seller.getMember().getPhone())
-                .build();
+            return SellerReadDTO.builder()
+                    .mno(seller.getMno())
+                    .sname(seller.getSname())
+                    .slocation(seller.getSlocation())
+                    .introContent(intro.getIntroContent())
+                    .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
+                    .hiredCount(intro.getHiredCount())
+                    .info(intro.getInfo())
+                    .phone(seller.getMember().getPhone())
+                    .build();
+        }
+        return null;
     }
-    return null;
-}
 
-@Transactional
-@Override
-public void registerSeller(Long mno, SellerRegisterDTO dto) {
-    try {
-        Seller seller = sellerRepository.findById(mno)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
+    @Transactional
+    @Override
+    public void registerSeller(Long mno, SellerRegisterDTO dto) {
+        try {
+            Seller seller = sellerRepository.findById(mno)
+                    .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
 
-        String simageCombined = String.join(",", dto.getSimage());
+            String simageCombined = String.join(",", dto.getSimage());
 
-        SellerIntro sellerIntro = SellerIntro.builder()
-                .seller(seller)
-                .introContent(dto.getIntroContent())
-                .info(dto.getInfo())
-                .simage(simageCombined)
-                .hiredCount(0)
-                .build();
+            SellerIntro sellerIntro = SellerIntro.builder()
+                    .seller(seller)
+                    .introContent(dto.getIntroContent())
+                    .info(dto.getInfo())
+                    .simage(simageCombined)
+                    .hiredCount(0)
+                    .build();
 
-        sellerIntroRepository.save(sellerIntro);
+            sellerIntroRepository.save(sellerIntro);
 
-        System.out.println("✅ 저장 성공!");
-    } catch (Exception e) {
-        System.out.println("❌ 등록 실패:");
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
 
     @Override
     @Transactional

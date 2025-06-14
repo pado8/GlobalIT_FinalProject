@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { postSellerRegister } from "../api/SellerApi";
-import { uploadImage,getImageUrl } from "../api/UploadImageApi";
-import "../css/SellerRegisterPage.css";
+import { postSellerRegister } from "../../api/SellerApi";
+import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
+import "../../css/SellerRegisterPage.css";
 
 
 

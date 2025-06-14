@@ -1,22 +1,36 @@
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSellerList, getSellerDetail } from "../api/SellerApi";
-import { getImageUrl } from "../api/UploadImageApi";
-import "../css/SellerListPage.css";
+import { getSellerList, getSellerDetail } from "../../api/SellerApi";
+import { getImageUrl } from "../../api/UploadImageApi";
+import Pagination from "../../components/paging/Pagination";
+import "../../css/SellerListPage.css";
 
 const SellerListPage = () => {
   const navigate = useNavigate();
-  const [sellerList, setSellerList] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
   const [enlargedImage, setEnlargedImage] = useState(null);
+  const [page, setPage] = useState(1);
+
+  const [sellerData, setSellerData] = useState({
+  dtoList: [],
+  pageList: [],
+  currentPage: 1,
+  totalPage: 0,
+  prev: false,
+  next: false,
+  prevPage: 0,
+  nextPage: 0
+});
 
   useEffect(() => {
-    getSellerList()
-      .then(setSellerList)
+    window.scrollTo(0, 0);
+
+    getSellerList(page, 12)
+      .then(data => setSellerData(data))
       .catch(err => console.error("리스트 불러오기 실패", err));
-  }, []);
+  }, [page]);
 
   const openModal = async (mno) => {
     try {
@@ -40,7 +54,7 @@ const SellerListPage = () => {
       </div>
 
       <div className="card-container">
-        {sellerList.map((seller, idx) => (
+        {sellerData.dtoList.map((seller, idx) => (
           <div className="card" key={idx} onClick={() => openModal(seller.mno)}>
             <div className="card-header">
               <div className="image">
@@ -57,6 +71,18 @@ const SellerListPage = () => {
         ))}
       </div>
 
+      {/* 페이징 버튼 */}
+      <Pagination
+        current={sellerData.currentPage}
+        pageList={sellerData.pageList}
+        prev={sellerData.prev}
+        next={sellerData.next}
+        prevPage={sellerData.prevPage}   
+        nextPage={sellerData.nextPage}
+        onPageChange={(pageNum) => setPage(pageNum)}
+      />
+
+      {/* 상세 모달 */}
       {modalOpen && selectedSeller && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -78,36 +104,29 @@ const SellerListPage = () => {
               </div>
 
               {selectedSeller.simage.length > 1 && (
-              <div className="image-slider">
-                {selectedSeller.simage.length - 1 > 3 && slideIndex > 0 && (
-                  <button
-                    onClick={() => setSlideIndex(prev => Math.max(prev - 3, 0))}
-                    className="slider-button"
-                  >
-                    {"<"}
-                  </button>
-                )}
+                <div className="image-slider">
+                  {selectedSeller.simage.length - 1 > 3 && slideIndex > 0 && (
+                    <button onClick={() => setSlideIndex(prev => Math.max(prev - 3, 0))} className="slider-button">
+                      {"<"}
+                    </button>
+                  )}
 
-                {selectedSeller.simage
-                  .slice(1)
-                  .slice(slideIndex, slideIndex + 3)
-                  .map((img, i) => (
-                    <div className="img-box" key={i} onClick={() => setEnlargedImage(getImageUrl(img))}>
-                      <img src={getImageUrl(img)} alt={`소개 ${i}`} />
-                    </div>
-                  ))}
+                  {selectedSeller.simage
+                    .slice(1)
+                    .slice(slideIndex, slideIndex + 3)
+                    .map((img, i) => (
+                      <div className="img-box" key={i} onClick={() => setEnlargedImage(getImageUrl(img))}>
+                        <img src={getImageUrl(img)} alt={`소개 ${i}`} />
+                      </div>
+                    ))}
 
-                {selectedSeller.simage.length - 1 > 3 && slideIndex + 3 < selectedSeller.simage.length - 1 && (
-                  <button
-                    onClick={() => setSlideIndex(prev => prev + 3)}
-                    className="slider-button"
-                  >
-                    {">"}
-                  </button>
-                )}
-              </div>
-            )}
-
+                  {selectedSeller.simage.length - 1 > 3 && slideIndex + 3 < selectedSeller.simage.length - 1 && (
+                    <button onClick={() => setSlideIndex(prev => prev + 3)} className="slider-button">
+                      {">"}
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className="seller-detail">
                 <p><strong>업체정보</strong><br />{selectedSeller.info}</p>
@@ -118,6 +137,7 @@ const SellerListPage = () => {
         </div>
       )}
 
+      {/* 이미지 확대 모달 */}
       {enlargedImage && (
         <div className="modal-overlay" onClick={() => setEnlargedImage(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

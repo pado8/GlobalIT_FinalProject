@@ -20,6 +20,9 @@ public class SellerPageResponseDTO<E> {
     private boolean prev;
     private boolean next;
 
+    private int prevPage;
+    private int nextPage;
+
     private List<Integer> pageList;
 
     @Builder
@@ -31,13 +34,21 @@ public class SellerPageResponseDTO<E> {
 
         this.totalPage = (int) Math.ceil((double) totalCount / size);
 
-        int tempEnd = (int)(Math.ceil(currentPage / 10.0)) * 10;
-        int start = tempEnd - 9;
-        int end = Math.min(totalPage, tempEnd);
+        // 🔹 페이지 블럭 단위 계산 (5개씩)
+        int blockSize = 5;
+        int tempEnd = (int)(Math.ceil(currentPage / (double) blockSize)) * blockSize;
+        int start = tempEnd - (blockSize - 1);
+        int end = Math.min(tempEnd, totalPage);
 
+        // 🔹 페이지 번호 리스트
+        this.pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+
+        // 🔹 이전/다음 페이지 존재 여부
         this.prev = start > 1;
         this.next = totalPage > tempEnd;
 
-        this.pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+        // 🔹 단순 페이지 이동용 prevPage/nextPage (블럭 단위)
+        this.prevPage = start - 1;
+        this.nextPage = end + 1;
     }
 }
