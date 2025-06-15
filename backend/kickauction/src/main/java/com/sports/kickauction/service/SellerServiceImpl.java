@@ -53,6 +53,10 @@ public class SellerServiceImpl implements SellerService {
         Seller seller = sellerRepository.findById(mno)
                 .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
 
+        if (sellerIntroRepository.existsBySeller(seller)) {
+        throw new IllegalStateException("이미 업체를 등록하셨습니다.");
+    }
+
         String simageCombined = String.join(",", dto.getSimage());
 
         SellerIntro sellerIntro = SellerIntro.builder()
@@ -64,6 +68,13 @@ public class SellerServiceImpl implements SellerService {
                 .build();
 
         sellerIntroRepository.save(sellerIntro);
+    }
+
+    @Override
+    public boolean isAlreadyRegistered(Long mno) {
+        Seller seller = sellerRepository.findById(mno)
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원의 업체 정보가 존재하지 않습니다."));
+        return sellerIntroRepository.existsBySeller(seller);
     }
 
     @Override

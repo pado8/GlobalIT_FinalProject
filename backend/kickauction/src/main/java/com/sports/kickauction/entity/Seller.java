@@ -21,6 +21,7 @@ public class Seller {
     private Long mno;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "mno")
     private Member member;
 

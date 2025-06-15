@@ -20,3 +20,8 @@ export const getSellerList = async (page = 1, size = 12) => {
   });
   return res.data;
 };
+
+export const getSellerRegistered = async (mno) => {
+  const res = await axios.get(`${prefix}/registered/${mno}`);
+  return res.data; 
+};

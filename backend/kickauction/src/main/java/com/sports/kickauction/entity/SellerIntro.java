@@ -21,6 +21,7 @@ public class SellerIntro {
     private Long mno;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "mno")
     private Seller seller;
 
