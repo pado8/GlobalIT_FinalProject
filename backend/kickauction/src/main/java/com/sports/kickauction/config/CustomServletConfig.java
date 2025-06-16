@@ -21,7 +21,7 @@ public class CustomServletConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // /images/** 로 들어오는 요청을 C:/upload 폴더로 매핑
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:///" + uploadDir + "/")
+                .addResourceLocations("file:" + uploadDir + "/")
                 .setCachePeriod(3600)       // 캐시 1시간 (필요 시 조절)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver());

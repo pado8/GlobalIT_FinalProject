@@ -100,7 +100,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     // 게시글 조회
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CommunityDTO get(Long pno) {
          log.info("ID로 조회 (조회수 증가): {}", pno);
         // 1) 엔티티 조회
@@ -109,7 +109,7 @@ public class CommunityServiceImpl implements CommunityService {
         // 2) 조회수 1 증가
         Integer current = entity.getView() != null ? entity.getView() : 0;
         entity.setView(current + 1);
-        Community updated = communityRepository.save(entity);
+        Community updated = communityRepository.saveAndFlush(entity);
         // 3) DTO 변환
         return modelMapper.map(updated, CommunityDTO.class);
     }
