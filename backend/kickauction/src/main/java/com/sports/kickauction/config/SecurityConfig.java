@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,19 +29,21 @@ public class SecurityConfig {
 
     private final MemberDetailsService memberDetailsService;
 
+    // 주석: 비밀번호 암호화 BCryptPasswordEncoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .cors(withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/api/members/**", "/css/**", "/js/**", "/images/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",
+                                "/images/**")
+                .permitAll()
+                .anyRequest().authenticated())
             )
             .formLogin(form -> form
                 .loginProcessingUrl("/login") 
@@ -58,7 +61,6 @@ public class SecurityConfig {
                 .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
                 .permitAll()
             );
-
         return http.build();
     }
 
@@ -81,5 +83,4 @@ public class SecurityConfig {
         builder.userDetailsService(memberDetailsService).passwordEncoder(passwordEncoder());
         return builder.build();
     }
-
 }

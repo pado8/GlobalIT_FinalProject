@@ -3,12 +3,11 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Layout from "../components/Layout";
 import communityRouter from "../router/communityRouter";
+import sellerRouter from "../router/sellerRouter";
 import requestRouter from "../router/requestRouter";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
-const SellerList = lazy(() => import("../pages/SellerListPage"));
-const SellerRegister = lazy(() => import("../pages/SellerRegisterPage"));
 const Login = lazy(() => import("../pages/login/LoginPage"));
 const PreSignup = lazy(() => import("../pages/login/PreSignupPage"));
 const Signup = lazy(() => import("../pages/login/SignupPage"));
@@ -83,19 +82,7 @@ const root = createBrowserRouter([
       },
       {
         path: "sellerlist",
-        element: (
-          <Suspense fallback={Loading}>
-            <SellerList />
-          </Suspense>
-        ),
-      },
-      {
-        path: "sellerlist/register",
-        element: (
-          <Suspense fallback={Loading}>
-            <SellerRegister mno={1} />
-          </Suspense>
-        ),
+        children: sellerRouter(),
       },
     ],
   },

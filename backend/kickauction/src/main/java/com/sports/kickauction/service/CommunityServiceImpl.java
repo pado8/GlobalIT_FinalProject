@@ -20,41 +20,98 @@ import com.sports.kickauction.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import com.sports.kickauction.dto.CommunityDTO;
+import com.sports.kickauction.entity.Community;
+import com.sports.kickauction.repository.CommunityRepository;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 @Service
 @Transactional
 @Log4j2
 @RequiredArgsConstructor
 public class CommunityServiceImpl implements CommunityService {
 
+    @Value("${upload.path}")
+    private String uploadDir;
+
     private final ModelMapper modelMapper;
     private final CommunityRepository communityRepository;
 
     // 게시글 등록
+    // @Override
+    // public Long register(CommunityDTO communityDTO) {
+    // log.info("DTO → Entity 매핑: {}", communityDTO);
+
+    // // 기본값 처리
+    // if (communityDTO.getView() == null) {
+    // communityDTO.setView(0);
+    // }
+    // if (communityDTO.getPimage() == null) {
+    // communityDTO.setPimage("");
+    // }
+
+    // Community community = modelMapper.map(communityDTO, Community.class);
+    // Community saved = communityRepository.save(community);
+    // return saved.getPno();
+    // }
     @Override
-    public Long register(CommunityDTO communityDTO) {
-        log.info("DTO → Entity 매핑: {}", communityDTO);
+    public CommunityDTO register(CommunityDTO dto, MultipartFile pimageFile) {
+        // 1) DEBUG: uploadDir 주입 값 확인
+        System.out.println("[DEBUG] uploadDir = " + uploadDir);
 
-        // 기본값 처리
-        if (communityDTO.getView() == null) {
-            communityDTO.setView(0);
-        }
-        if (communityDTO.getPimage() == null) {
-            communityDTO.setPimage("");
+        // 2) 이미지 저장
+        if (pimageFile != null && !pimageFile.isEmpty()) {
+            try {
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String filename = UUID.randomUUID() + "_" + pimageFile.getOriginalFilename();
+                Path filePath = uploadPath.resolve(filename);
+                pimageFile.transferTo(filePath.toFile());
+
+                dto.setPimage("/images/" + filename);
+            } catch (IOException e) {
+                e.printStackTrace(); // 스택트레이스 찍어보고
+                throw new RuntimeException("이미지 저장 실패: " + e.getMessage(), e);
+            }
         }
 
-        Community community = modelMapper.map(communityDTO, Community.class);
-        Community saved = communityRepository.save(community);
-        return saved.getPno();
+        // 3) 저장 & 반환
+        Community entity = modelMapper.map(dto, Community.class);
+        if (entity.getView() == null) {
+            entity.setView(0);
+        }
+        Community saved = communityRepository.save(entity);
+        return modelMapper.map(saved, CommunityDTO.class);
     }
 
     // 게시글 조회
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CommunityDTO get(Long pno) {
-        log.info("ID로 조회: {}", pno);
-        Community community = communityRepository.findById(pno)
-                .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
-        return modelMapper.map(community, CommunityDTO.class);
+         log.info("ID로 조회 (조회수 증가): {}", pno);
+        // 1) 엔티티 조회
+        Community entity = communityRepository.findById(pno)
+            .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
+        // 2) 조회수 1 증가
+        Integer current = entity.getView() != null ? entity.getView() : 0;
+        entity.setView(current + 1);
+        Community updated = communityRepository.saveAndFlush(entity);
+        // 3) DTO 변환
+        return modelMapper.map(updated, CommunityDTO.class);
     }
 
     // 게시글 수정

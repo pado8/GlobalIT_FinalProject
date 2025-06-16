@@ -1,10 +1,13 @@
 import { useRef, useState } from "react";
-import "../css/SellerRegisterPage.css";
-import { postSellerRegister } from "../api/SellerApi";
-import { uploadImage,getImageUrl } from "../api/UploadImageApi";
+import { useNavigate } from "react-router-dom";
+import { postSellerRegister } from "../../api/SellerApi";
+import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
+import "../../css/SellerRegisterPage.css";
+
 
 
 const SellerRegisterPage = ({ mno }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     simage: [],
     introContent: "",
@@ -65,6 +68,7 @@ const SellerRegisterPage = ({ mno }) => {
   try {
     await postSellerRegister(mno, payload);            
     alert("등록 완료");
+    navigate("/sellerlist");
   } catch (err) {
     console.error(err);
     alert("등록 실패");

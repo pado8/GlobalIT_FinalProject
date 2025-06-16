@@ -14,10 +14,9 @@ public class SellerReadDTO {
     private Long mno;
     private String sname;
     private String slocation;
-
-    // 소개 정보
+    private String[] simage;
     private String introContent;
-    private String simage;
-    private int hiredCount;
     private String info;
+    private int hiredCount;
+    private String phone;
 }
