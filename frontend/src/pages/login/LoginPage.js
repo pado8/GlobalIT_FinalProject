@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import "../login/LoginPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
 import emailicon from "../../assets/img/icon_email.svg";
@@ -11,20 +11,52 @@ function LoginPage() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const loginError = searchParams.get("error");
+  const [userid, setUserid] = useState("");
+  const [passwd, setPasswd] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    const formData = new URLSearchParams();
+    formData.append("username", userid);
+    formData.append("password", passwd);
+
+    try {
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials: "include",
+        body: formData.toString(),
+      });
+
+      if (!res.ok) {
+        throw new Error("로그인 실패");
+      }
+
+      navigate("/");
+    } catch (err) {
+      setError("이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.");
+    }
+  };
 
   return (
     <div className="login_container">
       <div className="login_smallcontainer">
         <img src={logo} alt="킥옥션 로고" className="login_logo" />
 
-        <form class="form_1" method="POST" action="http://localhost:8080/login">
-          <div class="section_1">
+        <form className="form_1" onSubmit={handleLogin}>
+          <div className="section_1">
             <img src={emailicon} alt="사용자 아이콘" className="email_icon"></img>
-            <input type="text" name="username" className="login_input" placeholder="이메일 주소" required />
+            <input type="text" name="username" className="login_input" placeholder="이메일 주소" required value={userid} onChange={(e) => setUserid(e.target.value)} />
           </div>
-          <div class="section_1">
+          <div className="section_1">
             <img src={pwicon} alt="비밀번호 아이콘" className="password_icon"></img>
-            <input type="password" name="password" className="login_input" placeholder="비밀번호" required />
+            <input type="password" name="password" className="login_input" placeholder="비밀번호" required value={passwd} onChange={(e) => setPasswd(e.target.value)} autoComplete="off" />
           </div>
 
           <div className="login_remember">
@@ -34,7 +66,7 @@ function LoginPage() {
             </label>
           </div>
 
-          {loginError && <p className="login_error">이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.</p>}
+          {error && <p className="login_error">{error}</p>}
 
           <button type="submit" className="login_button">
             로그인
@@ -42,8 +74,8 @@ function LoginPage() {
         </form>
 
         <div className="social_login_icons">
-          <img src={socialk}></img>
-          <img src={socialg}></img>
+          <img src={socialk} alt="소셜 아이콘 카카오"></img>
+          <img src={socialg} alt="소셜 아이콘 구글"></img>
         </div>
 
         <div className="login_help">
