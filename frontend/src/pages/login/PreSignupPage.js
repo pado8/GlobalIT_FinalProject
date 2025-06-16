@@ -52,6 +52,11 @@ function PreSignupPage() {
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
+  // 주석: 카카오 회원가입
+  const handleKakaoSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
+  };
+
   return (
     <div className="signup_container">
       <div className="signup_smallcontainer">
@@ -95,7 +100,7 @@ function PreSignupPage() {
             <span>또는</span>
           </div>
 
-          <button type="button" className="social_signup_k">
+          <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
             <img className="socialicon" src={socialk}></img>
             카카오 계정으로 회원가입
           </button>
