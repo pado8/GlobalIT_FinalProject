@@ -1,13 +1,16 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { postSellerRegister } from "../../api/SellerApi";
+import { postSellerRegister,getSellerRegistered } from "../../api/SellerApi";
 import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
+import { checkAuth } from "../../api/authApi";
 import "../../css/SellerRegisterPage.css";
 
 
 
 const SellerRegisterPage = ({ mno }) => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [isRegistered, setIsRegistered] = useState(false); 
   const [formData, setFormData] = useState({
     simage: [],
     introContent: "",
@@ -16,13 +19,47 @@ const SellerRegisterPage = ({ mno }) => {
   const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
   const [slideIndex, setSlideIndex] = useState(0);
   const [enlargedImage, setEnlargedImage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const fileInputRef = useRef();
   const introInputRef = useRef();
 
+ useEffect(() => {
+    const init = async () => {
+      try {
+        const authUser = await checkAuth();
+
+        if (authUser.role !== 1) {
+          navigate("/errorpage");
+          return;
+        }
+
+        const registered = await getSellerRegistered(authUser.mno);
+        if (registered) {
+          navigate("/errorpage");
+        } else {
+          setUser(authUser);
+          setIsRegistered(true);
+        }
+      } catch (e) {
+        // navigate("/login", { replace: true });
+      }
+    };
+
+    init();
+  }, [navigate]);
+
+  // if (!user || isRegistered) return null;
+
   const handleMainChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+    alert("이미지 용량이 맞지 않습니다.");
+    fileInputRef.current.value = null; 
+    return;
+  }
 
     const uploaded = await uploadImage([file]);
     const path = uploaded[0].path;
@@ -34,6 +71,12 @@ const SellerRegisterPage = ({ mno }) => {
 
   const handleIntroChange = async (e) => {
     const files = Array.from(e.target.files);
+    const oversized = files.find(file => file.size > 10 * 1024 * 1024);
+
+    if (oversized) {
+      alert("이미지 용량이 맞지 않습니다.");
+      return;
+    }
     const uploaded = await uploadImage(files);
     const paths = uploaded.map(u => u.path);
     const urls = uploaded.map(u => u.url);
@@ -52,6 +95,8 @@ const SellerRegisterPage = ({ mno }) => {
   };
 
   const handleSubmit = async () => {
+  if (submitting) return; // 중복 제출 방지
+
   const { simage, introContent, info } = formData;
 
   if (!simage.length || !info || !introContent) {
@@ -59,19 +104,34 @@ const SellerRegisterPage = ({ mno }) => {
     return;
   }
 
-  const payload = {
-    simage,
-    info,
-    introContent
-  };
-
   try {
-    await postSellerRegister(mno, payload);            
+    const sizes = await Promise.all(
+      simage.map(async (path) => {
+        const res = await fetch(getImageUrl(path));
+        const blob = await res.blob();
+        return blob.size;
+      })
+    );
+
+    const totalSize = sizes.reduce((a, b) => a + b, 0);
+    if (totalSize > 30 * 1024 * 1024) {
+      alert("전체 이미지 용량이 맞지 않습니다.");
+      return;
+    }
+  } catch (err) {}
+
+  const payload = { simage, info, introContent };
+
+  setSubmitting(true); // 등록 시작
+  try {
+    await postSellerRegister(mno, payload);
     alert("등록 완료");
     navigate("/sellerlist");
   } catch (err) {
     console.error(err);
     alert("등록 실패");
+  } finally {
+    setSubmitting(false); // 등록 종료
   }
 };
 
@@ -212,7 +272,9 @@ const SellerRegisterPage = ({ mno }) => {
         onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
       />
 
-      <button className="register-button" onClick={handleSubmit}>등록</button>
+      <button className="register-button" onClick={handleSubmit} disabled={submitting}>
+        {submitting ? "등록 중..." : "등록"}
+        </button>
 
       {enlargedImage && (
         <div className="image-modal" onClick={() => setEnlargedImage(null)}>

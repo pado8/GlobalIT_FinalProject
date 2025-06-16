@@ -36,8 +36,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // 주석: csrf - test단계 비활성화 
+            // .csrf(csrf -> csrf
+            // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/","presignup","presignups","/signup","signups","/login","/api/**").permitAll() 
+                .requestMatchers(
+    "/", "/login", "/signup", "/presignup", "/signups",
+    "/api/**",
+    "/css/**", "/js/**", "/images/**", "/static/**", "/favicon.ico",
+    "/**" //  React 모든 라우트 허용!
+).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login
@@ -64,6 +71,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         // 프론트 개발 서버 주소
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowCredentials(true);
         // 허용 HTTP 메서드
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         // 허용 헤더

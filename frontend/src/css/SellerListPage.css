@@ -152,6 +152,18 @@
   margin-top: 30px;
 }
 
+.fixed-pagination {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 16px 0;
+  background: transparent; /* 배경 제거 */
+  z-index: 999;
+  box-shadow: none;        /* 희미한 선 제거 */
+}
+
 /* 모달 css */
 
 .modal-overlay {

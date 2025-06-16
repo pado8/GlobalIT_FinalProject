@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate , useSearchParams } from "react-router-dom";
 import { getSellerList, getSellerDetail,getSellerRegistered } from "../../api/SellerApi";
 import { getImageUrl } from "../../api/UploadImageApi";
+import { checkAuth } from "../../api/authApi";
 import Pagination from "../../components/paging/Pagination";
 import "../../css/SellerListPage.css";
 
 const SellerListPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -15,7 +17,6 @@ const SellerListPage = () => {
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState(pageFromUrl);
   const [isRegistered, setIsRegistered] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user")); // 예: { mno: 16, role: "SELLER", ... }
 
   const [sellerData, setSellerData] = useState({
   dtoList: [],
@@ -29,11 +30,21 @@ const SellerListPage = () => {
 });
 
   useEffect(() => {
-  if (user?.role === "SELLER") {
-    getSellerRegistered(user.mno)
-      .then(setIsRegistered)
-      .catch(err => console.error("등록 여부 확인 실패", err));
-  }
+  const init = async () => {
+    try {
+      const authUser = await checkAuth();
+      setUser(authUser);
+
+      if (authUser.role === 1) {
+        const registered = await getSellerRegistered(authUser.mno);
+        setIsRegistered(registered);
+      }
+    } catch (err) {
+      setUser(null);
+    }
+  };
+
+  init();
 }, []);
 
   useEffect(() => {
@@ -41,7 +52,6 @@ const SellerListPage = () => {
 
     getSellerList(page, 12)
       .then(data => setSellerData(data))
-      .catch(err => console.error("리스트 불러오기 실패", err));
   }, [page]);
 
   useEffect(() => {
@@ -94,6 +104,7 @@ const SellerListPage = () => {
 
       {/* 페이징 버튼 */}
       <Pagination
+        className="fixed-pagination"
         current={sellerData.currentPage}
         pageList={sellerData.pageList}
         prev={sellerData.prev}
