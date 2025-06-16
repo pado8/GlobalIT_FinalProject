@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.sports.kickauction.service.CustomOAuth2UserService;
 import com.sports.kickauction.service.MemberDetailsService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final MemberDetailsService memberDetailsService;
+    private final CustomOAuth2UserService oAuth2UserService;
 
     // 주석: 비밀번호 암호화 BCryptPasswordEncoder
     @Bean
@@ -44,7 +46,6 @@ public class SecurityConfig {
                                 "/images/**")
                 .permitAll()
                 .anyRequest().authenticated())
-            )
             .formLogin(form -> form
                 .loginProcessingUrl("/login") 
                 .successHandler((req, res, auth) -> {
@@ -60,6 +61,13 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
                 .permitAll()
+            )
+            .oauth2Login(oauth -> oauth
+                .loginPage("/login")
+                .userInfoEndpoint(user -> user
+                    .userService(oAuth2UserService)
+                )
+                .defaultSuccessUrl("http://localhost:3000/", true) 
             );
         return http.build();
     }

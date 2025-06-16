@@ -39,7 +39,7 @@ public void insertDummySellersWithIntro() {
                 .userPw("1234")
                 .userName("테스트회원" + i)
                 .phone("0109999" + String.format("%04d", i))
-                .role(1)
+                .role("USER")
                 .social(0)
                 .social(0)
                 .build();

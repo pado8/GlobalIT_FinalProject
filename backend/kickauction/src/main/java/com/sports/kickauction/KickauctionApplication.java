@@ -10,6 +10,6 @@ public class KickauctionApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(KickauctionApplication.class, args);
-	}
+	}	
 
 }
