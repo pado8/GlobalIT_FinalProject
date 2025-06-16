@@ -27,6 +27,8 @@ public class SellerIntro {
     private Seller seller;
 
     private String introContent;
+    
+    @Column(length = 1000)
     private String simage;
     private Integer hiredCount;
     private String info;

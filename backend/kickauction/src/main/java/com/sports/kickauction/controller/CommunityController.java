@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sports.kickauction.dto.CommunityDTO;
 import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.PageResponseDTO;
-import com.sports.kickauction.dto.CommunityDTO;
 import com.sports.kickauction.service.CommunityService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,9 @@ public class CommunityController {
     private final CommunityService service;
 
     @GetMapping("/{pno}")
-    public CommunityDTO get(@PathVariable(name = "pno") Long pno) {
-        return service.get(pno);
+    public ResponseEntity<CommunityDTO> getOne(@PathVariable Long pno) {
+        CommunityDTO dto = service.get(pno);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/list")

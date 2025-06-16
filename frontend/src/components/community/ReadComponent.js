@@ -96,7 +96,7 @@ const ReadComponent = ({ pno }) => {
                 </div>
                 <div className={`${styles.comment_form} ${styles.clearfix}`}>
                     <textarea className={styles.comment_input} placeholder="댓글을 입력하세요..."></textarea>
-                    <button className={styles.comment_submit} onClick={submitComment()}>댓글 작성</button>
+                    <button className={styles.comment_submit} onClick={submitComment}>댓글 작성</button>
                 </div>
             </div>
 
