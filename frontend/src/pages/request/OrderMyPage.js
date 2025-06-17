@@ -72,10 +72,20 @@ const OrderMyPage = () => {
         const response = await axios.get('/api/orders/my-orders'); // 가상의 API 엔드포인트
         const data = response.data;
 
-        // 백엔드 응답을 각 상태에 맞게 매핑
-        setActiveList(data.activeOrder || null);
-        setClosedOrders(data.closedOrders || []);
-        setCancelledOrders(data.cancelledOrders || []);
+        // 백엔드 응답 구조:
+        // {
+        //   activeOrder: { id, title, location, date, isUrgent, timeLeft },
+        //   closedOrders: [ { id, title }, ... ],
+        //   cancelledOrders: [ { id, title }, ... ]
+        // }
+        const { activeOrder, closedOrders, cancelledOrders } = data;
+        if (!activeOrder && !closedOrders && !cancelledOrders) {
+          throw new Error("잘못된 응답 구조");
+        }
+        setActiveList(activeOrder ?? null);
+        setClosedOrders(closedOrders ?? []);
+        setCancelledOrders(cancelledOrders ?? []);
+
 
       } catch (err) {
         setError("내 견적 목록을 불러오는 데 실패했습니다.");

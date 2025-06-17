@@ -64,6 +64,7 @@ const OrderReadPage = () => {
                                // 현재는 백엔드에서 받지 않으므로 임시로 목업 유지
         });
 
+        // NOTE :
         // 업체 목록 데이터는 백엔드 OrderController에서 직접 반환하지 않으므로,
         // 이 부분은 별도의 API가 있거나, 또는 getOrderDetails 응답에 포함되어야 함.
         // 현재 코드 상으로는 `companies` 데이터가 백엔드 응답에 포함되어 있지 않다.
