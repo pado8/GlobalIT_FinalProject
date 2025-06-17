@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,11 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
+
 
 import com.sports.kickauction.dto.RequestDTO;
 import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.RequestService;
 import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.repository.MemberRepository;
 
 
 
@@ -28,6 +35,12 @@ public class RequestController {
 
     @Autowired
     private RequestService requestService;
+
+    private final MemberRepository memberRepository;
+
+    public RequestController(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
     
 
     // 견적 상세 조회 (GET /api/orders/{ono})
@@ -106,8 +119,26 @@ public class RequestController {
 
     // 견적 생성 (POST /api/orders) - 프론트엔드 OrderCreatePage.js에서 호출될 API
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder (@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody RequestDTO requestDTO) {
-        requestDTO.setMno(memberDetails.getMember().getMno().intValue());
+    public ResponseEntity<Map<String, Object>> createOrder (@RequestBody RequestDTO requestDTO) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String username;
+
+        // 2. principal에서 username 추출
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString(); // 일반 문자열일 경우
+        }
+
+        // 3. MemberRepository를 통해 Member 조회
+        Member member = memberRepository.findByUserId(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 4. 요청 객체에 회원 번호 설정
+        requestDTO.setMno(member.getMno().intValue());
+        
+
 
         // datetime 문자열 파싱 (수정 시와 동일)
         String datetimeFromFrontend = (String) requestDTO.getAttributes().get("datetime");
@@ -135,17 +166,24 @@ public class RequestController {
             response.put("message", "견적 요청이 성공적으로 생성되었습니다.");
             response.put("ono", requestDTO.getOno()); // 서비스에서 ono가 DTO에 설정되어 반환됨
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else {
+        } 
+        else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "견적 생성에 실패했습니다."));
         }
     }
 
     // 내 견적 목록 조회 (GET /api/orders/my-orders) - 프론트엔드 OrderMyPage.js에서 호출될 API
     @GetMapping("/my-orders")
-    public ResponseEntity<Map<String, Object>> getMyOrders(@AuthenticationPrincipal MemberDetails memberDetails) {
-        Member user = memberDetails.getMember();
-        int memberNo = user.getMno().intValue();
-        System.out.println(user.getMno());
+    public ResponseEntity<Map<String, Object>> getMyOrders() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String loginUserId = user.getUsername();
+        
+        Member member = memberRepository.findByUserId(loginUserId)
+        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginUserId));
+
+        int memberNo = member.getMno().intValue();
+        System.out.println(memberNo);
 
         Map<String, Object> myOrdersData = requestService.getMyOrdersByMemberNo(memberNo);
 
