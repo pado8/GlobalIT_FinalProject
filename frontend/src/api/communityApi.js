@@ -5,9 +5,10 @@ import { API_SERVER_HOST } from "./common";
 const prefix = `${API_SERVER_HOST}/api/community`
 
 export const getOne = async (pno) => {
-    const res = await axios.get(`${prefix}/${pno}`, { params: { t: Date.now() } })
-    return res.data
-}
+    return axios
+    .get(`${prefix}/${pno}`)
+    .then(res => res.data);
+};
 
 export const getList = async (pageParam) => {
     const { page, size } = pageParam
