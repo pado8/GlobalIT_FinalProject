@@ -37,6 +37,8 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     @Bean
+
+    // 주석: csrf & 권한 (csrf - 현재 비활성화임)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
@@ -75,16 +77,24 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+        // 프론트 개발 서버 주소
         config.setAllowedOrigins(List.of("http://localhost:3000"));
+        // 허용 HTTP 메서드
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // 허용 헤더
         config.setAllowedHeaders(List.of("*"));
+        // 쿠키 전송 허용하려면 true
         config.setAllowCredentials(true);
 
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); 
+        // 모든 /api/** 경로에 위 정책 적용
+        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/images/**", config); 
         return source;
     }
 
+    // 비밀번호 암호화 인코더
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
