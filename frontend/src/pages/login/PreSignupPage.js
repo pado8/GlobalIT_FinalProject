@@ -56,7 +56,6 @@ function PreSignupPage() {
   const handleKakaoSignup = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
-
   return (
     <div className="signup_container">
       <div className="signup_smallcontainer">

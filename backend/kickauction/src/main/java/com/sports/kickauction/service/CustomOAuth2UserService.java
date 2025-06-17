@@ -1,6 +1,7 @@
 package com.sports.kickauction.service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -32,6 +33,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
          // 주석: 1) 카카오, 구글 둘 중 어떤 소셜 가입인지 확인하는 과정
         String registrationId = request.getClientRegistration().getRegistrationId(); 
 
+        System.out.println("소셜 로그인 진입, registrationId = " + request.getClientRegistration().getRegistrationId());
+        
         // 주석: 2) 사용자 정보 파싱
         final String finalEmail;
         final String finalNicknameBase;
@@ -76,10 +79,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 return memberRepository.save(newMember);
             });
 
+        String userNameAttributeName = request
+        .getClientRegistration()
+        .getProviderDetails()
+        .getUserInfoEndpoint()
+        .getUserNameAttributeName();
+
+        Map<String, Object> customAttributes = new HashMap<>(attributes);
+        customAttributes.put("user_name", member.getUserName()); 
+
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(member.getRole())),
             attributes,
-            "email" 
+            userNameAttributeName
         );
-    }
+    }   
 }

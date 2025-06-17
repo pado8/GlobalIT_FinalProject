@@ -10,6 +10,7 @@ const Nav = () => {
 
   useEffect(() => {
     fetch("http://localhost:8080/api/auth/me", {
+      method: "GET",
       credentials: "include",
     })
       .then((res) => {
