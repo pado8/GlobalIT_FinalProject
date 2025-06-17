@@ -13,24 +13,6 @@ import Hero from "../../components/requestComponents/bHero";
   };
 
 
-// const OrderCreatePage = () => {
-//   // console.log("OrderForm: ", BContentP08);
-//   // console.log("Hero: ", Hero);
-//   return (
-//     <>
-//       {/* <Header /> */}
-//       <div
-//         className="bg-cover bg-center min-h-screen pt-12"
-//         // style={{ backgroundImage: "url('/stadium-bg.jpg')" }}
-//       >
-//         <Hero {...createHero} />
-//         <BContentP08 />
-//       </div>
-//       {/* <Footer /> */}
-//     </>
-//   );
-// };
-
 const OrderCreatePage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -39,7 +21,8 @@ const OrderCreatePage = () => {
     rentalItems: '',
     detail: '',
     region: '',
-    datetime: '',
+    datetime: null,
+    timeDetail: "",
     people: '',
     request: '',
   });
@@ -61,10 +44,6 @@ const OrderCreatePage = () => {
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
-      // 백엔드 API (POST 요청) - 이 부분은 OrderController에 없으니 추가 필요
-      // 현재 컨트롤러에는 POST /api/orders 로 생성 API가 없다.
-      // 이 예시에서는 POST /api/orders 에 데이터를 보낸다고 가정하고,
-      // 백엔드에서 성공적으로 생성 후 ono를 반환한다고 가정
       const response = await axios.post('/api/orders', dataToSend);
       const newOno = response.data.ono; // 백엔드에서 생성된 ono를 반환한다고 가정
 

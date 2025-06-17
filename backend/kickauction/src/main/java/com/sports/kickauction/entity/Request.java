@@ -1,15 +1,25 @@
 package com.sports.kickauction.entity; // Recommended package for entities
 
-import jakarta.persistence.*; // JPA annotations
-import lombok.*; // Lombok annotations
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; // JPA annotations
+
+import jakarta.persistence.Column; // Lombok annotations
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Getter;
+import lombok.ToString;
 
 @Entity // Specifies that this class is an entity
-@Table(name = "`ORDER`") // Maps to the "ORDER" table. Backticks are important because ORDER is a SQL reserved keyword.
-@Getter
+@Table(name = "`ORDER`")
 @Setter
 @ToString
-// @Data // Lombok: Generates getters, setters, toString, equals, and hashCode
+@Getter
 @NoArgsConstructor // Lombok: Generates a no-argument constructor
 @AllArgsConstructor // Lombok: Generates an all-argument constructor
 @Builder // Lombok: Provides a builder pattern for object creation
@@ -50,10 +60,4 @@ public class Request {
     @Column(name = "finished", nullable = false) // Maps to 'finished' column, assuming not nullable
     private int finished;
 
-    // Note: If you plan to use this Entity with Spring Data JPA,
-    // you would also create an interface like:
-    // public interface OrderRepository extends JpaRepository<Order, Integer> {}
-    // This removes the need for custom mappers for basic CRUD operations.
-    // However, if you are strictly using MyBatis, this Entity class is for clearer mapping
-    // and potentially for other JPA-related features if you combine them.
 }

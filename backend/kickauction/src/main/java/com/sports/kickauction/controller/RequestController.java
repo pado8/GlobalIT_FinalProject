@@ -1,17 +1,25 @@
 package com.sports.kickauction.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.RequestService;
+import com.sports.kickauction.entity.Member;
+
 
 
 @RestController
@@ -74,13 +82,13 @@ public class RequestController {
             requestService.parseDateTimeAndSetOrderDTO(datetimeFromFrontend, requestDTO);
         }
 
-        // "people" 필드에서 "명" 제거 및 숫자만 파싱
-        if (requestDTO.getPerson() != null) {
-            String peopleStr = requestDTO.getPerson().replaceAll("[^0-9]", "");
-            if (!peopleStr.isEmpty()) {
-                requestDTO.setPerson(Integer.parseInt(peopleStr));
-            }
-        }
+        // // "people" 필드에서 "명" 제거 및 숫자만 파싱
+        // if (requestDTO.getPerson() != null) {
+        //     String peopleStr = requestDTO.getPerson().replaceAll("[^0-9]", "");
+        //     if (!peopleStr.isEmpty()) {
+        //         requestDTO.setPerson(Integer.parseInt(peopleStr));
+        //     }
+        // }
 
         // DTO 필드명과 DB 컬럼명 매핑 (컨트롤러에서 수행)
         // RequestDTO의 sport를 playType으로
@@ -98,9 +106,8 @@ public class RequestController {
 
     // 견적 생성 (POST /api/orders) - 프론트엔드 OrderCreatePage.js에서 호출될 API
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody RequestDTO requestDTO) {
-        // mno는 실제 로그인 사용자 정보를 통해 가져와야 합니다. 여기서는 임시로 1로 설정.
-        requestDTO.setMno(1);
+    public ResponseEntity<Map<String, Object>> createOrder (@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody RequestDTO requestDTO) {
+        requestDTO.setMno(memberDetails.getMember().getMno().intValue());
 
         // datetime 문자열 파싱 (수정 시와 동일)
         String datetimeFromFrontend = (String) requestDTO.getAttributes().get("datetime");
@@ -108,13 +115,14 @@ public class RequestController {
             requestService.parseDateTimeAndSetOrderDTO(datetimeFromFrontend, requestDTO);
         }
 
-        // "people" 필드에서 "명" 제거 및 숫자만 파싱 (수정 시와 동일)
-        if (requestDTO.getPerson() != null) {
-            String peopleStr = requestDTO.getPerson().replaceAll("[^0-9]", "");
-            if (!peopleStr.isEmpty()) {
-                requestDTO.setPerson(Integer.parseInt(peopleStr));
-            }
-        }
+        // // "people" 필드에서 "명" 제거 및 숫자만 파싱 (수정 시와 동일)
+        // if (requestDTO.getPerson() != null) {
+        //     String peopleStr = requestDTO.getPerson().replaceAll("[^0-9]", "");
+        //     if (!peopleStr.isEmpty()) {
+        //         requestDTO.setPerson(Integer.parseInt(peopleStr));
+        //     }
+        // }
+
         // DTO 필드명과 DB 컬럼명 매핑
         // RequestDTO의 sport를 playType으로
         // RequestDTO의 region을 olocation으로
@@ -134,10 +142,10 @@ public class RequestController {
 
     // 내 견적 목록 조회 (GET /api/orders/my-orders) - 프론트엔드 OrderMyPage.js에서 호출될 API
     @GetMapping("/my-orders")
-    public ResponseEntity<Map<String, Object>> getMyOrders() {
-        // 실제로는 로그인한 사용자의 mno를 가져와야 합니다.
-        // 예를 들어, int memberNo = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        int memberNo = 1; // 임시 사용자 번호
+    public ResponseEntity<Map<String, Object>> getMyOrders(@AuthenticationPrincipal MemberDetails memberDetails) {
+        Member user = memberDetails.getMember();
+        int memberNo = user.getMno().intValue();
+        System.out.println(user.getMno());
 
         Map<String, Object> myOrdersData = requestService.getMyOrdersByMemberNo(memberNo);
 

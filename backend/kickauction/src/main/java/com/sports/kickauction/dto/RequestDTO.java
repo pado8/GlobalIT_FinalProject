@@ -14,20 +14,20 @@ import java.lang.Integer;
 @AllArgsConstructor
 @Builder
 public class RequestDTO {
-  private int ono;
-  private int mno;
-  private String playType; // React: sport
-  private String olocation; // React: region
-  private LocalDateTime rentalDate; // React: datetime (날짜 부분)
-  private String rentalTime; // React: datetime (시간 부분)
-  private Integer person; // React: people
-  private String rentalEquipment; // React: rentalItems, detail 합친 값
-  private String ocontent; // React: request
-  private LocalDateTime regdate;
-  private int finished;
+    private int ono;
+    private int mno;
+    private String playType; // React: sport
+    private String olocation; // React: region
+    private LocalDateTime rentalDate; // React: datetime (날짜 부분)
+    private String rentalTime; // React: datetime (시간 부분)
+    private Integer person; // React: people
+    private String rentalEquipment; // React: rentalItems, detail 합친 값
+    private String ocontent; // React: request
+    private LocalDateTime regdate;
+    private int finished;
 
-
-  private Map<String, Object> extraAttributes = new HashMap<>();
+    @Builder.Default
+    private Map<String, Object> extraAttributes = new HashMap<>();
 
     @JsonAnySetter
     public void setExtraAttribute(String key, Object value) {
