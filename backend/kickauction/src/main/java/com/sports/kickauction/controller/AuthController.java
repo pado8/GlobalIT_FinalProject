@@ -59,6 +59,8 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
 
     return ResponseEntity.ok(Map.of(
     "nickname", member.getUserName(),
-    "mno", member.getMno()));
+    "role",member.getRole(), // 권한 확인 필요함
+    "mno", member.getMno()
+    ));
 }
 }
