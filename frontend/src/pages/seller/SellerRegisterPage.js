@@ -29,7 +29,7 @@ const SellerRegisterPage = ({ mno }) => {
   const init = async () => {
     // user가 null이면 로그인 페이지로 이동
     if (user === null) {
-      navigate("/login", { replace: true });
+      // navigate("/login", { replace: true });
       return;
     }
 
@@ -53,7 +53,7 @@ const SellerRegisterPage = ({ mno }) => {
   init();
 }, [user, navigate]);
 
-   if (!user || isRegistered) return null;
+  //  if (!user || isRegistered) return null;
 
   const handleMainChange = async (e) => {
     const file = e.target.files[0];
