@@ -34,7 +34,7 @@ public class Member {
 
     @Column(nullable = false)
     @Builder.Default
-    private String role = "USER"; 
+    private String role = "USER";
 
     @Column(unique = true)
     private String userName;
