@@ -47,6 +47,15 @@ function PreSignupPage() {
     }
   };
 
+  // 주석: 구글 회원가입
+  const handleGoogleSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
+  // 주석: 카카오 회원가입
+  const handleKakaoSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
+  };
   return (
     <div className="signup_container">
       <div className="signup_smallcontainer">
@@ -90,12 +99,12 @@ function PreSignupPage() {
             <span>또는</span>
           </div>
 
-          <button type="button" className="social_signup_k">
-            <img class="socialicon" src={socialk}></img>
+          <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
+            <img className="socialicon" src={socialk}></img>
             카카오 계정으로 회원가입
           </button>
-          <button type="button" className="social_signup_g">
-            <img class="socialicon" src={socialg}></img>
+          <button type="button" className="social_signup_g" onClick={handleGoogleSignup}>
+            <img className="socialicon" src={socialg}></img>
             구글 계정으로 회원가입
           </button>
         </form>

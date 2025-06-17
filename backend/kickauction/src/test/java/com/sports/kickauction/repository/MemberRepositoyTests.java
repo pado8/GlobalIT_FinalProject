@@ -1,9 +1,5 @@
 package com.sports.kickauction.repository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +35,7 @@ public void insertDummySellersWithIntro() {
                 .userPw("1234")
                 .userName("테스트회원" + i)
                 .phone("0109999" + String.format("%04d", i))
-                .role(1)
+                .role("USER")
                 .social(0)
                 .social(0)
                 .build();
