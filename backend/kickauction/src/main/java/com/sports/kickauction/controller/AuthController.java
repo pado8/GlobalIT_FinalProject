@@ -43,6 +43,7 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
 
         // 주석: 소셜로그인(카카오)
         if (email == null) {
+            @SuppressWarnings("unchecked")
             Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
             if (kakaoAccount != null) {
                 email = (String) kakaoAccount.get("email");
@@ -59,6 +60,8 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
 
     return ResponseEntity.ok(Map.of(
     "nickname", member.getUserName(),
-    "mno", member.getMno()));
+    "role",member.getRole(), // 권한 확인 필요함
+    "mno", member.getMno()
+    ));
 }
 }
