@@ -67,12 +67,12 @@ public class SecurityConfig {
                 .permitAll()
             )
             .oauth2Login(oauth -> oauth
-                .loginPage("/login")
-                .userInfoEndpoint(user -> user
-                    .userService(oAuth2UserService)
-                )
-                .defaultSuccessUrl("http://localhost:3000/", true) 
-            );
+            .loginPage("/login")
+            .userInfoEndpoint(user -> user.userService(oAuth2UserService))
+            .successHandler((request, response, authentication) -> {
+            response.sendRedirect("http://localhost:3000/"); 
+              })
+);
         return http.build();
     }
 
