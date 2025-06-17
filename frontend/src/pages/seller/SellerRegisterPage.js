@@ -1,15 +1,16 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/Authcontext"
 import { postSellerRegister,getSellerRegistered } from "../../api/SellerApi";
 import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
-import { checkAuth } from "../../api/authApi";
+
 import "../../css/SellerRegisterPage.css";
 
 
 
 const SellerRegisterPage = ({ mno }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false); 
   const [formData, setFormData] = useState({
     simage: [],
@@ -25,31 +26,34 @@ const SellerRegisterPage = ({ mno }) => {
   const introInputRef = useRef();
 
  useEffect(() => {
-    const init = async () => {
-      try {
-        const authUser = await checkAuth();
+  const init = async () => {
+    // user가 null이면 로그인 페이지로 이동
+    if (user === null) {
+      navigate("/login", { replace: true });
+      return;
+    }
 
-        if (authUser.role !== 1) {
-          navigate("/errorpage");
-          return;
-        }
+    // SELLER 권한이 아니면 에러 페이지로 이동
+    if (user.role !== "SELLER") {
+      navigate("/errorpage");
+      return;
+    }
 
-        const registered = await getSellerRegistered(authUser.mno);
-        if (registered) {
-          navigate("/errorpage");
-        } else {
-          setUser(authUser);
-          setIsRegistered(true);
-        }
-      } catch (e) {
-        // navigate("/login", { replace: true });
-      }
-    };
+    // 이미 등록된 업체면 에러 페이지로 이동
+    const registered = await getSellerRegistered(user.mno);
+    if (registered) {
+      navigate("/errorpage");
+      return;
+    }
 
-    init();
-  }, [navigate]);
+    // 모든 조건 통과 시 등록 가능 상태로 설정
+    setIsRegistered(true);
+  };
 
-  // if (!user || isRegistered) return null;
+  init();
+}, [user, navigate]);
+
+   if (!user || isRegistered) return null;
 
   const handleMainChange = async (e) => {
     const file = e.target.files[0];

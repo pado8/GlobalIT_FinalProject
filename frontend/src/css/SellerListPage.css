@@ -1,7 +1,7 @@
 #wrap-container {
   max-width: 1200px;
   margin: 0 auto;
-  margin-top: 10px;
+  margin-top: 100px;
   padding: 20px;
 }
 
@@ -87,6 +87,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 1; /* or 2 */
+  line-clamp: 1;
   line-height: 1.4em;
   max-height: 1.4em; /* 1줄 제한이면 */
   white-space: normal;
@@ -153,7 +154,7 @@
 }
 
 .fixed-pagination {
-  position: fixed;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;

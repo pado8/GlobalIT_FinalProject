@@ -34,8 +34,11 @@ public class AuthController {
 
         // 닉네임 포함 반환
         return ResponseEntity.ok(Map.of(
+            "mno", member.getMno(), //mno로 회원 정보 조회시 필요
             "userId", member.getUserId(),
-            "nickname", member.getUserName()
+            "nickname", member.getUserName(),
+            "role", member.getRole() //업체 계정인지 아닌지 확인시 필요
         ));
     }
+
 }

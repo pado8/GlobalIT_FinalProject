@@ -35,7 +35,7 @@ public void insertDummySellersWithIntro() {
                 .userPw("1234")
                 .userName("테스트회원" + i)
                 .phone("0109999" + String.format("%04d", i))
-                .role("USER")
+                .role("Seller")
                 .social(0)
                 .build();
         memberRepository.save(member);
@@ -96,7 +96,7 @@ public void insertLongTextSeller() {
             .userPw("1234")
             .userName("긴텍스트회원")
             .phone("01012345678")
-            .role(1)
+            .role("Seller")
             .social(0)
             .build();
     memberRepository.save(member);
@@ -118,6 +118,32 @@ public void insertLongTextSeller() {
             .hiredCount(999)
             .build();
     sellerIntroRepository.save(intro);
+}
+
+@Test
+@Transactional
+@Rollback(false)
+public void insertDemoSellerForImageUpload() {
+    // 1. 이미지 업로드 테스트용 Member 생성
+    Member member = Member.builder()
+            .userId("imageDemoUser")
+            .userPw("1234")
+            .userName("이미지데모업체")
+            .phone("01000000000")
+            .role("Seller") // 문자열 "Seller"
+            .social(0)
+            .build();
+    memberRepository.save(member);
+
+    // 2. 해당 Member에 연결된 Seller 생성
+    Seller seller = Seller.builder()
+            .member(member)
+            .sname("이미지 업로드 테스트 업체")
+            .slocation("서울시 강남구 업로드로 123")
+            .build();
+    sellerRepository.save(seller);
+
+    // SellerIntro는 생략 — 프론트에서 props로 수동 넘겨서 사용할 예정
 }
 }
 

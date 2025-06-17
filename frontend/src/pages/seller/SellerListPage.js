@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate , useSearchParams } from "react-router-dom";
+import { useAuth } from "../../contexts/Authcontext"
 import { getSellerList, getSellerDetail,getSellerRegistered } from "../../api/SellerApi";
 import { getImageUrl } from "../../api/UploadImageApi";
-import { checkAuth } from "../../api/authApi";
 import Pagination from "../../components/paging/Pagination";
 import "../../css/SellerListPage.css";
 
 const SellerListPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -30,22 +30,17 @@ const SellerListPage = () => {
 });
 
   useEffect(() => {
-  const init = async () => {
-    try {
-      const authUser = await checkAuth();
-      setUser(authUser);
-
-      if (authUser.role === 1) {
-        const registered = await getSellerRegistered(authUser.mno);
-        setIsRegistered(registered);
-      }
-    } catch (err) {
-      setUser(null);
+  const fetchRegistration = async () => {
+    if (user?.role === "SELLER") {
+      const registered = await getSellerRegistered(user.mno);
+      setIsRegistered(registered);
     }
   };
 
-  init();
-}, []);
+  if (user) {
+    fetchRegistration();
+  }
+}, [user]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
