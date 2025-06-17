@@ -45,8 +45,8 @@ public class SellerController {
         Member member = memberRepository.findById(mno)
             .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
-        //  role 체크: 업체회원(role == 1)만 허용
-        if (member.getRole() != "Seller") {
+        //  role 체크: 업체회원(role == "Seller")만 허용
+        if (!member.getRole().equals("Seller")) {
             return ResponseEntity.status(403).body("업체 회원만 등록할 수 있습니다.");
         }
 
