@@ -4,6 +4,8 @@
   padding: 20px;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+       overflow-anchor: none;
+
 }
 
 .write_header {
@@ -54,6 +56,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
+   overflow-anchor: none;
 }
 
 .write_content > div {
@@ -105,12 +108,14 @@
   border: 2px solid #e0e0e0;
   border-radius: 12px;
   font-size: 16px;
-  transition: all 0.3s ease;
+  transition: height 0.3s ease;
   background: #fafafa;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
   font-family: inherit;
   box-sizing: border-box;
 }
+
 
 .write_content textarea:focus {
   outline: none;

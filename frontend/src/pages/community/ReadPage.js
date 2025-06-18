@@ -47,6 +47,28 @@ const ReadPage = () => {
         moveToList()
     }
 
+    function formatDisplayDate(isoString) {
+    const d = new Date(isoString);
+    const today = new Date();
+
+    // 날짜(연-월-일)만 비교
+    const isToday =
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate();
+
+    if (isToday) {
+      // 시간(HH:mm)만
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else {
+      // 년-월-일
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+  }
+
     return (
         <div id="read_Page">
             {result ? <ResultModal title={'처리결과'} content={result} callbackFn={closeModal}></ResultModal> : <></>}
@@ -69,7 +91,7 @@ const ReadPage = () => {
                     <div className="read_meta">
                         <div className="read_info">
                             <span>👤 {community.mno}</span>
-                            <span>📅 {community.pregdate}</span>
+                            <span>📅 {formatDisplayDate(community.pregdate)}</span>
                             <span>👁 {community.view}</span>
                             {/* <span>💬 댓글 8</span> 아직 미구현*/}
                         </div>
