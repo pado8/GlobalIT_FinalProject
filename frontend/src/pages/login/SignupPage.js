@@ -330,10 +330,10 @@ function SignupPage() {
                 <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className="auth_input" />
 
                 <div className="modal_buttons">
-                  <button className="modal_button" onClick={handleVerifySMS}>
+                  <button type="button" className="modal_button" onClick={handleVerifySMS}>
                     확인
                   </button>
-                  <button className="modal_button cancel" onClick={() => setIsModalOpen(false)}>
+                  <button type="button" className="modal_button cancel" onClick={() => setIsModalOpen(false)}>
                     닫기
                   </button>
                 </div>

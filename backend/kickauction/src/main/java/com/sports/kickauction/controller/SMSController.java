@@ -30,12 +30,45 @@ public class SMSController {
         }
 
         // 주석:: 인증번호 
-        String authCode = String.valueOf((int)((Math.random() * 900000) + 100000)); 
-        session.setAttribute("authCode:" + phone, authCode); 
+        String authCode = String.format("%06d", (int)(Math.random() * 1000000));
+        session.setAttribute("authCode:" + phone, authCode);  //세션에 인증번호 및 폰번 저장
+        session.setAttribute("authCodeExpire:" + phone, System.currentTimeMillis() + 180_000); // 만료시간:3분
 
         // 주석:: 인증번호 전송
         messageVerificationService.sendSms(phone, "[킥옥션] 인증번호: [" + authCode+"]를 입력해주세요.");
 
         return ResponseEntity.ok("인증번호 전송 완료");
+
+
     }
+
+    // 주석: 인증번호 검증
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request, HttpSession session) {
+        String phone = request.get("phone"); 
+        String inputCode = request.get("code");  //사용자 입력 코드
+        String savedCode = (String) session.getAttribute("authCode:" + phone); // 세션에 저장된 전송 인증번호
+        Long currentTime = System.currentTimeMillis();          //모달열리고 흐른 시간
+        Long expireTime = (Long) session.getAttribute("authCodeExpire:" + phone); //유효시간 
+
+        if (expireTime == null || currentTime > expireTime) {
+        session.removeAttribute("authCode:" + phone);
+        session.removeAttribute("authCodeExpire:" + phone);
+        return ResponseEntity.status(400).body("인증 시간이 만료되었습니다.");
+        }
+
+        if (savedCode != null && savedCode.equals(inputCode)) {
+            session.removeAttribute("authCode:" + phone);
+            session.removeAttribute("authCode:" + phone);
+            session.removeAttribute("authCodeExpire:" + phone);
+            return ResponseEntity.ok("인증 성공");
+        } else {
+            session.removeAttribute("authCode:" + phone);
+            session.removeAttribute("authCodeExpire:" + phone);
+            return ResponseEntity.status(400).body("인증 실패");
+        }
+
+        
+    }
+    
 }
