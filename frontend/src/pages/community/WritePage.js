@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { postWrite } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +16,8 @@ const WritePage = () => {
   const { moveToList } = useCustomMove();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const textareaRef = useRef(null);
 
   useEffect(() => {
-    if (textareaRef.current) {
-      autoResize(textareaRef.current);
-    }
     if (!user) {
       if (window.confirm("글 작성을 위해 로그인해야 합니다. 로그인 페이지로 이동할까요?")) {
         navigate("/login");
@@ -30,28 +26,6 @@ const WritePage = () => {
       }
     }
   }, [user, navigate, moveToList]);
-
-  const autoResize = el => {
-    const scrollY = window.scrollY;      // 현재 스크롤 위치 저장
-    el.style.height = "auto";
-    el.style.height = el.scrollHeight + "px";
-    window.scrollTo(0, scrollY);         // 높이 조정 후 스크롤 위치 복원
-  };
-
-  useLayoutEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-
-    // 현재 페이지 스크롤 위치 저장
-    const scrollY = window.scrollY;
-
-    // 높이 리사이즈
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-
-    // 스크롤 위치 복원
-    window.scrollTo(0, scrollY);
-  }, [community.pcontent]);
 
   const handleChangeCommunity = (e) => {
     const { name, value } = e.target;
@@ -125,11 +99,8 @@ const WritePage = () => {
           <textarea
             id="pcontent"
             name="pcontent"
-            ref={textareaRef}
             value={community.pcontent}
             onChange={handleChangeCommunity}
-            style={{ overflow: "hidden" }}
-            placeholder="내용을 입력하세요…"
           />
         </div>
       </div>
