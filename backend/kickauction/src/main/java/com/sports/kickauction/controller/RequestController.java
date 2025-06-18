@@ -6,8 +6,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,17 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.Authentication;
-
 
 import com.sports.kickauction.dto.RequestDTO;
-import com.sports.kickauction.service.MemberDetails;
-import com.sports.kickauction.service.RequestService;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.service.RequestService;
 
 
 
@@ -176,6 +173,7 @@ public class RequestController {
     @GetMapping("/my-orders")
     public ResponseEntity<Map<String, Object>> getMyOrders() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
         User user = (User) authentication.getPrincipal();
         String loginUserId = user.getUsername();
         

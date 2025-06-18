@@ -47,10 +47,10 @@ const OrderCreatePage = () => {
       const response = await axios.post('/api/orders', dataToSend);
       const newOno = response.data.ono; // 백엔드에서 생성된 ono를 반환한다고 가정
 
-      alert("견적 요청이 성공적으로 생성되었습니다.");
+      alert("견적 생성 성공");
       navigate(`/request/read/${newOno}`); // 생성 후 상세 페이지로 이동
     } catch (err) {
-      alert("견적 생성에 실패했습니다.");
+      alert("견적 생성 실패");
       console.error("Error creating order:", err);
     }
   };

@@ -83,7 +83,7 @@ const renderField = (field,value, handleChange) => {
                         <input
                             type="radio"
                             name={field.name}
-                            value={option} // value 속성 추가
+                            value={option}
                             checked={value === option}
                             onChange={handleChange}
                         /> {option}

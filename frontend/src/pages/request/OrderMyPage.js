@@ -27,7 +27,7 @@ const OrderMyPage = () => {
       try {
         setLoading(true);
         //  API 호출 - GET /api/orders/my-orders
-        const response = await axios.get('/api/orders/my-orders',{withCredentials: true});
+        const response = await axios.get('http://localhost:8080/api/orders/my-orders',{withCredentials: true});
         console.log("응답:", response.data);
 
         // 로그인 페이지 HTML을 받아온 경우 대비: content-type 검사
