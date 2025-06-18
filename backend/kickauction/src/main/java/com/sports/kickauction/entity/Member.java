@@ -39,6 +39,6 @@ public class Member {
     @Column(unique = true)
     private String userName;
 
-    @Column(length = 11, unique = true)
+    @Column(length = 13, unique = true)
     private String phone;
 }
