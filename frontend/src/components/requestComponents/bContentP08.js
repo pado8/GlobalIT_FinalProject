@@ -51,13 +51,13 @@ const formFields = {
       type: "text",
       label: "상세 시간",
       name: "timeDetail",
-      placeholder: "예: 오후 3시 이후 가능해요"
+      placeholder: "예: 17시 이후 : 17"
     },
     {
       type: "text",
       label: "인원",
       name: "people",
-      placeholder: "예: 11명"
+      placeholder: "예: 11명 : 11"
     },
     {
       type: "textarea",

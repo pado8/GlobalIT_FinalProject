@@ -1,4 +1,4 @@
-import { Link,Outlet } from 'react-router-dom';
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'; // axios 임포트
 
@@ -26,22 +26,30 @@ const OrderMyPage = () => {
     const fetchMyOrders = async () => {
       try {
         setLoading(true);
-        // 사용자 본인의 견적 목록을 가져오는 API 호출
-        //  GET /api/orders/my-orders
-        // 응답 데이터는 활성, 마감, 취소된 견적을 포함해야 함.
-        const response = await axios.get('/api/orders/my-orders'); // 가상의 API 엔드포인트
+        //  API 호출 - GET /api/orders/my-orders
+        const response = await axios.get('/api/orders/my-orders',{withCredentials: true});
+        console.log("응답:", response.data);
+
+        // 로그인 페이지 HTML을 받아온 경우 대비: content-type 검사
+        const contentType = response.headers['content-type'];
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error("로그인하지 않았거나 응답 형식이 JSON이 아닙니다.");
+        }
         const data = response.data;
 
-        // 백엔드 응답 구조:
+        // 의도한 백엔드 응답 구조:
         // {
         //   activeOrder: { id, title, location, date, isUrgent, timeLeft },
         //   closedOrders: [ { id, title }, ... ],
         //   cancelledOrders: [ { id, title }, ... ]
         // }
-        const { activeOrder, closedOrders, cancelledOrders } = data;
-        if (!activeOrder && !closedOrders && !cancelledOrders) {
+        if (typeof data !== 'object' || (!data.activeOrder && !data.closedOrders && !data.cancelledOrders)) {
           throw new Error("잘못된 응답 구조");
         }
+
+        const { activeOrder, closedOrders, cancelledOrders } = data;
+        
+        // 상태 업데이트
         setActiveList(activeOrder ?? null);
         setClosedOrders(closedOrders ?? []);
         setCancelledOrders(cancelledOrders ?? []);
