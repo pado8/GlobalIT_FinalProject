@@ -1,35 +1,27 @@
 import "../../css/ListPage.css";
 
-const PageComponent = ({ serverData, movePage }) => {
+const PageComponent = ({ serverData, onPageChange }) => {
     return (
         <div className="pagination">
-            {serverData.prev ? (
-                <div
-                    className="page_btn"
-                    onClick={() => movePage({ page: serverData.prevPage })}
-                >
+            {serverData.prev && (
+                <div className="page_btn" onClick={() => onPageChange(serverData.prevPage)}>
                     이전
                 </div>
-            ) : null}
-
-            {serverData.pageNumList.map((pageNum) => (
+            )}
+            {serverData.pageNumList.map(pageNum => (
                 <div
                     key={pageNum}
-                    className={`page_btn ${serverData.current === pageNum ? 'active' : ''}`}
-                    onClick={() => movePage({ page: pageNum })}
+                    className={`page_btn ${serverData.current === pageNum ? "active" : ""}`}
+                    onClick={() => onPageChange(pageNum)}
                 >
                     {pageNum}
                 </div>
             ))}
-
-            {serverData.next ? (
-                <div
-                    className="page_btn"
-                    onClick={() => movePage({ page: serverData.nextPage })}
-                >
+            {serverData.next && (
+                <div className="page_btn" onClick={() => onPageChange(serverData.nextPage)}>
                     다음
                 </div>
-            ) : null}
+            )}
         </div>
     );
 };
