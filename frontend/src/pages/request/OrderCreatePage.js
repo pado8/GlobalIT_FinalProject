@@ -16,10 +16,9 @@ import Hero from "../../components/requestComponents/bHero";
 const OrderCreatePage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    sport: '',
-    rental: '필요없어요', // 기본값 설정
+    sport: '축구',
+    rental: '필요해요', // 기본값 설정
     rentalItems: '',
-    detail: '',
     region: '',
     datetime: null,
     timeDetail: "",
@@ -29,7 +28,21 @@ const OrderCreatePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    let newFormData = { ...formData, [name]: value };
+
+    // '장비 대여 여부'가 '필요없어요'로 변경되었을 때, 관련 필드 비우기
+    if (name === 'rental' && value === '필요없어요') {
+        newFormData.rentalItems = '';
+        newFormData.detail = '';
+    }
+    
+    // datetime 필드가 DatePicker에서 넘어오는 경우 Date 객체 처리
+    if (name === 'datetime' && value instanceof Date) {
+        newFormData.datetime = value;
+    }
+
+    setFormData(newFormData);
   };
 
   const handleSubmit = async (e) => {
@@ -37,20 +50,20 @@ const OrderCreatePage = () => {
 
     try {
       const dataToSend = { ...formData };
-      // '필요없어요'를 선택했을 경우 rentalItems와 detail을 비웁니다.
       if (formData.rental === '필요없어요') {
         dataToSend.rentalItems = '';
         dataToSend.detail = '';
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
+      console.log(dataToSend);
       const response = await axios.post('/api/orders', dataToSend);
       const newOno = response.data.ono; // 백엔드에서 생성된 ono를 반환한다고 가정
 
-      alert("견적 요청이 성공적으로 생성되었습니다.");
+      alert("견적 생성 성공");
       navigate(`/request/read/${newOno}`); // 생성 후 상세 페이지로 이동
     } catch (err) {
-      alert("견적 생성에 실패했습니다.");
+      alert("견적 생성 실패");
       console.error("Error creating order:", err);
     }
   };
