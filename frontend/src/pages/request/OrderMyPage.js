@@ -10,7 +10,7 @@ import Hero from "../../components/requestComponents/bHero";
 const { Active, List } = OrderList;
 
 const OrderMyPage = () => {
-  const [activeList, setActiveList] = useState(null); // 활성 견적 상태
+  const [activeLists, setActiveLists] = useState([]); // 활성 견적 상태
   const [closedOrders, setClosedOrders] = useState([]); // 마감된 견적 상태
   const [cancelledOrders, setCancelledOrders] = useState([]); // 취소된 견적 상태
   const [loading, setLoading] = useState(true);
@@ -35,22 +35,17 @@ const OrderMyPage = () => {
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error("로그인하지 않았거나 응답 형식이 JSON이 아닙니다.");
         }
+        //응답 내용 저장
         const data = response.data;
 
-        // 의도한 백엔드 응답 구조:
-        // {
-        //   activeOrder: { id, title, location, date, isUrgent, timeLeft },
-        //   closedOrders: [ { id, title }, ... ],
-        //   cancelledOrders: [ { id, title }, ... ]
-        // }
         if (typeof data !== 'object' || (!data.activeOrder && !data.closedOrders && !data.cancelledOrders)) {
           throw new Error("잘못된 응답 구조");
         }
 
-        const { activeOrder, closedOrders, cancelledOrders } = data;
+        const { activeOrders, closedOrders, cancelledOrders } = data;
         
         // 상태 업데이트
-        setActiveList(activeOrder ?? null);
+        setActiveLists(activeOrders ?? []);
         setClosedOrders(closedOrders ?? []);
         setCancelledOrders(cancelledOrders ?? []);
 
@@ -73,11 +68,13 @@ const OrderMyPage = () => {
     <div>
       <main className="max-w-4xl mx-auto mt-10 p-4">
         <Hero {...myPageHero} />
-
-        {/* 활성 견적이 있을 경우에만 렌더링 */}
-        {activeList && <Active {...activeList} />}
-        <List title="마감된 견적" quotes={closedOrders} type="closed" />
-        <List title="취소된 견적" quotes={cancelledOrders} type="cancelled" />
+        {activeLists && activeLists.length > 0 ? (
+            <List title="진행 견적" quotes={activeLists} type="active" />
+        ) : (
+            <div className="mt-6 text-gray-500">현재 진행 중인 견적이 없습니다.</div>
+        )}
+        <List title="마감 견적" quotes={closedOrders} type="closed" />
+        <List title="취소 견적" quotes={cancelledOrders} type="cancelled" />
       </main>
     </div>
   );

@@ -92,14 +92,6 @@ public class RequestController {
             requestService.parseDateTimeAndSetOrderDTO(datetimeFromFrontend, requestDTO);
         }
 
-        // // "people" 필드에서 "명" 제거 및 숫자만 파싱
-        // if (requestDTO.getPerson() != null) {
-        //     String peopleStr = requestDTO.getPerson().replaceAll("[^0-9]", "");
-        //     if (!peopleStr.isEmpty()) {
-        //         requestDTO.setPerson(Integer.parseInt(peopleStr));
-        //     }
-        // }
-
         // DTO 필드명과 DB 컬럼명 매핑 (컨트롤러에서 수행)
         // RequestDTO의 sport를 playType으로
         // RequestDTO의 region을 olocation으로
@@ -142,14 +134,6 @@ public class RequestController {
         if (requestDTO.getAttributes() != null && requestDTO.getAttributes().containsKey("datetime")) {
             requestService.parseDateTimeAndSetOrderDTO(datetimeFromFrontend, requestDTO);
         }
-
-        // // "people" 필드에서 "명" 제거 및 숫자만 파싱 (수정 시와 동일)
-        // if (requestDTO.getPerson() != null) {
-        //     String peopleStr = requestDTO.getPerson().replaceAll("[^0-9]", "");
-        //     if (!peopleStr.isEmpty()) {
-        //         requestDTO.setPerson(Integer.parseInt(peopleStr));
-        //     }
-        // }
 
         // DTO 필드명과 DB 컬럼명 매핑
         // RequestDTO의 sport를 playType으로

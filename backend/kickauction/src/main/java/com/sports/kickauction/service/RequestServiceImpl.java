@@ -133,7 +133,7 @@ public class RequestServiceImpl implements RequestService {
                                             .filter(order -> order.getFinished() == 0)
                                             .map(this::convertToDto)
                                             .collect(Collectors.toList());
-        myOrdersData.put("activeOrder", activeOrders.isEmpty() ? null : activeOrders.get(0));
+        myOrdersData.put("activeOrders", activeOrders);
 
 
         // 마감된 주문 (finished = 1)
