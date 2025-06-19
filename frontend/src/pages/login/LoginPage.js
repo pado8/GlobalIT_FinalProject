@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import "../login/LoginPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
@@ -15,6 +15,16 @@ function LoginPage() {
   const [passwd, setPasswd] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [remember, setRemember] = useState(false); //이메일기억
+
+  // 주석: 이메일 기억하기
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setUserid(savedEmail);
+      setRemember(true);
+    }
+  }, []);
 
   // 주석: 로그인 버튼 클릭 시 Spring Security POST요청
   const handleLogin = async (e) => {
@@ -37,6 +47,12 @@ function LoginPage() {
 
       if (!res.ok) {
         throw new Error("로그인 실패");
+      }
+
+      if (remember) {
+        localStorage.setItem("rememberedEmail", userid);
+      } else {
+        localStorage.removeItem("rememberedEmail");
       }
 
       navigate("/");
@@ -75,7 +91,7 @@ function LoginPage() {
           {/* 이메일 기억 */}
           <div className="login_remember">
             <label>
-              <input type="checkbox" />
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
               이메일 기억하기
             </label>
           </div>
