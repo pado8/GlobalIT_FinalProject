@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Nav.css";
 import logo from "../assets/img/kickauction_logo.png";
-import logo2 from "../assets/img/kickauction_logo_2.png";
-import logo3 from "../assets/img/kickauction_logo_3.png";
 
 const Nav = () => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
@@ -21,7 +19,6 @@ const Nav = () => {
         return res.json();
       })
       .then((data) => {
-        console.log("서버 응답:", data);
         setUser(data.nickname);
       })
       .catch(() => setUser(null));
