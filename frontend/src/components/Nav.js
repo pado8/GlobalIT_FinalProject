@@ -22,7 +22,7 @@ const Nav = () => {
         return res.json();
       })
       .then((data) => {
-        setUser(data.nickname);
+        setUser(data);
       })
       .catch(() => setUser(null));
   }, []);
@@ -88,7 +88,7 @@ const Nav = () => {
           ) : (
             <div className="user_dropdown">
               <button onClick={toggleDropdown} className="user_button">
-                {user} 님 ▼
+                {user.nickname} 님 ▼
               </button>
               {dropdownOpen && (
                 <div className="dropdown_menu">
@@ -122,6 +122,7 @@ const Nav = () => {
         <div className="sidebar_userbox">
           {!user ? (
             <>
+              <img className="profile_img" src={`http://localhost:8080/images/baseprofile.png`} alt="비로그인 프로필 사진" />
               <p>비로그인 상태입니다.</p>
               <div className="sidebar_buttons">
                 <Link to="/login" onClick={handleLinkClick} className="sidebar_btn">
@@ -134,9 +135,10 @@ const Nav = () => {
             </>
           ) : (
             <>
+              <img className="profile_img" src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
               <p>
                 안녕하세요! <br />
-                <strong>{user}</strong> 님
+                <strong>{user.nickname}</strong> 님
               </p>
               <Link to="/mypage" onClick={handleLinkClick} className="sidebar_btn_black">
                 마이페이지

@@ -188,19 +188,28 @@ body {
   padding: 1.2rem 1rem;
   border-radius: 12px;
   text-align: center;
-  margin: 3rem 0;
+  margin: 1.6rem 0;
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.05);
   color: #222;
   font-size: 0.95rem;
   font-weight: 500;
   line-height: 1.4;
+  height: 16rem;
+  align-content: center;
+}
+
+.profile_img {
+  margin: 0 auto;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
 }
 
 .sidebar_userbox p {
   font-size: 0.8rem;
   color: azure;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
+  margin: 1rem auto;
+  line-height: 1.75;
 }
 
 .sidebar_buttons {
@@ -245,7 +254,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
-  margin-top: 2.35rem;
+  margin-top: 1.86rem;
 }
 
 .sidebar nav a {
@@ -279,12 +288,13 @@ body {
 .backtohome {
   color: #4564eb !important;
   font-size: 1.15rem !important;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 /* ---------------------------------------
   주석: 반응형 (<751)
 ---------------------------------------- */
+
 @media (max-width: 750px) {
   body {
     min-width: 1px;

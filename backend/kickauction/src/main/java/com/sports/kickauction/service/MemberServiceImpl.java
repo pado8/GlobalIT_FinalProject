@@ -1,5 +1,7 @@
 package com.sports.kickauction.service;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,4 +45,16 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsByPhone(phone);
     }
 
-}
+    @Override
+    public boolean updateProfileImg(Long mno, String newFileName) {
+        Optional<Member> opt = memberRepository.findById(mno);
+        if (opt.isPresent()) {
+            Member member = opt.get();
+            member.setProfileimg(newFileName);
+            memberRepository.save(member);
+            return true;
+        }
+        return false;
+    }
+    
+}   

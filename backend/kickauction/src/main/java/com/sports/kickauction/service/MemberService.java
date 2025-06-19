@@ -10,4 +10,7 @@ public interface MemberService {
     boolean existsByPhone(String phone);
 
     Member register(Member member);
+
+    // 프로필사진 이미지 업로드
+    boolean updateProfileImg(Long mno, String newFileName);
 }
