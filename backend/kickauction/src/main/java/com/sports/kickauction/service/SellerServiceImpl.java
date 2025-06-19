@@ -14,6 +14,7 @@ import com.sports.kickauction.dto.SellerPageRequestDTO;
 import com.sports.kickauction.dto.SellerPageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
 import com.sports.kickauction.dto.SellerRegisterDTO;
+import com.sports.kickauction.dto.SellerRegisterReadDTO;
 import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.SellerIntroRepository;
@@ -40,7 +41,9 @@ public class SellerServiceImpl implements SellerService {
                 .sname(seller.getSname())
                 .slocation(seller.getSlocation())
                 .introContent(intro.getIntroContent())
-                .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
+                .simage(intro.getSimage() != null && !intro.getSimage().isBlank()
+                ? intro.getSimage().split(",")
+                : new String[0])
                 .hiredCount(intro.getHiredCount())
                 .info(intro.getInfo())
                 .phone(seller.getMember().getPhone())
@@ -57,7 +60,9 @@ public class SellerServiceImpl implements SellerService {
         throw new IllegalStateException("이미 업체를 등록하셨습니다.");
     }
 
-        String simageCombined = String.join(",", dto.getSimage());
+        String simageCombined = (dto.getSimage() == null || dto.getSimage().isEmpty())
+        ? "default.jpg"
+        : String.join(",", dto.getSimage());
 
         SellerIntro sellerIntro = SellerIntro.builder()
                 .seller(seller)
@@ -80,7 +85,7 @@ public class SellerServiceImpl implements SellerService {
     @Override
     @Transactional
     public SellerPageResponseDTO<SellerReadDTO> getSellerList(SellerPageRequestDTO sellerPageRequestDTO) {
-        Pageable pageable = sellerPageRequestDTO.getPageable(Sort.by("mno").descending());
+        Pageable pageable = sellerPageRequestDTO.getPageable(Sort.by("regDate").descending());
 
         Page<SellerIntro> result = sellerIntroRepository.findAll(pageable);
 
@@ -94,7 +99,9 @@ public class SellerServiceImpl implements SellerService {
                     .phone(seller.getMember().getPhone())
                     .introContent(intro.getIntroContent())
                     .info(intro.getInfo())
-                    .simage(intro.getSimage() != null ? intro.getSimage().split(",") : new String[0])
+                    .simage(intro.getSimage() != null && !intro.getSimage().isBlank()
+                    ? intro.getSimage().split(",")
+                    : new String[0])
                     .hiredCount(intro.getHiredCount())
                     .build();
         }).collect(Collectors.toList());
@@ -103,6 +110,19 @@ public class SellerServiceImpl implements SellerService {
                 .dtoList(dtoList)
                 .sellerPageRequestDTO(sellerPageRequestDTO)
                 .totalCount(result.getTotalElements())
+                .build();
+    }
+    @Override
+    public SellerRegisterReadDTO getSellerRegisterInfo(Long mno) {
+        Seller seller = sellerRepository.findById(mno)
+                .orElseThrow(() -> new IllegalArgumentException("해당 판매자를 찾을 수 없습니다. mno=" + mno));
+
+       
+
+        return SellerRegisterReadDTO.builder()
+                .sname(seller.getSname())
+                .slocation(seller.getSlocation())
+                .phone(seller.getMember().getPhone())
                 .build();
     }
 }
