@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../login/SignupPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
@@ -60,7 +60,9 @@ function PreSignupPage() {
     <div className="signup_container">
       <div className="signup_smallcontainer">
         {/* 로고 */}
-        <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+        <Link to="/">
+          <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+        </Link>
         <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
 
         {/* 전환 버튼 */}
