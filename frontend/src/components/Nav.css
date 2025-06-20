@@ -16,6 +16,7 @@ body {
   background-color: white;
   border-bottom: 1px solid #eee;
   min-width: 1300px;
+  z-index: 1000; /* nav 겹쳐서 인덱스 올림*/
 }
 
 .nav_logo {
