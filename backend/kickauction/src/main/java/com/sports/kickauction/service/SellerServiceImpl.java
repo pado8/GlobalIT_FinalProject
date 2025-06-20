@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.sports.kickauction.dto.SellerModifyDTO;
+import com.sports.kickauction.dto.SellerModifyReadDTO;
 import com.sports.kickauction.dto.SellerPageRequestDTO;
 import com.sports.kickauction.dto.SellerPageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
@@ -35,6 +37,22 @@ public class SellerServiceImpl implements SellerService {
 
     private static final String DEFAULT_IMAGE_PATH = "default/default.png";
 
+
+    private String buildSimageString(List<String> simageList) {
+    return (simageList == null || simageList.isEmpty())
+            ? DEFAULT_IMAGE_PATH
+            : String.join(",", simageList);
+}
+
+    private List<String> parseSimageString(String simage) {
+    return (simage != null && !simage.isBlank())
+            ? Arrays.stream(simage.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList())
+            : List.of(DEFAULT_IMAGE_PATH);
+}
+
     @Override
     public SellerReadDTO getSellerByMno(Long mno) {
         SellerIntro intro = sellerIntroRepository.findById(mno)
@@ -42,19 +60,14 @@ public class SellerServiceImpl implements SellerService {
 
         Seller seller = intro.getSeller();
 
-        String[] simageArr = (intro.getSimage() != null && !intro.getSimage().isBlank())
-            ? Arrays.stream(intro.getSimage().split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .toArray(String[]::new)
-            : new String[] { DEFAULT_IMAGE_PATH };
+        List<String> simageList = parseSimageString(intro.getSimage());
 
         return SellerReadDTO.builder()
                 .mno(seller.getMno())
                 .sname(seller.getSname())
                 .slocation(seller.getSlocation())
                 .introContent(intro.getIntroContent())
-                .simage(simageArr)
+                .simage(simageList.toArray(new String[0]))
                 .hiredCount(intro.getHiredCount())
                 .info(intro.getInfo())
                 .phone(Optional.ofNullable(seller.getMember())
@@ -73,9 +86,7 @@ public class SellerServiceImpl implements SellerService {
         throw new IllegalStateException("이미 업체를 등록하셨습니다.");
     }
 
-        String simageCombined = (dto.getSimage() == null || dto.getSimage().isEmpty())
-        ? DEFAULT_IMAGE_PATH
-        : String.join(",", dto.getSimage());
+        String simageCombined = buildSimageString(dto.getSimage());
 
         SellerIntro sellerIntro = SellerIntro.builder()
                 .seller(seller)
@@ -105,12 +116,7 @@ public class SellerServiceImpl implements SellerService {
         List<SellerReadDTO> dtoList = result.stream().map(intro -> {
             Seller seller = intro.getSeller();
 
-            String[] simageArr = (intro.getSimage() != null && !intro.getSimage().isBlank())
-                ? Arrays.stream(intro.getSimage().split(","))
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .toArray(String[]::new)
-                : new String[] { DEFAULT_IMAGE_PATH };
+            String[] simageArr = parseSimageString(intro.getSimage()).toArray(new String[0]);
 
             return SellerReadDTO.builder()
                     .mno(seller.getMno())
@@ -143,4 +149,47 @@ public class SellerServiceImpl implements SellerService {
                 .phone(seller.getMember().getPhone())
                 .build();
     }
+
+    @Override
+    public SellerModifyReadDTO getSellerModifyInfo(Long mno) {
+    Seller seller = sellerRepository.findById(mno)
+        .orElseThrow(() -> new NoSuchElementException("판매자 정보 없음"));
+
+    SellerIntro intro = sellerIntroRepository.findById(mno)
+        .orElseThrow(() -> new NoSuchElementException("소개 정보 없음"));
+
+    List<String> simageList = parseSimageString(intro.getSimage());
+
+    return SellerModifyReadDTO.builder()
+        .sname(seller.getSname())
+        .slocation(seller.getSlocation())
+        .introContent(intro.getIntroContent())
+        .info(intro.getInfo())
+        .phone(seller.getMember().getPhone())
+        .simage(simageList)
+        .build();
+}
+    
+    @Override
+    @Transactional
+    public void modifySeller(Long mno, SellerModifyDTO dto) {
+        Seller seller = sellerRepository.findById(mno)
+            .orElseThrow(() -> new NoSuchElementException("해당 판매자 정보 없음"));
+
+        String simageCombined = buildSimageString(dto.getSimage());
+
+        seller.setSname(dto.getSname());
+        seller.setSlocation(dto.getSlocation());
+
+        SellerIntro updatedIntro = SellerIntro.builder()
+            .seller(seller)
+            .simage(simageCombined)
+            .introContent(dto.getIntroContent())
+            .info(dto.getInfo())
+            .build();
+
+        sellerIntroRepository.save(updatedIntro);
+    }
+
+
 }

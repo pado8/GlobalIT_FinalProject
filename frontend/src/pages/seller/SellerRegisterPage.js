@@ -39,14 +39,14 @@ const SellerRegisterPage = () => {
 
     // SELLER 권한이 아니면 에러 페이지로 이동
     if (user.role !== "SELLER") {
-      navigate("/errorpage");
+      navigate("/error");
       return;
     }
 
     // 이미 등록된 업체면 에러 페이지로 이동
     const registered = await getSellerRegistered();
     if (registered) {
-      navigate("/errorpage");
+      navigate("/error");
       return;
     }
 

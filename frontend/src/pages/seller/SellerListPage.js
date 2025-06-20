@@ -109,6 +109,17 @@ const SellerListPage = () => {
         ))}
       </div>
 
+
+{user?.role === "SELLER" && (
+  <div style={{ textAlign: "center", margin: "2rem 0" }}>
+    <button
+      className="button-blue"
+      onClick={() => navigate("/sellerlist/modify")}
+    >
+      🛠 테스트용 업체정보 수정하기
+    </button>
+  </div>
+)}
       <Pagination
         className="fixed-pagination"
         current={sellerData.currentPage}
