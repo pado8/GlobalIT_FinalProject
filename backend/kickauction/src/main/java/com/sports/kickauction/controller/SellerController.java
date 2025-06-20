@@ -11,6 +11,8 @@ import com.sports.kickauction.dto.SellerPageRequestDTO;
 import com.sports.kickauction.dto.SellerPageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
 import com.sports.kickauction.dto.SellerRegisterDTO;
+import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.service.SellerService;
 
 
@@ -24,6 +26,7 @@ public class SellerController {
 
     
     private final SellerService sellerService;
+    private final MemberRepository memberRepository;
     
     @GetMapping("/list")
     public ResponseEntity<SellerPageResponseDTO<SellerReadDTO>> getSellerList(SellerPageRequestDTO sellerPageRequestDTO) {
@@ -38,8 +41,26 @@ public class SellerController {
 
     @PostMapping("/register/{mno}")
     public ResponseEntity<?> registerSeller(@PathVariable Long mno,@RequestBody SellerRegisterDTO dto) {
-    sellerService.registerSeller(mno, dto);
-    return ResponseEntity.ok("등록 완료");
+        //  회원 존재 여부 확인
+        Member member = memberRepository.findById(mno)
+            .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
+        //  role 체크: 업체회원(role == "Seller")만 허용
+        if (!member.getRole().equals("Seller")) {
+            return ResponseEntity.status(403).body("업체 회원만 등록할 수 있습니다.");
+        }
+
+        try {
+            sellerService.registerSeller(mno, dto);
+            return ResponseEntity.ok("등록 완료");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/registered/{mno}")
+    public ResponseEntity<Boolean> checkRegistered(@PathVariable Long mno) {
+        return ResponseEntity.ok(sellerService.isAlreadyRegistered(mno));
     }
    
 }

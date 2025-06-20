@@ -42,6 +42,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            // .csrf(csrf -> csrf
+            // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .cors(withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",

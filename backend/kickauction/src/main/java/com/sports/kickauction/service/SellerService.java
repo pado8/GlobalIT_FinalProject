@@ -9,4 +9,5 @@ public interface SellerService {
     SellerReadDTO getSellerByMno(Long mno);
     void registerSeller(Long mno, SellerRegisterDTO dto);
     SellerPageResponseDTO<SellerReadDTO> getSellerList(SellerPageRequestDTO sellerPageRequestDTO);
+    boolean isAlreadyRegistered(Long mno);
 }
