@@ -12,7 +12,7 @@ const formFields = {
       type: "select",
       label: "종목",
       options: ["축구", "풋살"],
-      name: "sport"
+      name: "playType"
     },
     {
       type: "radio",
@@ -23,7 +23,7 @@ const formFields = {
     {
       type: "text",
       label: "대여할 장비 목록",
-      name: "rentalItems",
+      name: "rentalEquipment",
       placeholder: "예: 축구화, 장갑, 조끼 등"
     }
   ],
@@ -38,23 +38,23 @@ const formFields = {
     {
       type: "date",
       label: "날짜",
-      name: "datetime"
+      name: "rentalDate"
     },
     {
       type: "text",
       label: "상세 시간",
-      name: "timeDetail",
+      name: "rentalTime",
       placeholder: "시작 시간을 입력해주세요"
     },
     {
       type: "number",
       label: "인원",
-      name: "people",
+      name: "person",
     },
     {
       type: "textarea",
       label: "요청사항",
-      name: "request",
+      name: "ocontent",
       placeholder: "예: 인조잔디인가요? 주차장 있나요? 등"
     }
   ]
@@ -67,7 +67,8 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
   switch (field.type) {
     case "select":
       return (
-        <select name={field.name} value={value} onChange={handleChange} className="w-full border px-3 py-2 rounded">
+        <select name={field.name} value={value} onChange={handleChange} 
+        className="w-full border px-3 py-2 rounded">
           {field.options.map((option, idx) => (<option key={idx}>{option}</option>))}
         </select>
       );
@@ -111,10 +112,10 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           readOnly={isReadOnly}
         />
       );
-    case "number": // <-- 새로운 case 추가
+    case "number":
       return (
           <input
-              type="number" // type을 "number"로 설정
+              type="number"
               name={field.name}
               value={value}
               onChange={handleChange}
@@ -141,38 +142,34 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
 };
 
 const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
-  const [isRentalItemsReadOnly, setIsRentalItemsReadOnly] = useState(false);
-  const [isDetailReadOnly, setIsDetailReadOnly] = useState(false);
+  const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
 
   useEffect(() => {
     if (formData.rental === '필요없어요') {
-      setIsRentalItemsReadOnly(true);
-      setIsDetailReadOnly(true);
+      setIsRentalEquipmentReadOnly(true);
     } 
     else {
-      setIsRentalItemsReadOnly(false);
-      setIsDetailReadOnly(false);
+      setIsRentalEquipmentReadOnly(false);
     }
   }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
 
   return (
     <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
+      {/* 왼 */}
       <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
         {formFields.left.map((field, idx) => (
           <div key={idx} className="mt-4">
             <label className="block font-semibold mb-1">{field.label}</label>
             {/* {renderField(field, formData[field.name], handleChange)} */}
             {
-              field.name === 'rentalItems' ?
-                renderField(field, formData[field.name], handleChange, isRentalItemsReadOnly) :
-                  field.name === 'detail' ?
-                    renderField(field, formData[field.name], handleChange, isDetailReadOnly) :
-                      renderField(field, formData[field.name], handleChange)
+              field.name === 'rentalEquipment' ?
+                renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
+                renderField(field, formData[field.name], handleChange)
             }
           </div>
         ))}
       </div>
-
+      {/* 오 */}
       <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
         {formFields.right.map((field, idx) => (
           <div key={idx} className="mt-4">

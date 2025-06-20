@@ -46,7 +46,7 @@ const OrderReadPage = () => {
 
         // 백엔드 OrderController의 getOrder 메서드에서 보내는 필드명에 맞게 매핑.
         setQuoteDetail({
-          title: data.sport, // playType -> sport로 매핑됨
+          title: data.playType, // playType -> playType로 매핑됨
           location: data.region, // olocation -> region으로 매핑됨
           date: datePart, // datetime 날짜
           timeDesc: timePart, // datetime 시간
