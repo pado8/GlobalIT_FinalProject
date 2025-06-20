@@ -39,6 +39,11 @@ const Nav = () => {
       });
 
       // 주석:: 사용자 정보 초기화
+      // logout 요청을 보낸 후 페이지를 아래처럼 전체 새로고침 (window.location.href = "/") 하기 때문에:
+      // 브라우저가 리로드되고,
+      // AuthProvider의 useEffect가 다시 실행되며,
+      // checkAuth() 호출 → 서버에서 로그인 안 된 상태라 null 반환
+      // 그래서 setUser(null) 자동 실행됨 
       //setUser(null);
 
       //주석:: 로그아웃 후 이동위치

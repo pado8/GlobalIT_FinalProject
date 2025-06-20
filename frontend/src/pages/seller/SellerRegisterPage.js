@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext"
 import { postSellerRegister,getSellerRegistered,getSellerRegisterInfo} from "../../api/SellerApi";
 import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
-import defaultImg from "../../assets/img/default.png"
 import "../../css/SellerRegisterPage.css";
 
 
@@ -53,7 +52,6 @@ const SellerRegisterPage = () => {
 
     try {
       const info = await getSellerRegisterInfo();
-      console.log("기본 정보:", info); 
       setBasicInfo(info);
     } catch (e) {
       console.error("기본 정보 로딩 실패", e);
@@ -72,6 +70,13 @@ const SellerRegisterPage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // MIME 타입으로 이미지인지 확인
+    if (!file.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있습니다.");
+      fileInputRef.current.value = null;
+      return;
+    }
+
     if (file.size > 10 * 1024 * 1024) {
     alert("이미지 용량이 맞지 않습니다.");
     fileInputRef.current.value = null; 
@@ -88,8 +93,16 @@ const SellerRegisterPage = () => {
 
   const handleIntroChange = async (e) => {
     const files = Array.from(e.target.files);
+    
+    // 이미지 아닌 파일 있는지 확인
+    const invalid = files.find(file => !file.type.startsWith("image/"));
+    if (invalid) {
+      alert("모든 파일은 이미지여야 합니다.");
+      introInputRef.current.value = null;
+      return;
+    }
+    
     const oversized = files.find(file => file.size > 10 * 1024 * 1024);
-
     if (oversized) {
       alert("이미지 용량이 맞지 않습니다.");
       return;
@@ -114,12 +127,11 @@ const SellerRegisterPage = () => {
   const handleSubmit = async () => {
   if (submitting) return; // 중복 제출 방지
 
-  const { simage, introContent, info } = formData;
+  let { simage, introContent, info } = formData;
 
   // 대표 이미지 없으면 기본값 설정
   if (!simage.length || !simage[0]) {
-    const defaultPath = "default.jpg"; // 서버에 저장된 기본 대표 이미지 경로
-    formData.simage = [defaultPath, ...simage.slice(1)];
+    simage = ["default/default.png", ...simage.slice(1)];
   }
 
   if (!info || !introContent) {
@@ -197,7 +209,7 @@ const SellerRegisterPage = () => {
   }
 }}>
   <img
-    src={previewUrls.main || defaultImg}
+    src={previewUrls.main || getImageUrl("default/default.png")}
     alt="대표 이미지"
     onClick={(e) => {
       e.stopPropagation();

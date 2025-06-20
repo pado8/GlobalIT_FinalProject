@@ -34,6 +34,14 @@ const SellerListPage = () => {
     nextPage: 0,
   });
 
+  // 이미지 경로 안전 처리 함수
+  const getSafeImage = (simage) => {
+  if (!Array.isArray(simage)) return "default/default.png";
+  const first = simage[0]?.trim();
+  if (!first || first === "undefined") return "default/default.png";
+  return first;
+ };
+
   useEffect(() => {
     if (user?.role !== "SELLER") return;
 
@@ -56,16 +64,15 @@ const SellerListPage = () => {
   }, [page]);
 
   const openModal = async (mno) => {
-  try {
-    const detail = await getSellerDetail(mno);
-    console.log("상세 seller 데이터 확인", detail); // ← 요거
-    setSelectedSeller(detail);
-    setSlideIndex(0);
-    setModalOpen(true);
-  } catch (err) {
-    console.error("상세 불러오기 실패", err);
-  }
-};
+    try {
+      const detail = await getSellerDetail(mno);
+      setSelectedSeller(detail);
+      setSlideIndex(0);
+      setModalOpen(true);
+    } catch (err) {
+      console.error("상세 불러오기 실패", err);
+    }
+  };
 
   const closeModal = () => setModalOpen(false);
   const goToRegister = () => navigate("/sellerlist/register");
@@ -89,10 +96,7 @@ const SellerListPage = () => {
           <div className="card" key={idx} onClick={() => openModal(seller.mno)}>
             <div className="card-header">
               <div className="image">
-                <img
-                  src={getImageUrl(seller.simage?.[0] || "default.png")}
-                  alt="대표"
-                />
+                <img src={getImageUrl(getSafeImage(seller.simage))} alt="대표" />
               </div>
               <div className="count">선정 횟수: {seller.hiredCount || 0}</div>
             </div>
@@ -117,97 +121,93 @@ const SellerListPage = () => {
       />
 
       {/* 상세 모달 */}
-      {modalOpen && selectedSeller && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>상세정보</h3>
-              <button onClick={closeModal}>✕</button>
-            </div>
+      {modalOpen && selectedSeller && (() => {
+        const simage = selectedSeller.simage;
+        const mainImg = getSafeImage(simage);
 
-            <div className="modal-body">
-              <div className="seller-top">
-                <div
-                  className="seller-image"
-                  onClick={() =>
-                    setEnlargedImage(
-                      getImageUrl(
-                        selectedSeller.simage?.[0] || "default.png"
-                      )
-                    )
-                  }
-                >
-                  <img
-                    src={getImageUrl(
-                      selectedSeller.simage?.[0] || "default.png"
-                    )}
-                    alt="대표"
-                  />
-                </div>
-                <div className="seller-info">
-                  <strong>{selectedSeller.sname || "업체명 없음"}</strong>
-                  <br />
-                  연락처: {selectedSeller.phone || "정보 없음"}
-                  <br />
-                  주소: {selectedSeller.slocation || "정보 없음"}
-                  <br />
-                </div>
+        return (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>상세정보</h3>
+                <button onClick={closeModal}>✕</button>
               </div>
 
-              {Array.isArray(selectedSeller.simage) && selectedSeller.simage.length > 1 && selectedSeller.simage.slice(1).some(img => img) && (
-              <div className="image-slider">
-                {selectedSeller.simage.length > 4 && slideIndex > 0 && (
-                  <button
-                    onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))}
-                    className="slider-button"
-                  >
-                    {"<"}
-                  </button>
+              <div className="modal-body">
+                <div className="seller-top">
+                  <div className={`seller-image ${mainImg === "default/default.png" ? "non-clickable" : "clickable"}`}
+                       onClick={() => {
+                        if (mainImg !== "default/default.png") {
+                          setEnlargedImage(getImageUrl(mainImg));
+                        }
+                      }}
+                    >
+                      <img src={getImageUrl(mainImg)} alt="대표" />
+                    </div>
+                  <div className="seller-info">
+                    <strong>{selectedSeller.sname || "업체명 없음"}</strong>
+                    <br />
+                    연락처: {selectedSeller.phone || "정보 없음"}
+                    <br />
+                    주소: {selectedSeller.slocation || "정보 없음"}
+                    <br />
+                  </div>
+                </div>
+
+                {Array.isArray(simage) && simage.length > 1 && simage.slice(1).some(img => img?.trim()) && (
+                  <div className="image-slider">
+                    {simage.length > 4 && slideIndex > 0 && (
+                      <button
+                        onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))}
+                        className="slider-button"
+                      >
+                        {"<"}
+                      </button>
+                    )}
+
+                    {simage
+                      .slice(1)
+                      .slice(slideIndex, slideIndex + 3)
+                      .filter(img => img?.trim())
+                      .map((img, i) => (
+                        <div
+                          className="img-box"
+                          key={i}
+                          onClick={() => setEnlargedImage(getImageUrl(img))}
+                        >
+                          <img src={getImageUrl(img)} alt={`소개 ${i}`} />
+                        </div>
+                      ))}
+
+                    {simage.length > 4 &&
+                      slideIndex + 3 < simage.length - 1 && (
+                        <button
+                          onClick={() => setSlideIndex((prev) => prev + 3)}
+                          className="slider-button"
+                        >
+                          {">"}
+                        </button>
+                      )}
+                  </div>
                 )}
 
-                {selectedSeller.simage
-                  .slice(1)
-                  .slice(slideIndex, slideIndex + 3)
-                  .filter(Boolean)  // null, undefined 제거
-                  .map((img, i) => (
-                    <div
-                      className="img-box"
-                      key={i}
-                      onClick={() => setEnlargedImage(getImageUrl(img))}
-                    >
-                      <img src={getImageUrl(img)} alt={`소개 ${i}`} />
-                    </div>
-                  ))}
-
-                {selectedSeller.simage.length > 4 &&
-                  slideIndex + 3 < selectedSeller.simage.length - 1 && (
-                    <button
-                      onClick={() => setSlideIndex((prev) => prev + 3)}
-                      className="slider-button"
-                    >
-                      {">"}
-                    </button>
-                  )}
-              </div>
-            )}
-
-
-              <div className="seller-detail">
-                <p>
-                  <strong>업체정보</strong>
-                  <br />
-                  {selectedSeller.info || "정보 없음"}
-                </p>
-                <p>
-                  <strong>업체소개</strong>
-                  <br />
-                  {selectedSeller.introContent || "소개 없음"}
-                </p>
+                <div className="seller-detail">
+                  <p>
+                    <strong>업체정보</strong>
+                    <br />
+                    {selectedSeller.info || "정보 없음"}
+                  </p>
+                  <p>
+                    <strong>업체소개</strong>
+                    <br />
+                    {selectedSeller.introContent || "소개 없음"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 확대 이미지 모달 */}
       {enlargedImage && (

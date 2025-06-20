@@ -42,7 +42,8 @@ function LoginPage() {
     formData.append("password", passwd);
 
     try {
-      const res = await fetch("http://localhost:8080/login", {  // /login 리액트 기준으로 요청함 
+      // /login 앞에 백엔드주소 없어서 리액트주소로 요청함
+      const res = await fetch("http://localhost:8080/login", {   
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -55,10 +56,11 @@ function LoginPage() {
         throw new Error("로그인 실패");
       }
 
-      // 로그인 성공 후 → 서버에 내 정보 요청 (/api/auth/me)
+      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
       const userData = await checkAuth();
 
-      // 응답 받은 사용자 정보를 Context 전역 상태로 저장
+      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
+      // 로그인 후 업체목록페이지에서 새로고침해야 권한이 적용(업체 등록 버튼이 보임)되길래 추가함
       setUser(userData);
 
       if (remember) {

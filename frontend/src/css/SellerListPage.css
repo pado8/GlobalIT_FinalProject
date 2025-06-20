@@ -108,6 +108,26 @@
   right: 0;
 }
 
+.seller-image {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.seller-image.clickable {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.seller-image.clickable:hover {
+  transform: scale(1.02);
+}
+
+.seller-image.non-clickable {
+  cursor: default;
+  opacity: 0.8; 
+}
+
+
 .image {
   width: 70px;
   height: 70px;

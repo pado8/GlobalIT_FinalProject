@@ -1,8 +1,11 @@
 package com.sports.kickauction.service;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +18,7 @@ import com.sports.kickauction.dto.SellerPageResponseDTO;
 import com.sports.kickauction.dto.SellerReadDTO;
 import com.sports.kickauction.dto.SellerRegisterDTO;
 import com.sports.kickauction.dto.SellerRegisterReadDTO;
+import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.SellerIntroRepository;
@@ -29,6 +33,8 @@ public class SellerServiceImpl implements SellerService {
     private final SellerRepository sellerRepository;
     private final SellerIntroRepository sellerIntroRepository;
 
+    private static final String DEFAULT_IMAGE_PATH = "default/default.png";
+
     @Override
     public SellerReadDTO getSellerByMno(Long mno) {
         SellerIntro intro = sellerIntroRepository.findById(mno)
@@ -36,17 +42,24 @@ public class SellerServiceImpl implements SellerService {
 
         Seller seller = intro.getSeller();
 
+        String[] simageArr = (intro.getSimage() != null && !intro.getSimage().isBlank())
+            ? Arrays.stream(intro.getSimage().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toArray(String[]::new)
+            : new String[] { DEFAULT_IMAGE_PATH };
+
         return SellerReadDTO.builder()
                 .mno(seller.getMno())
                 .sname(seller.getSname())
                 .slocation(seller.getSlocation())
                 .introContent(intro.getIntroContent())
-                .simage(intro.getSimage() != null && !intro.getSimage().isBlank()
-                ? intro.getSimage().split(",")
-                : new String[0])
+                .simage(simageArr)
                 .hiredCount(intro.getHiredCount())
                 .info(intro.getInfo())
-                .phone(seller.getMember().getPhone())
+                .phone(Optional.ofNullable(seller.getMember())
+                .map(Member::getPhone)
+                .orElse("정보 없음"))
                 .build();
     }
 
@@ -61,7 +74,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
         String simageCombined = (dto.getSimage() == null || dto.getSimage().isEmpty())
-        ? "default.jpg"
+        ? DEFAULT_IMAGE_PATH
         : String.join(",", dto.getSimage());
 
         SellerIntro sellerIntro = SellerIntro.builder()
@@ -92,6 +105,13 @@ public class SellerServiceImpl implements SellerService {
         List<SellerReadDTO> dtoList = result.stream().map(intro -> {
             Seller seller = intro.getSeller();
 
+            String[] simageArr = (intro.getSimage() != null && !intro.getSimage().isBlank())
+                ? Arrays.stream(intro.getSimage().split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toArray(String[]::new)
+                : new String[] { DEFAULT_IMAGE_PATH };
+
             return SellerReadDTO.builder()
                     .mno(seller.getMno())
                     .sname(seller.getSname())
@@ -99,9 +119,7 @@ public class SellerServiceImpl implements SellerService {
                     .phone(seller.getMember().getPhone())
                     .introContent(intro.getIntroContent())
                     .info(intro.getInfo())
-                    .simage(intro.getSimage() != null && !intro.getSimage().isBlank()
-                    ? intro.getSimage().split(",")
-                    : new String[0])
+                    .simage(simageArr)
                     .hiredCount(intro.getHiredCount())
                     .build();
         }).collect(Collectors.toList());

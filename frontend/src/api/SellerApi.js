@@ -10,7 +10,7 @@ export const postSellerRegister = async (payload) => {
 
 
 export const getSellerDetail = async (mno) => {
-  const res = await axios.get(`${prefix}/detail/${mno}`);
+  const res = await axios.get(`${prefix}/detail`, {params: { mno }});
   return res.data;
 };
 
