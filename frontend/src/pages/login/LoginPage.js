@@ -74,7 +74,9 @@ function LoginPage() {
   return (
     <div className="login_container">
       <div className="login_smallcontainer">
-        <img src={logo} alt="킥옥션 로고" className="login_logo" />
+        <Link to="/">
+          <img src={logo} alt="킥옥션 로고" className="login_logo" />
+        </Link>
 
         <form className="form_1" onSubmit={handleLogin}>
           {/* 이메일 입력 */}

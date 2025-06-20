@@ -1,9 +1,5 @@
-#wrap {
-    padding-top: 80px;
-}
-
-#community_page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+#communityPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
