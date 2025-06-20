@@ -91,7 +91,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
         <input
           type="text"
           name={field.name}
-          value={value ? value.toString() : null}
+          value={value ? value.toString() : ""}
           onChange={handleChange}
           className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`}
           placeholder={currentPlaceholder}
@@ -198,13 +198,11 @@ const BContentP09 = () => {
       setSavedRentalEquipment(formData.rentalEquipment); 
       setFormData((prev) => ({ ...prev, rentalEquipment: "" }));
       setIsRentalEquipmentReadOnly(true);
-      console.log("set no : ", formData.rentalEquipment);
     } 
 
     else if (formData.rental === "필요해요") {
       setFormData((prev) => ({ ...prev, rentalEquipment: savedRentalEquipment }));
       setIsRentalEquipmentReadOnly(false);
-      console.log("set yes : ", savedRentalEquipment);
     }
   }, [formData.rental, savedRentalEquipment]);
 
@@ -213,6 +211,17 @@ const BContentP09 = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    // 최신 값을 savedRentalEquipment에 반영
+    if (name === 'rentalEquipment' && formData.rental === "필요해요") {
+        setSavedRentalEquipment(value);
+        console.log("rentalEquipment 직접 변경 감지 & savedRentalEquipment 업데이트:", value);
+    }
+
+    if (name === 'rental') {
+        console.log(`User selected rental: ${value}`);
+        console.log(`debug - ${savedRentalEquipment}`);
+    }
   };
 
   const handleSubmit = (e) => {
