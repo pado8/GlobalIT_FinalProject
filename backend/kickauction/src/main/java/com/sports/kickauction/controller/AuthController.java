@@ -63,7 +63,8 @@ public class AuthController {
     return ResponseEntity.ok(Map.of(
     "nickname", member.getUserName(),
     "role",member.getRole(), // 권한 확인 필요함
-    "mno", member.getMno()
+    "mno", member.getMno(),
+    "profileimg", member.getProfileimg()
     ));
 }
 }

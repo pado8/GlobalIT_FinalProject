@@ -15,6 +15,7 @@ const PreSignupSeller = lazy(() => import("../pages/login/PreSignupPageSeller"))
 const Signup = lazy(() => import("../pages/login/SignupPage"));
 const SignupSeller = lazy(() => import("../pages/login/SignupPageSeller"));
 const Request = lazy(() => import("../pages/request/OrderMaster"));
+const MyPage = lazy(() => import("../pages/mypage/MyPage"));
 
 const Loading = <div>Loading...</div>;
 const root = createBrowserRouter([
@@ -73,9 +74,9 @@ const root = createBrowserRouter([
         ),
       },
       {
-          path: "error",
-          element: <ErrorPage />,  
-      },  
+        path: "error",
+        element: <ErrorPage />,
+      },
       {
         path: "community",
         element: (
@@ -97,6 +98,14 @@ const root = createBrowserRouter([
       {
         path: "sellerlist",
         children: sellerRouter(),
+      },
+      {
+        path: "mypage",
+        element: (
+          <Suspense fallback={Loading}>
+            <MyPage />
+          </Suspense>
+        ),
       },
     ],
   },

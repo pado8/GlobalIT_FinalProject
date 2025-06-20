@@ -59,6 +59,7 @@ function LoginPage() {
       // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
       // 로그인 후 업체목록페이지에서 새로고침해야 권한이 적용(업체 등록 버튼이 보임)되길래 추가함
       setUser(userData);
+      console.log("userData:", userData);
 
       if (remember) {
         localStorage.setItem("rememberedEmail", userid);

@@ -10,6 +10,7 @@ const Nav = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [latestRequestCount, setLatestRequestCount] = useState(null);
   const { user, setUser } = useAuth();
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
@@ -73,16 +74,30 @@ const Nav = () => {
           ) : (
             <div className="user_dropdown">
               <button onClick={toggleDropdown} className="user_button">
-                {user.nickname} 님 ▼
+                {user.nickname} 님{" "}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#555">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
               </button>
-              {dropdownOpen && (
-                <div className="dropdown_menu">
-                  <Link to="/mypage">마이페이지</Link>
-                  <a href="#" onClick={handleLogout}>
+              <div className={`user_dropdown_box ${dropdownOpen ? "open" : ""}`}>
+                <img className="profile_img_dropdown" src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
+                <p>
+                  안녕하세요! <br />
+                  <strong>{user.nickname}</strong> 님
+                </p>
+                <p className="recentsuggest">
+                  {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
+                  최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
+                </p>
+                <div className="sidebar_buttons">
+                  <Link to="/mypage" className="dropdown_btn">
+                    마이페이지
+                  </Link>
+                  <button onClick={handleLogout} className="dropdown_btn">
                     로그아웃
-                  </a>
+                  </button>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
@@ -125,9 +140,18 @@ const Nav = () => {
                 안녕하세요! <br />
                 <strong>{user.nickname}</strong> 님
               </p>
-              <Link to="/mypage" onClick={handleLinkClick} className="sidebar_btn_black">
-                마이페이지
-              </Link>
+              <p className="recentsuggest">
+                {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
+                최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
+              </p>
+              <div className="sidebar_buttons">
+                <Link to="/mypage" onClick={handleLinkClick} className="sidebar_btn2">
+                  마이페이지
+                </Link>
+                <button onClick={handleLogout} className="sidebar_btn2">
+                  로그아웃
+                </button>
+              </div>
             </>
           )}
         </div>
