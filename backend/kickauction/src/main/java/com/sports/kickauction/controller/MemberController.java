@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.service.MemberService;
 
@@ -40,7 +41,7 @@ public class MemberController {
             return ResponseEntity.ok(Map.of("exists", exists));
         }
    
-    // 매핑: 회원가입
+    // 매핑: 회원가입(일반)
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody Member member) {
         if (memberService.existsByUserId(member.getUserId())) {
@@ -60,7 +61,36 @@ public class MemberController {
         return ResponseEntity.ok("환영합니다! 회원가입이 완료되었습니다.");
     }
 
-    @PostMapping("/upload-profile")
+    //매핑: 회원가입(업체)
+    @PostMapping("/signupseller")
+    public ResponseEntity<?> registerSeller(@RequestBody MemberSellerDTO dto) {
+    if (memberService.existsByUserId(dto.getUserId())) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 이메일입니다.");
+    }
+    if (memberService.existsByUserName(dto.getUserName())) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
+    }
+    if (memberService.existsByPhone(dto.getPhone())) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
+    }
+
+   Member member = Member.builder()
+        .userId(dto.getUserId())
+        .userName(dto.getUserName())
+        .userPw(dto.getUserPw())
+        .phone(dto.getPhone())
+        .profileimg("baseprofile.png")
+        .role("SELLER")
+        .build();
+
+
+    memberService.registerSeller(member, dto.getSname(), dto.getSlocation());
+
+    return ResponseEntity.ok("환영합니다! 회원가입이 완료되었습니다.");
+}
+
+    // 매핑: 프로필사진 업로드
+    @PostMapping("/upload_profile")
     public ResponseEntity<?> uploadProfileImage(
         @RequestParam("file") MultipartFile file,
         @RequestParam("mno") Long mno) {

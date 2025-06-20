@@ -128,7 +128,7 @@ const Nav = () => {
                 <Link to="/login" onClick={handleLinkClick} className="sidebar_btn">
                   로그인
                 </Link>
-                <Link to="/signup" onClick={handleLinkClick} className="sidebar_btn">
+                <Link to="/presignup" onClick={handleLinkClick} className="sidebar_btn">
                   회원가입
                 </Link>
               </div>
