@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/Authcontext";
 import "./Nav.css";
 import logo from "../assets/img/kickauction_logo.png";
 import logo2 from "../assets/img/kickauction_logo.png";
@@ -7,7 +8,7 @@ console.log("로고 경로:", logo2);
 
 const Nav = () => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
