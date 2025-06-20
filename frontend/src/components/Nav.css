@@ -10,6 +10,7 @@
   padding: 1.2rem 2.5rem;
   background-color: white;
   border-bottom: 1px solid #eee;
+  z-index: 1000; /* nav 자꾸 겹쳐서 인덱스 올림  */
 }
 
 .nav_logo {

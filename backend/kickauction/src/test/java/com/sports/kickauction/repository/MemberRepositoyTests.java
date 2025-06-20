@@ -145,5 +145,34 @@ public void insertDemoSellerForImageUpload() {
 
     // SellerIntro는 생략 — 프론트에서 props로 수동 넘겨서 사용할 예정
 }
+
+ @Test
+    @Transactional
+    @Rollback(false)
+    public void insertUniqueTestSellers() {
+
+        for (int i = 1004; i <= 1004; i++) {
+            String uid = "unique_testuser_" + i;
+
+            Member member = Member.builder()
+                    .userId(uid)
+                    .userPw("pw" + i)
+                    .userName("테스트계정" + i)
+                    .phone("0108888" + i)
+                    .role("Seller")
+                    .social(0)
+                    .build();
+            memberRepository.save(member);
+
+            Seller seller = Seller.builder()
+                    .member(member)
+                    .sname("테스트업체 " + i)
+                    .slocation("서울시 마포구 테스트로 " + i + "길")
+                    .build();
+            sellerRepository.save(seller);
+
+    }
 }
+}
+
 

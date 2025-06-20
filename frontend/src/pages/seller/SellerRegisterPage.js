@@ -1,35 +1,39 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext"
-import { postSellerRegister,getSellerRegistered } from "../../api/SellerApi";
+import { postSellerRegister,getSellerRegistered,getSellerRegisterInfo} from "../../api/SellerApi";
 import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
-
 import "../../css/SellerRegisterPage.css";
 
 
 
-const SellerRegisterPage = ({ mno }) => {
+const SellerRegisterPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const fileInputRef = useRef();
+  const introInputRef = useRef();
+  const { user,loading } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false); 
+  const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [enlargedImage, setEnlargedImage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     simage: [],
     introContent: "",
     info: ""
   });
-  const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
-  const [slideIndex, setSlideIndex] = useState(0);
-  const [enlargedImage, setEnlargedImage] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  const fileInputRef = useRef();
-  const introInputRef = useRef();
+  const [basicInfo, setBasicInfo] = useState({
+  sname: "",
+  phone: "",
+  slocation: ""
+  });
 
  useEffect(() => {
+  if (loading) return; //로딩 중이면 아무 것도 하지 않음 
   const init = async () => {
     // user가 null이면 로그인 페이지로 이동
     if (user === null) {
-      // navigate("/login", { replace: true });
+       navigate("/login", { replace: true });
       return;
     }
 
@@ -40,10 +44,17 @@ const SellerRegisterPage = ({ mno }) => {
     }
 
     // 이미 등록된 업체면 에러 페이지로 이동
-    const registered = await getSellerRegistered(user.mno);
+    const registered = await getSellerRegistered();
     if (registered) {
       navigate("/errorpage");
       return;
+    }
+
+    try {
+      const info = await getSellerRegisterInfo();
+      setBasicInfo(info);
+    } catch (e) {
+      console.error("기본 정보 로딩 실패", e);
     }
 
     // 모든 조건 통과 시 등록 가능 상태로 설정
@@ -51,13 +62,20 @@ const SellerRegisterPage = ({ mno }) => {
   };
 
   init();
-}, [user, navigate]);
+}, [user, loading, navigate]);
 
-  //  if (!user || isRegistered) return null;
+  if (loading || !user || !isRegistered) return null;
 
   const handleMainChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // MIME 타입으로 이미지인지 확인
+    if (!file.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있습니다.");
+      fileInputRef.current.value = null;
+      return;
+    }
 
     if (file.size > 10 * 1024 * 1024) {
     alert("이미지 용량이 맞지 않습니다.");
@@ -75,8 +93,16 @@ const SellerRegisterPage = ({ mno }) => {
 
   const handleIntroChange = async (e) => {
     const files = Array.from(e.target.files);
+    
+    // 이미지 아닌 파일 있는지 확인
+    const invalid = files.find(file => !file.type.startsWith("image/"));
+    if (invalid) {
+      alert("모든 파일은 이미지여야 합니다.");
+      introInputRef.current.value = null;
+      return;
+    }
+    
     const oversized = files.find(file => file.size > 10 * 1024 * 1024);
-
     if (oversized) {
       alert("이미지 용량이 맞지 않습니다.");
       return;
@@ -101,10 +127,15 @@ const SellerRegisterPage = ({ mno }) => {
   const handleSubmit = async () => {
   if (submitting) return; // 중복 제출 방지
 
-  const { simage, introContent, info } = formData;
+  let { simage, introContent, info } = formData;
 
-  if (!simage.length || !info || !introContent) {
-    alert("모든 정보를 입력해주세요.");
+  // 대표 이미지 없으면 기본값 설정
+  if (!simage.length || !simage[0]) {
+    simage = ["default/default.png", ...simage.slice(1)];
+  }
+
+  if (!info || !introContent) {
+    alert("업체 정보와 소개글을 작성해주세요.");
     return;
   }
 
@@ -128,7 +159,7 @@ const SellerRegisterPage = ({ mno }) => {
 
   setSubmitting(true); // 등록 시작
   try {
-    await postSellerRegister(mno, payload);
+    await postSellerRegister(payload);
     alert("등록 완료");
     navigate("/sellerlist");
   } catch (err) {
@@ -171,23 +202,29 @@ const SellerRegisterPage = ({ mno }) => {
 
   return (
     <div className="container">
-      <div className="main-simage" onClick={() => fileInputRef.current.click()}>
-        {previewUrls.main ? (
-          <img
-            src={previewUrls.main}
-            alt="대표 이미지"
-            onClick={e => {
-              e.stopPropagation();
-              setEnlargedImage(previewUrls.main);
-            }}
-          />
-        ) : (
-          <div className="clickable-content">
-            <div className="img-placeholder">🖼️</div>
-            <div className="click-text">대표 이미지를 설정해주세요!</div>
-          </div>
-        )}
-      </div>
+      <div className="main-simage" onClick={() => {
+  // 기본 이미지일 때는 파일 선택만 실행
+  if (!previewUrls.main) {
+    fileInputRef.current.click();
+  }
+}}>
+  <img
+    src={previewUrls.main || getImageUrl("default/default.png")}
+    alt="대표 이미지"
+    onClick={(e) => {
+      e.stopPropagation();
+      // 대표 이미지가 있을 때만 확대
+      if (previewUrls.main) {
+        setEnlargedImage(previewUrls.main);
+      } else {
+        fileInputRef.current.click(); // 기본 이미지일 땐 클릭 시 파일 선택
+      }
+    }}
+  />
+</div>
+
+
+
       <input type="file" hidden ref={fileInputRef} onChange={handleMainChange} accept="image/*" />
 
      <div className="button-group">
@@ -198,6 +235,13 @@ const SellerRegisterPage = ({ mno }) => {
           <button className="button-red" onClick={handleMainCancel}>취소</button>
         )}
       </div>
+
+        <div className="basic-info-text">
+          <p><strong>업체이름:</strong> {basicInfo.sname}</p>
+          <p><strong>연락처:</strong> {basicInfo.phone}</p>
+          <p><strong>업체주소:</strong> {basicInfo.slocation}</p>
+        </div>
+
 
 
  {previewUrls.intros.length > 0 && (

@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/Authcontext";
 import "./Nav.css";
 import logo from "../assets/img/kickauction_logo.png";
 
 const Nav = () => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user } = useAuth();
 
   // 주석: 현재 로그인 중인 유저의 닉네임을 받아와 GNB {user}에 표시
-  useEffect(() => {
-    fetch("http://localhost:8080/api/auth/me", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => {
-        console.log("서버 응답:", data);
-        setUser(data.nickname);
-      })
-      .catch(() => setUser(null));
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://localhost:8080/api/auth/me", {
+  //     method: "GET",
+  //     credentials: "include",
+  //   })
+  //     .then((res) => {
+  //       if (!res.ok) throw new Error();
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       console.log("서버 응답:", data);
+  //       setUser(data.nickname);
+  //     })
+  //     .catch(() => setUser(null));
+  // }, []);
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
@@ -37,7 +39,12 @@ const Nav = () => {
       });
 
       // 주석:: 사용자 정보 초기화
-      setUser(null);
+      // logout 요청을 보낸 후 페이지를 아래처럼 전체 새로고침 (window.location.href = "/") 하기 때문에:
+      // 브라우저가 리로드되고,
+      // AuthProvider의 useEffect가 다시 실행되며,
+      // checkAuth() 호출 → 서버에서 로그인 안 된 상태라 null 반환
+      // 그래서 setUser(null) 자동 실행됨 
+      //setUser(null);
 
       //주석:: 로그아웃 후 이동위치
       window.location.href = "/";
@@ -81,7 +88,7 @@ const Nav = () => {
         ) : (
           <div className="user_dropdown">
             <button onClick={toggleDropdown} className="user_button">
-              {user} 님 ▼
+              {user.nickname} 님 ▼
             </button>
             {dropdownOpen && (
               <div className="dropdown_menu">
