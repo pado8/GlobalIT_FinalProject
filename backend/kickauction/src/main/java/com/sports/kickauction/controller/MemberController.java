@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -123,6 +124,43 @@ public class MemberController {
     } catch (IOException e) {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 실패: " + e.getMessage());
+    }
+}
+
+// 회원정보 업데이트
+@PutMapping("/update")
+public ResponseEntity<?> updateMember(@RequestBody Member member) {
+    try {
+        // 회원 존재 여부 확인
+        Member existing = memberService.findById(member.getMno());
+        if (existing == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원이 존재하지 않습니다.");
+        }
+
+        // 닉네임 중복체크
+        if (!existing.getUserName().equals(member.getUserName()) &&
+            memberService.existsByUserName(member.getUserName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
+        }
+
+        // 전화번호 중복체크
+        if (!existing.getPhone().equals(member.getPhone()) &&
+            memberService.existsByPhone(member.getPhone())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
+        }
+
+        // 수정 적용
+        existing.setUserName(member.getUserName());
+        existing.setPhone(member.getPhone());
+        existing.setUserPw(member.getUserPw());
+
+        memberService.updateMember(existing);
+
+        return ResponseEntity.ok("회원 정보가 변경되었어요.");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
     }
 }
     

@@ -65,7 +65,8 @@ public class AuthController {
     "role",member.getRole(), 
     "mno", member.getMno(),
     "profileimg", member.getProfileimg(),
-    "user_id", member.getUserId()
+    "user_id", member.getUserId(),
+    "phone", member.getPhone()
     ));
 }
 }

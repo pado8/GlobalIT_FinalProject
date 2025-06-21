@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { getSellerRegisterInfo, getSellerRegistered } from "../../api/SellerApi";
 import "../mypage/MyPage.css";
@@ -48,7 +49,9 @@ const MyPage = () => {
           <strong>{user.nickname}</strong> 님<br />
           <span className="user_email">({user.user_id})</span>
         </p>
-        <button className="blue_btn">회원정보 수정</button>
+        <Link to="/updateinfo">
+          <button className="blue_btn">회원정보 수정</button>
+        </Link>
       </section>
 
       {/* 견적 정보 */}

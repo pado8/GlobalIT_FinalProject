@@ -4,6 +4,8 @@ import com.sports.kickauction.entity.Member;
 
 public interface MemberService {
 
+    Member findById(Long mno);
+
     // 주석: 중복검사용 
     boolean existsByUserId(String userId);
     boolean existsByUserName(String userName);
@@ -16,4 +18,7 @@ public interface MemberService {
 
     // 프로필사진 이미지 업로드
     boolean updateProfileImg(Long mno, String newFileName);
+
+    // 회원정보 업데이트
+    void updateMember(Member member);
 }
