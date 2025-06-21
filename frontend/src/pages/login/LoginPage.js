@@ -53,11 +53,9 @@ function LoginPage() {
         throw new Error("로그인 실패");
       }
 
-      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
+      // 주석: 로그인 성공 후 내 정보 요청
       const userData = await checkAuth();
 
-      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
-      // 로그인 후 업체목록페이지에서 새로고침해야 권한이 적용(업체 등록 버튼이 보임)되길래 추가함
       setUser(userData);
       console.log("userData:", userData);
 
@@ -127,7 +125,7 @@ function LoginPage() {
 
         {/* 회원정보 찾기 / 회원가입 */}
         <div className="login_help">
-          <Link to="/findid">아이디/비밀번호 찾기</Link>
+          <Link to="/findinfo">아이디/비밀번호 찾기</Link>
           <span>|</span>
           <Link to="/presignup">킥옥션 회원가입</Link>
         </div>
