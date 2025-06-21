@@ -42,7 +42,7 @@ const MyPage = () => {
 
         {/* 프사 */}
         <div className="profile_image_wrapper">
-          <img src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 이미지" className="profile_image" />
+          <img key={user.profileimg} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}?t=${new Date().getTime()}`} alt="프로필 이미지" className="profile_image" />
         </div>
 
         <p className="user_name">

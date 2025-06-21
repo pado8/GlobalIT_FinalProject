@@ -8,6 +8,9 @@ function Updateinfo() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
+  const [preview, setPreview] = useState("/upload/baseprofile.png");
+  const fileInputRef = useRef();
+  const [file, setFile] = useState(null);
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
@@ -38,6 +41,29 @@ function Updateinfo() {
       setPhone(user.phone || "");
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user && user.profileimg) {
+      setPreview(`/images/${user.profileimg}`);
+    } else {
+      setPreview("/images/baseprofile.png");
+    }
+  }, [user]);
+
+  // 사진 변경
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+    }
+  };
+
+  // 기존 사진 삭제
+  const handleDeletePhoto = () => {
+    setFile(null);
+    setPreview("/images/baseprofile.png");
+  };
 
   // 주석: 닉네임 중복확인
   const handleNicknameCheck = async () => {
@@ -208,21 +234,30 @@ function Updateinfo() {
     if (password && !validatePassword(password)) return alert("비밀번호 형식이 올바르지 않습니다.");
     if (password && password !== confirmPw) return alert("비밀번호가 일치하지 않습니다.");
 
+    const formData = new FormData();
+    formData.append("mno", user.mno);
+    formData.append("userName", nickname);
+    formData.append("userPw", password);
+    formData.append("phone", phone);
+
+    if (file) {
+      formData.append("profileimg", file);
+    } else if (user.profileimg && user.profileimg !== "baseprofile.png") {
+      // 기존 사진 삭제
+      formData.append("remove", "true");
+    }
+
     try {
-      await axios.put(
-        "http://localhost:8080/api/members/update",
-        {
-          mno: user.mno,
-          userName: nickname,
-          userPw: password,
-          phone: phone,
-        },
-        { withCredentials: true }
-      );
+      const res = await axios.put("http://localhost:8080/api/members/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+
+      const newProfileImg = res.data.filename || user.profileimg;
 
       alert("회원 정보가 변경되었어요.");
-      setUser({ ...user, nickname, phone });
-      navigate("/mypage");
+      setUser({ ...user, nickname, phone, profileimg: newProfileImg });
+      window.location.href = "/mypage";
     } catch (err) {
       alert("알 수 없는 오류가 발생했습니다..");
     }
@@ -233,6 +268,28 @@ function Updateinfo() {
       <div className="signup_smallcontainer">
         <h2 className="signup_title">회원정보 수정</h2>
         <form className="signup_form" onSubmit={handleSubmit}>
+          {/* 프로필사진 첨부 */}
+          <div className="signup_input_container" style={{ textAlign: "center" }}>
+            <img
+              src={preview}
+              alt="프로필 미리보기"
+              width="150"
+              style={{ borderRadius: "8px", border: "1px solid #ccc" }}
+              onError={(e) => {
+                e.target.src = "/images/baseprofile.png";
+              }}
+            />
+            <div>
+              <button type="button" onClick={() => fileInputRef.current.click()} style={{ marginRight: "0.5rem" }}>
+                사진 변경
+              </button>
+              <button type="button" onClick={handleDeletePhoto}>
+                사진 삭제
+              </button>
+            </div>
+            <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} style={{ display: "none" }} />
+          </div>
+
           {/* 이메일 */}
           <div className="signup_input_container">
             <input type="email" className="input" value={email} readOnly />

@@ -20,6 +20,7 @@ import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.service.MemberService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -102,7 +103,7 @@ public class MemberController {
 
     try {
         // 파일폴더
-        String uploadDir = "C:/uploads/";
+        String uploadDir = "C:/upload/";
 
         // 파일명:
         String originalName = file.getOriginalFilename();
@@ -127,41 +128,73 @@ public class MemberController {
     }
 }
 
-// 회원정보 업데이트
+// 매핑: 회원정보 업데이트
 @PutMapping("/update")
-public ResponseEntity<?> updateMember(@RequestBody Member member) {
+public ResponseEntity<?> updateMember(
+    @RequestParam Long mno,
+    @RequestParam String userName,
+    @RequestParam String userPw,
+    @RequestParam String phone,
+    @RequestParam(required = false) MultipartFile profileimg,
+    @RequestParam(required = false) String remove
+) {
     try {
-        // 회원 존재 여부 확인
-        Member existing = memberService.findById(member.getMno());
+        Member existing = memberService.findById(mno);
         if (existing == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원이 존재하지 않습니다.");
         }
-
-        // 닉네임 중복체크
-        if (!existing.getUserName().equals(member.getUserName()) &&
-            memberService.existsByUserName(member.getUserName())) {
+        if (!existing.getUserName().equals(userName) && memberService.existsByUserName(userName)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
         }
-
-        // 전화번호 중복체크
-        if (!existing.getPhone().equals(member.getPhone()) &&
-            memberService.existsByPhone(member.getPhone())) {
+        if (!existing.getPhone().equals(phone) && memberService.existsByPhone(phone)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
         }
 
         // 수정 적용
-        existing.setUserName(member.getUserName());
-        existing.setPhone(member.getPhone());
-        existing.setUserPw(member.getUserPw());
+        existing.setUserName(userName);
+        existing.setPhone(phone);
+        existing.setUserPw(userPw); 
+
+        // 파일 업로드 경로
+            String uploadDir = "C:/upload/";
+            String currentImg = existing.getProfileimg();
+
+        // 1) 프로필 이미지 삭제 요청 처리
+            if ("true".equals(remove)) {
+                if (currentImg != null && !currentImg.equals("baseprofile.png")) {
+                    File oldFile = new File(uploadDir + currentImg);
+                    if (oldFile.exists()) oldFile.delete();
+                }
+                existing.setProfileimg("baseprofile.png");
+            }
+
+            // 2) 새 프로필 이미지 업로드 처리
+            if (profileimg != null && !profileimg.isEmpty()) {
+                // 기존 이미지 삭제
+                if (currentImg != null && !currentImg.equals("baseprofile.png")) {
+                    File oldFile = new File(uploadDir + currentImg);
+                    if (oldFile.exists()) oldFile.delete();
+                }
+
+                String ext = profileimg.getOriginalFilename()
+                        .substring(profileimg.getOriginalFilename().lastIndexOf("."));
+                String newFileName = UUID.randomUUID() + ext;
+                File dest = new File(uploadDir + newFileName);
+                profileimg.transferTo(dest);
+
+                existing.setProfileimg(newFileName);
+            }
 
         memberService.updateMember(existing);
+        return ResponseEntity.ok(Map.of("filename", existing.getProfileimg()));
 
-        return ResponseEntity.ok("회원 정보가 변경되었어요.");
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
-    }
+    } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 처리 중 오류 발생");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
+        }
 }
-    
+
 }
