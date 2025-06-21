@@ -23,7 +23,7 @@ public class AuthController {
 
     private final MemberRepository memberRepository;
 
-    // 주석: 로그인 중인지 확인
+    // 주석: 사용자 로그인 상태 
     @GetMapping("/me")
     public ResponseEntity<?> getLoginUser(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
@@ -59,12 +59,13 @@ public class AuthController {
     Member member = memberRepository.findByUserId(email)
             .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원 없음"));
 
-            // 주석: 닉네임(user_name), mno 정보 반환
+    // 주석: 로그인 후 사용자 정보 추출
     return ResponseEntity.ok(Map.of(
     "nickname", member.getUserName(),
-    "role",member.getRole(), // 권한 확인 필요함
+    "role",member.getRole(), 
     "mno", member.getMno(),
-    "profileimg", member.getProfileimg()
+    "profileimg", member.getProfileimg(),
+    "user_id", member.getUserId()
     ));
 }
 }

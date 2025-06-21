@@ -90,7 +90,7 @@ const Nav = () => {
                   최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
                 </p>
                 <div className="sidebar_buttons">
-                  <Link to="/mypage" className="dropdown_btn">
+                  <Link to="/mypage" className="dropdown_btn" onClick={() => setDropdownOpen(false)}>
                     마이페이지
                   </Link>
                   <button onClick={handleLogout} className="dropdown_btn">
