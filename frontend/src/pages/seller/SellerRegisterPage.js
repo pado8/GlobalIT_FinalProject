@@ -5,14 +5,13 @@ import { postSellerRegister,getSellerRegistered,getSellerRegisterInfo} from "../
 import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
 import "../../css/SellerRegisterPage.css";
 
-
-
 const SellerRegisterPage = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef();
   const introInputRef = useRef();
   const { user,loading } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false); 
+
   const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
   const [slideIndex, setSlideIndex] = useState(0);
   const [enlargedImage, setEnlargedImage] = useState(null);
@@ -20,12 +19,12 @@ const SellerRegisterPage = () => {
   const [formData, setFormData] = useState({
     simage: [],
     introContent: "",
-    info: ""
+    info: "",
   });
   const [basicInfo, setBasicInfo] = useState({
-  sname: "",
-  phone: "",
-  slocation: ""
+    sname: "",
+    phone: "",
+    slocation: "",
   });
 
  useEffect(() => {
@@ -87,13 +86,12 @@ const SellerRegisterPage = () => {
     const path = uploaded[0].path;
     const url = getImageUrl(path);
 
-    setFormData(prev => ({ ...prev, simage: [path, ...prev.simage.slice(1)] }));
-    setPreviewUrls(prev => ({ ...prev, main: url }));
+    setFormData((prev) => ({ ...prev, simage: [path, ...prev.simage.slice(1)] }));
+    setPreviewUrls((prev) => ({ ...prev, main: url }));
   };
 
   const handleIntroChange = async (e) => {
     const files = Array.from(e.target.files);
-    
     // 이미지 아닌 파일 있는지 확인
     const invalid = files.find(file => !file.type.startsWith("image/"));
     if (invalid) {
@@ -108,17 +106,17 @@ const SellerRegisterPage = () => {
       return;
     }
     const uploaded = await uploadImage(files);
-    const paths = uploaded.map(u => u.path);
-    const urls = uploaded.map(u => u.url);
+    const paths = uploaded.map((u) => u.path);
+    const urls = uploaded.map((u) => u.url);
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      simage: [prev.simage[0], ...prev.simage.slice(1), ...paths]
+      simage: [prev.simage[0], ...prev.simage.slice(1), ...paths],
     }));
 
-    setPreviewUrls(prev => ({
+    setPreviewUrls((prev) => ({
       ...prev,
-      intros: [...prev.intros, ...urls]
+      intros: [...prev.intros, ...urls],
     }));
 
     introInputRef.current.value = null;
@@ -169,36 +167,36 @@ const SellerRegisterPage = () => {
     setSubmitting(false); // 등록 종료
   }
 };
-
+  
   const handleMainCancel = () => {
-    setFormData(prev => ({ ...prev, simage: [] }));
-    setPreviewUrls(prev => ({ ...prev, main: null }));
+    setFormData((prev) => ({ ...prev, simage: [] }));
+    setPreviewUrls((prev) => ({ ...prev, main: null }));
     fileInputRef.current.value = null;
   };
 
   const handleIntroCancel = () => {
-    setFormData(prev => ({ ...prev, simage: [prev.simage[0]] }));
-    setPreviewUrls(prev => ({ ...prev, intros: [] }));
+    setFormData((prev) => ({ ...prev, simage: [prev.simage[0]] }));
+    setPreviewUrls((prev) => ({ ...prev, intros: [] }));
     introInputRef.current.value = null;
   };
 
   const handleIntroRemove = (index) => {
-  const updatedUrls = [...previewUrls.intros];
-  const updatedPaths = [...formData.simage.slice(1)]; 
+    const updatedUrls = [...previewUrls.intros];
+    const updatedPaths = [...formData.simage.slice(1)];
 
-  updatedUrls.splice(index, 1);
-  updatedPaths.splice(index, 1);
+    updatedUrls.splice(index, 1);
+    updatedPaths.splice(index, 1);
 
-  setPreviewUrls(prev => ({
-    ...prev,
-    intros: updatedUrls
-  }));
+    setPreviewUrls((prev) => ({
+      ...prev,
+      intros: updatedUrls,
+    }));
 
-  setFormData(prev => ({
-    ...prev,
-    simage: [prev.simage[0], ...updatedPaths]
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      simage: [prev.simage[0], ...updatedPaths],
+    }));
+  };
 
   return (
     <div className="container">
@@ -223,16 +221,18 @@ const SellerRegisterPage = () => {
   />
 </div>
 
-
-
       <input type="file" hidden ref={fileInputRef} onChange={handleMainChange} accept="image/*" />
 
-     <div className="button-group">
+      <div className="button-group">
         {!previewUrls.main && (
-          <button className="button-blue" onClick={() => fileInputRef.current.click()}>대표 이미지 설정</button>
+          <button className="button-blue" onClick={() => fileInputRef.current.click()}>
+            대표 이미지 설정
+          </button>
         )}
         {previewUrls.main && (
-          <button className="button-red" onClick={handleMainCancel}>취소</button>
+          <button className="button-red" onClick={handleMainCancel}>
+            취소
+          </button>
         )}
       </div>
 
@@ -242,82 +242,66 @@ const SellerRegisterPage = () => {
           <p><strong>업체주소:</strong> {basicInfo.slocation}</p>
         </div>
 
-
-
- {previewUrls.intros.length > 0 && (
-  <div className="slider-wrapper">
-    {previewUrls.intros.length > 3 && (
-      <button
-        onClick={() => setSlideIndex(prev => Math.max(prev - 3, 0))}
-        className={`slider-button left ${slideIndex === 0 ? "disabled" : ""}`}
-        disabled={slideIndex === 0}
-      >
-        &lt;
-      </button>
-    )}
-
-    <div className="slider">
-      {previewUrls.intros.slice(slideIndex, slideIndex + 3).map((src, idx) => {
-        const globalIndex = slideIndex + idx;
-        return (
-          <div className="slider-img-wrapper" key={`${src}-${globalIndex}`}>
-            <img
-              src={src}
-              alt={`소개 ${globalIndex}`}
-              onClick={() => setEnlargedImage(src)}
-            />
-            <button
-              className="delete-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleIntroRemove(globalIndex);
-              }}
-            >
-              ×
-            </button>
-          </div>
-        );
-      })}
-    </div>
-
-    {previewUrls.intros.length > 3 && (
-      <button
-        onClick={() => setSlideIndex(prev => prev + 3)}
-        className={`slider-button right ${slideIndex + 3 >= previewUrls.intros.length ? "disabled" : ""}`}
-        disabled={slideIndex + 3 >= previewUrls.intros.length}
-      >
-        &gt;
-      </button>
-    )}
-  </div>
-)}
-
-
-
-    <div className="button-group">
-      <button className="button-blue" onClick={() => introInputRef.current.click()}>
-        {previewUrls.intros.length === 0 ? '소개 이미지 설정' : '소개 이미지 추가'}
-      </button>
       {previewUrls.intros.length > 0 && (
-        <button className="button-red" onClick={handleIntroCancel}>취소</button>
+        <div className="slider-wrapper">
+          {previewUrls.intros.length > 3 && (
+            <button onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))} className={`slider-button left ${slideIndex === 0 ? "disabled" : ""}`} disabled={slideIndex === 0}>
+              &lt;
+            </button>
+          )}
+
+          <div className="slider">
+            {previewUrls.intros.slice(slideIndex, slideIndex + 3).map((src, idx) => {
+              const globalIndex = slideIndex + idx;
+              return (
+                <div className="slider-img-wrapper" key={`${src}-${globalIndex}`}>
+                  <img src={src} alt={`소개 ${globalIndex}`} onClick={() => setEnlargedImage(src)} />
+                  <button
+                    className="delete-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleIntroRemove(globalIndex);
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {previewUrls.intros.length > 3 && (
+            <button
+              onClick={() => setSlideIndex((prev) => prev + 3)}
+              className={`slider-button right ${slideIndex + 3 >= previewUrls.intros.length ? "disabled" : ""}`}
+              disabled={slideIndex + 3 >= previewUrls.intros.length}
+            >
+              &gt;
+            </button>
+          )}
+        </div>
       )}
-    </div> 
+
+      <div className="button-group">
+        <button className="button-blue" onClick={() => introInputRef.current.click()}>
+          {previewUrls.intros.length === 0 ? "소개 이미지 설정" : "소개 이미지 추가"}
+        </button>
+        {previewUrls.intros.length > 0 && (
+          <button className="button-red" onClick={handleIntroCancel}>
+            취소
+          </button>
+        )}
+      </div>
       <input type="file" hidden ref={introInputRef} onChange={handleIntroChange} multiple accept="image/*" />
       <h2 className="info-title">업체 정보</h2>
-      <input
-        name="info"
-        className="input-field"
-        placeholder="업체 정보를 작성해주세요!"
-        value={formData.info}
-        onChange={e => setFormData(prev => ({ ...prev, info: e.target.value }))}
-      />
+      <input name="info" className="input-field" placeholder="업체 정보를 작성해주세요!" value={formData.info} onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} />
       <h2 className="content-title">업체 소개</h2>
       <textarea
         name="introContent"
         className="textarea"
         placeholder="업체소개 글을 작성해주세요!"
         value={formData.introContent}
-        onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
+        onChange={(e) => setFormData((prev) => ({ ...prev, introContent: e.target.value }))}
       />
 
       <button className="register-button" onClick={handleSubmit} disabled={submitting}>
