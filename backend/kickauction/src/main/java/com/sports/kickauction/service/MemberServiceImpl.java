@@ -99,5 +99,17 @@ public class MemberServiceImpl implements MemberService {
     member.setUserPw(encodedPw);
         // 주석:: 저장
     memberRepository.save(member); 
-}
+    }
+
+    // 주석: 전화번호로 이메일 찾기
+    @Override
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone).orElse(null);
+    }
+
+    // 주석: 전화번호+이메일로 비밀번호 재설정
+    @Override
+    public Member findByUserIdAndPhone(String email, String phone) {
+        return memberRepository.findByUserIdAndPhone(email, phone).orElse(null);
+    }
 }   

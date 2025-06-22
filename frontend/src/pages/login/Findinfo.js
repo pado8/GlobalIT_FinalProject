@@ -1,15 +1,18 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../login/Findinfo.css";
 
 function Findinfo() {
+  const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState("findId");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
 
   const [authCode, setAuthCode] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(""); // "showId", "resetPw", "auth"
+  const [modalType, setModalType] = useState("");
   const [timer, setTimer] = useState(180);
   const [timerRef, setTimerRef] = useState(null);
 
@@ -18,7 +21,9 @@ function Findinfo() {
   const [confirmPw, setConfirmPw] = useState("");
   const [pwStatus, setPwStatus] = useState(null);
   const [pw2Error, setPw2Error] = useState("");
+  const [verifyStatus, setVerifyStatus] = useState(null); // sms 인증유무
 
+  // 이메일 or 비번 탭 전환시 상태리셋
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
     setPhone("");
@@ -28,17 +33,24 @@ function Findinfo() {
     setPw2Error("");
   };
 
-  const formatPhone = (value) => {
-    const onlyNumbers = value.replace(/\D/g, "");
-    if (onlyNumbers.length <= 3) return onlyNumbers;
-    else if (onlyNumbers.length <= 7) return onlyNumbers.slice(0, 3) + "-" + onlyNumbers.slice(3);
-    return onlyNumbers.slice(0, 3) + "-" + onlyNumbers.slice(3, 7) + "-" + onlyNumbers.slice(7, 11);
+  //주석: 핸드폰 번호 하이픈 자동 입력
+  const formatPhoneNumber = (value) => {
+    const numbersOnly = value.replace(/\D/g, ""); // 주석: 숫자 외 입력값 자동제거
+
+    if (numbersOnly.length <= 3) {
+      return numbersOnly;
+    } else if (numbersOnly.length <= 7) {
+      return numbersOnly.slice(0, 3) + "-" + numbersOnly.slice(3);
+    } else {
+      return numbersOnly.slice(0, 3) + "-" + numbersOnly.slice(3, 7) + "-" + numbersOnly.slice(7, 11);
+    }
   };
 
+  // 주석: 문자인증
   const handleSendSMS = async () => {
     if (!/^010-\d{4}-\d{4}$/.test(phone)) return alert("올바른 전화번호를 입력하세요.");
     try {
-      await axios.post("/api/sms/send", { phone: phone.replace(/-/g, "") });
+      await axios.post("/api/sms/send", { phone: phone.replace(/-/g, "") }, { withCredentials: true });
       setModalType("auth");
       setIsModalOpen(true);
       setTimer(180);
@@ -60,10 +72,14 @@ function Findinfo() {
 
   const handleVerifySMS = async () => {
     try {
-      await axios.post("/api/sms/verify", {
-        phone: phone.replace(/-/g, ""),
-        code: authCode,
-      });
+      await axios.post(
+        "/api/sms/verify",
+        {
+          phone: phone.replace(/-/g, ""),
+          code: authCode,
+        },
+        { withCredentials: true }
+      );
       clearInterval(timerRef);
       setIsModalOpen(false);
 
@@ -92,13 +108,14 @@ function Findinfo() {
     }
 
     try {
-      await axios.put("/api/members/reset-password", {
+      await axios.put("/api/members/reset_password", {
         email,
         newPw,
         phone: phone.replace(/-/g, ""),
       });
       alert("비밀번호가 변경되었습니다.");
       setIsModalOpen(false);
+      navigate("/login");
     } catch {
       alert("비밀번호 변경 실패");
     }
@@ -114,6 +131,7 @@ function Findinfo() {
         <button className={activeTab === "findPw" ? "active" : ""} onClick={() => handleTabSwitch("findPw")}>
           비밀번호 찾기
         </button>
+        <div className="active_line" style={{ transform: activeTab === "findId" ? "translateX(0%)" : "translateX(100%)" }} />
       </div>
 
       {activeTab === "findId" ? (
@@ -121,7 +139,7 @@ function Findinfo() {
           <div className="input_group">
             <label>전화번호</label>
             <div className="input_row">
-              <input type="tel" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} />
+              <input type="tel" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} />
               <button onClick={handleSendSMS}>인증받기</button>
             </div>
           </div>
@@ -138,7 +156,7 @@ function Findinfo() {
           <div className="input_group">
             <label>전화번호</label>
             <div className="input_row">
-              <input type="tel" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} />
+              <input type="tel" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} />
               <button onClick={handleSendSMS}>인증받기</button>
             </div>
           </div>
