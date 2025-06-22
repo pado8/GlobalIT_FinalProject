@@ -23,8 +23,6 @@ function LoginPage() {
   const [remember, setRemember] = useState(false); //이메일기억
   const { setUser } = useAuth(); // 전역 사용자 상태 업데이트 함수
 
-  const { setUser } = useAuth(); // 전역 사용자 상태 업데이트 함수
-
   // 주석: 이메일 기억하기
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
