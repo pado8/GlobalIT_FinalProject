@@ -76,8 +76,8 @@ const root = createBrowserRouter([
         ),
       },
       {
-        path: "error",
-        element: <ErrorPage />,
+          path: "error",
+          element: <ErrorPage />,  
       },
       {
         path: "community",

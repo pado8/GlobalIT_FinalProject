@@ -7,6 +7,7 @@ import logo2 from "../assets/img/kickauction_logo.png";
 
 const Nav = () => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
+  
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,6 +26,7 @@ const Nav = () => {
         method: "POST",
         credentials: "include",
       });
+
       //주석:: 로그아웃 후 이동위치
       setUser(null);
       navigate(location.pathname);

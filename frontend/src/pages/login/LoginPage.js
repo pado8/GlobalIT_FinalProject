@@ -9,6 +9,8 @@ import pwicon from "../../assets/img/icon_password.svg";
 import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
 
+
+
 function LoginPage() {
   const location = useLocation();
   const redirectPath = location.state?.from || "/";
@@ -19,6 +21,8 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [remember, setRemember] = useState(false); //이메일기억
+  const { setUser } = useAuth(); // 전역 사용자 상태 업데이트 함수
+
   const { setUser } = useAuth(); // 전역 사용자 상태 업데이트 함수
 
   // 주석: 이메일 기억하기
@@ -41,6 +45,7 @@ function LoginPage() {
 
     try {
       const res = await fetch("http://localhost:8080/login", {
+        
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
