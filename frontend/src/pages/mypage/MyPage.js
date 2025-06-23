@@ -1,5 +1,6 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { getSellerRegisterInfo, getSellerRegistered } from "../../api/SellerApi";
 import "../../css/Sharesheet.css";
@@ -9,6 +10,8 @@ const MyPage = () => {
   const { user } = useAuth();
   const [company, setCompany] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("[MyPage] 현재 로그인된 사용자:", user);
@@ -33,9 +36,39 @@ const MyPage = () => {
 
   if (!user) return <p>비정상적인 접근입니다. 로그인 상태를 확인하세요.</p>;
 
+  // 주석: ROLE변경
+  const handleRoleToggle = async () => {
+    const nextRole = user.role === "USER" ? "SELLER" : "USER";
+    try {
+      const response = await axios.patch(`http://localhost:8080/api/members/role`, null, {
+        params: {
+          mno: user.mno,
+          newRole: nextRole,
+        },
+      });
+      alert("회원 타입이 변경되었어요.");
+      navigate(0); // 새로고침
+    } catch (err) {
+      alert("ROLE 변경 실패: " + err.message);
+      console.error(err);
+    }
+  };
+
   return (
     <div className="mypage_container">
-      <h2 className="mypage_title">마이페이지</h2>
+      <div className="mypage_header">
+        <h2 className="mypage_title">마이페이지</h2>
+        {user.role === "USER" && (
+          <button className="role_change_button" onClick={handleRoleToggle}>
+            ↺ ㅤ업체로 전환하기
+          </button>
+        )}
+        {user.role === "SELLER" && (
+          <button className="role_change_button" onClick={handleRoleToggle}>
+            ↺ ㅤ 일반 유저로 전환하기
+          </button>
+        )}
+      </div>
 
       {/* 회원 정보 */}
       <section className="mypage_section">
@@ -47,10 +80,13 @@ const MyPage = () => {
         </div>
         <div className="myinfo_wrapper">
           <p className="user_name">
-            <strong>{user.nickname}</strong> 님<br />
+            <strong>{user.nickname}</strong> 님{user.role === "USER" && <span className="role_badge badge_user">일반 유저</span>}
+            {user.role === "SELLER" && <span className="role_badge badge_seller">업체 유저</span>}
+            {user.role === "ADMIN" && <span className="role_badge badge_admin">운영진</span>}
+            <br />
             <span className="user_email">({user.user_id})</span>
           </p>
-          <Link to="/updateinfo">
+          <Link to={user.social === 0 ? "/updateinfosocial" : "/updateinfo"}>
             <button className="update_button">회원정보 수정</button>
           </Link>
         </div>
@@ -89,7 +125,7 @@ const MyPage = () => {
                   <p className="company_address"> {company.slocation}</p>
                 </div>
               ) : (
-                <p className="company_infos">❔❔ 등록된 업체가 없습니다.</p>
+                <p className="company_no"> 등록된 업체가 없습니다.</p>
               )}
 
               {isRegistered ? (

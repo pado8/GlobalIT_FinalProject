@@ -17,6 +17,7 @@ const SignupSeller = lazy(() => import("../pages/login/SignupPageSeller"));
 const Request = lazy(() => import("../pages/request/OrderMaster"));
 const MyPage = lazy(() => import("../pages/mypage/MyPage"));
 const Updateinfo = lazy(() => import("../pages/mypage/Updateinfo"));
+const UpdateinfoSocial = lazy(() => import("../pages/mypage/UpdateinfoSocial"));
 const Findinfo = lazy(() => import("../pages/login/Findinfo"));
 
 const Loading = <div>Loading...</div>;
@@ -76,8 +77,8 @@ const root = createBrowserRouter([
         ),
       },
       {
-          path: "error",
-          element: <ErrorPage />,  
+        path: "error",
+        element: <ErrorPage />,
       },
       {
         path: "community",
@@ -111,6 +112,14 @@ const root = createBrowserRouter([
       },
       {
         path: "updateinfo",
+        element: (
+          <Suspense fallback={Loading}>
+            <Updateinfo />
+          </Suspense>
+        ),
+      },
+      {
+        path: "updateinfosocial",
         element: (
           <Suspense fallback={Loading}>
             <Updateinfo />

@@ -2,12 +2,15 @@ package com.sports.kickauction.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -132,7 +135,7 @@ public class MemberController {
     public ResponseEntity<?> updateMember(
         @RequestParam Long mno,
         @RequestParam String userName,
-        @RequestParam String userPw,
+        @RequestParam(required = false) String userPw,
         @RequestParam String phone,
         @RequestParam(required = false) MultipartFile profileimg,
         @RequestParam(required = false) String remove
@@ -145,14 +148,16 @@ public class MemberController {
             if (!existing.getUserName().equals(userName) && memberService.existsByUserName(userName)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
             }
-            if (!existing.getPhone().equals(phone) && memberService.existsByPhone(phone)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
+            if (!Objects.equals(existing.getPhone(), phone) && memberService.existsByPhone(phone)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
             }
 
             // 수정 적용
             existing.setUserName(userName);
             existing.setPhone(phone);
-            existing.setUserPw(userPw); 
+            if (userPw != null && !userPw.isBlank()) {
+            existing.setUserPw(userPw);
+            }
 
             // 파일 업로드 경로
                 String uploadDir = "C:/upload/";
@@ -235,5 +240,25 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
 }
+
+    // 매핑: 마이페이지- ROLE변경
+    @PatchMapping("/role")
+    public ResponseEntity<?> changeRole(
+            @RequestParam Long mno,
+            @RequestParam String newRole) {
+
+          Member member = memberService.findById(mno);
+    if (member == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 정보 없음");
+    }
+
+    if (!List.of("USER", "SELLER").contains(newRole)) {
+        return ResponseEntity.badRequest().body("허용되지 않는 역할입니다.");
+    }
+
+
+    memberService.updateRole(mno, newRole);
+    return ResponseEntity.ok("성공");
+    }
 
 }

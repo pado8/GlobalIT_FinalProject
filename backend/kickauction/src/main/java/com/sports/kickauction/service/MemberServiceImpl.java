@@ -112,4 +112,15 @@ public class MemberServiceImpl implements MemberService {
     public Member findByUserIdAndPhone(String email, String phone) {
         return memberRepository.findByUserIdAndPhone(email, phone).orElse(null);
     }
+
+    // 주석: ROLE변경
+    @Override
+    @Transactional
+    public void updateRole(Long mno, String newRole) {
+        Member member = memberRepository.findById(mno).orElse(null);
+        if (member != null) {
+            member.setRole(newRole);
+            memberRepository.save(member); 
+        }
+    }
 }   
