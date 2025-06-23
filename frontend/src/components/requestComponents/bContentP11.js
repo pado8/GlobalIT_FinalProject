@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
+import "./requestDebugStyle.css";
+
 
 
 // 견적 상세보기
-const BContentP11 = ({ quote, companies, timeMap }) => {
+const BContentP11 = ({ quote, companies }) => {
   const navigate = useNavigate();
   const { ono } = useParams(); // URL 파라미터 (견적 ID)
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -74,7 +76,7 @@ const BContentP11 = ({ quote, companies, timeMap }) => {
           <div>시간📆 : {displayDate} {displayTime}</div>
         </div>
         <div className="text-red-500 font-semibold mt-2">
-          마감 임박! {timeMap[ono]} 남았어요! + {urgentStr}
+          마감 임박! {quote.timeLeftStr} 남았어요! + {urgentStr}
         </div>
       </div>
 

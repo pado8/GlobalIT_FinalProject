@@ -1,0 +1,11 @@
+.body{
+  margin-top: 20vh;
+}
+
+/* @media (prefers-reduced-motion: reduce)  */
+@media (max-width: 768px)
+{
+  .body{
+    margin-top: 20vh;
+  }
+}

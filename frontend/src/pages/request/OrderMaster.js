@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 // import { useCallback } from "react";
 
+
 const OrderMaster = () => {
     // const navigate = useNavigate()
     // const handleClickList = useCallback(() => { navigate({ pathname: 'list' }) },[])

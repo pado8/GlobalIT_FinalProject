@@ -4,6 +4,7 @@ import axios from "axios";
 // 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
 import DatePicker from "react-datepicker"; 
 import "react-datepicker/dist/react-datepicker.css";
+import "./requestDebugStyle.css";
 
 const formFields = {
   left: [
@@ -215,12 +216,7 @@ const BContentP09 = () => {
     // 최신 값을 savedRentalEquipment에 반영
     if (name === 'rentalEquipment' && formData.rental === "필요해요") {
         setSavedRentalEquipment(value);
-        console.log("rentalEquipment 직접 변경 감지 & savedRentalEquipment 업데이트:", value);
-    }
-
-    if (name === 'rental') {
-        console.log(`User selected rental: ${value}`);
-        console.log(`debug - ${savedRentalEquipment}`);
+        // console.log("rentalEquipment 직접 변경 감지 & savedRentalEquipment 업데이트:", value);
     }
   };
 

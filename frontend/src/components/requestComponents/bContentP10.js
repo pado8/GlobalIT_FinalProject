@@ -1,8 +1,9 @@
 // 마이페이지(견적목록)
 import React from 'react';
 import { Link } from 'react-router-dom';
+import "./requestDebugStyle.css";
 
-const List = ({ title, quotes, type, timeMap }) => ( 
+const List = ({ title, quotes, type }) => ( 
   <section className="mt-6">
     <h2 className="font-bold text-lg mb-2">{title}</h2> 
     <div>
@@ -35,11 +36,11 @@ const List = ({ title, quotes, type, timeMap }) => (
             <div className="flex-1 mb-2 sm:mb-0">
               <span className="font-semibold text-lg">{quote.ocontent} 견적 (글번호: {quote.ono})</span>
               <div className="text-sm text-gray-600"> {displayRegion} | {displayDate} {displayTime} | {displayPerson} </div>
-              {type === 'active' && timeMap && timeMap[quote.ono] && (
-                <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {timeMap[quote.ono]}</div>
+              {type === 'active' && (
+                <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr}</div>
               )}
-              {/* {type === 'active' && ( <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {timeStr} | {urgentStr} </div> )} */}
-              {type === 'active' && isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {timeMap[quote.ono]} 남았어요!</div> )}
+              {/* {type === 'active' && ( <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr} | {urgentStr} </div> )} */}
+              {type === 'active' && isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {quote.timeLeftStr} 남았어요!</div> )}
             </div>
             <div className="flex-shrink-0">
               {type === 'active' && (
