@@ -90,9 +90,15 @@
 }
 
 /* 주석:: 일반 <->기업 전환 */
-.change_toseller {
+.change_toseller,
+.change_touser {
   text-align: center;
   margin-bottom: 1.5rem;
+}
+
+.change_toseller a:hover,
+.change_touser a:hover {
+  text-decoration: underline;
 }
 
 .change_toseller a {
@@ -103,25 +109,12 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.change_toseller a:hover {
-  text-decoration: underline;
-}
-
-.change_touser {
-  width: 35%;
-  background-color: #007bff;
-  color: white;
+.change_touser a {
+  font-size: 0.9rem;
+  color: #25774e;
+  text-decoration: none;
   font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  margin: 0 auto 2rem;
-}
-
-.change_touser:hover {
-  background-color: #2077d3;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* 주석: 구분선 */
@@ -324,5 +317,31 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
+  }
+
+  /* pre-회원가입 (모바일) */
+  .email_input_pre {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-bottom: 1px solid #ccc;
+    border-radius: 6px;
+    width: 85%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .pre_signup_button {
+    width: 68%;
+    background: linear-gradient(90deg, #4ba9af, #3dbbc4);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 0.9rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    margin: 1rem auto;
   }
 }
