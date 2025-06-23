@@ -155,11 +155,8 @@ public class RequestServiceImpl implements RequestService {
             .build();
     }
 
-    /**
+    /*
      * 견적 요청을 삭제(취소) / 논리적 삭제(finished 상태 변경)
-     *
-     * @param requestDTO 삭제할 견적의 ono를 포함하는 DTO
-     * @return 삭제(취소) 성공 시 true, 실패 시 false
      */
     @Override
     public boolean deleteOrder(RequestDTO requestDTO) {

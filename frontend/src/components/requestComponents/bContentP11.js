@@ -29,15 +29,15 @@ const BContentP11 = ({ quote, companies, timeMap }) => {
 
   const timeLeft = endDateObj - new Date(); //남은 시간 계산 (밀리초)
   const isUrgent = timeLeft < (1000*60*60*12) ? true : false;  // 12시간 이하면 true
-  // let urgentStr = isUrgent===true?"True":"False"; //불리언 확인용
+  let urgentStr = isUrgent===true?"True":"False"; //불리언 확인용
 
   const handleModifyClick = () => {
     navigate(`/request/modify/${ono}`);
   };
   const handleDeleteClick = () => {
-     const response = axios.patch(`/api/orders/delete/${ono}`);
-     console.log(response);
-
+    axios.patch(`/api/orders/delete/${ono}`, { ono })
+    .then(res => console.log(res.data))
+    .catch(err => console.error(err));
     navigate(`/request/list`);
   };
   const handleConfirmClick = async () => {
@@ -74,7 +74,7 @@ const BContentP11 = ({ quote, companies, timeMap }) => {
           <div>시간📆 : {displayDate} {displayTime}</div>
         </div>
         <div className="text-red-500 font-semibold mt-2">
-          마감 임박! {timeMap[ono]} 남았어요!
+          마감 임박! {timeMap[ono]} 남았어요! + {urgentStr}
         </div>
       </div>
 
