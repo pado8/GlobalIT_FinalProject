@@ -15,11 +15,7 @@ function UpdateinfoSocial() {
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState(null);
-  const [pwStatus, setPwStatus] = useState(null);
-  const [pw2Error, setPw2Error] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [timer, setTimer] = useState(180);
@@ -234,21 +230,20 @@ function UpdateinfoSocial() {
         <h2 className="signup_title">회원정보 수정</h2>
         <form className="signup_form" onSubmit={handleSubmit}>
           {/* 프로필사진 첨부 */}
-          <div className="signup_input_container" style={{ textAlign: "center" }}>
+          <div className="img_input_container">
             <img
               src={preview}
               alt="프로필 미리보기"
-              width="150"
-              style={{ borderRadius: "8px", border: "1px solid #ccc" }}
+              width="180"
               onError={(e) => {
                 e.target.src = "/images/baseprofile.png";
               }}
             />
-            <div>
+            <div className="img_buttons">
               <button type="button" onClick={() => fileInputRef.current.click()} style={{ marginRight: "0.5rem" }}>
                 사진 변경
               </button>
-              <button type="button" onClick={handleDeletePhoto}>
+              <button type="button" className="delete_button" onClick={handleDeletePhoto}>
                 사진 삭제
               </button>
             </div>

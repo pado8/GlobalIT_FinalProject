@@ -28,6 +28,11 @@ public interface MemberService {
     // 주석: 전화번호+ 이메일로 비밀번호 재설정
     Member findByUserIdAndPhone(String email, String phone);
 
-    // 주석: ROLE변경
-    void updateRole(Long mno, String newRole);
+    // 주석: ROLE변경(USER->SELLER)
+    void changeToSeller(Long mno, String sname, String slocation);
+
+    // 주석: ROLE변경(SELEER->SUER)
+    void changeToUser(Long mno);
+
+
 }

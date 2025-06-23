@@ -241,24 +241,22 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
     return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
 }
 
-    // 매핑: 마이페이지- ROLE변경
-    @PatchMapping("/role")
-    public ResponseEntity<?> changeRole(
-            @RequestParam Long mno,
-            @RequestParam String newRole) {
+    // 매핑: 마이페이지- ROLE변경(->seller)
+    @PatchMapping("/changetoseller")
+    public ResponseEntity<?> changetoseller(
+           @RequestParam Long mno,
+           @RequestParam String sname,
+           @RequestParam String slocation) {
 
-          Member member = memberService.findById(mno);
-    if (member == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 정보 없음");
+          memberService.changeToSeller(mno, sname, slocation);
+          return ResponseEntity.ok("변경 완료");
     }
 
-    if (!List.of("USER", "SELLER").contains(newRole)) {
-        return ResponseEntity.badRequest().body("허용되지 않는 역할입니다.");
-    }
-
-
-    memberService.updateRole(mno, newRole);
-    return ResponseEntity.ok("성공");
+    // 매핑: 마이페이지- ROLE변경(->user)
+    @PatchMapping("/changetouser")
+    public ResponseEntity<?> changetouser(@RequestParam Long mno) {
+          memberService.changeToUser(mno);
+          return ResponseEntity.ok("변경 완료");
     }
 
 }

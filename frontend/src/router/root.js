@@ -122,7 +122,7 @@ const root = createBrowserRouter([
         path: "updateinfosocial",
         element: (
           <Suspense fallback={Loading}>
-            <Updateinfo />
+            <UpdateinfoSocial />
           </Suspense>
         ),
       },

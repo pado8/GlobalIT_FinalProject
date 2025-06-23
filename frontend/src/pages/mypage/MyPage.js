@@ -38,16 +38,30 @@ const MyPage = () => {
 
   // 주석: ROLE변경
   const handleRoleToggle = async () => {
-    const nextRole = user.role === "USER" ? "SELLER" : "USER";
     try {
-      const response = await axios.patch(`http://localhost:8080/api/members/role`, null, {
-        params: {
-          mno: user.mno,
-          newRole: nextRole,
-        },
-      });
+      if (user.role === "USER") {
+        const sname = prompt("업체명을 입력해주세요");
+        if (!sname) return alert("업체명을 입력해야 합니다.");
+
+        const slocation = prompt("업체 주소를 입력해주세요");
+        if (!slocation) return alert("업체 주소를 입력해야 합니다.");
+
+        await axios.patch(`http://localhost:8080/api/members/changetoseller`, null, {
+          params: {
+            mno: user.mno,
+            sname,
+            slocation,
+          },
+        });
+      } else {
+        await axios.patch(`http://localhost:8080/api/members/changetouser`, null, {
+          params: {
+            mno: user.mno,
+          },
+        });
+      }
       alert("회원 타입이 변경되었어요.");
-      navigate(0); // 새로고침
+      navigate(0);
     } catch (err) {
       alert("ROLE 변경 실패: " + err.message);
       console.error(err);
