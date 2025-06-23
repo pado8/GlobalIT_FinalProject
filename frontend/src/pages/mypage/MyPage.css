@@ -230,6 +230,75 @@ body {
   float: right;
 }
 
+/* seller데이터 입력 모달 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal_container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal_container h3 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.modal_container input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal_buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modal_buttons button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal_buttons button:first-child {
+  background-color: #3ebaf0;
+  color: white;
+}
+
+.modal_buttons button:last-child {
+  background-color: #ccc;
+  color: #333;
+}
+
+.modal_buttons button:hover {
+  opacity: 0.9;
+}
+
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .mypage_container {
@@ -238,10 +307,16 @@ body {
     padding: 1rem 1rem;
   }
 
+  .user_email {
+    max-width: 200px;
+    white-space: normal;
+    display: inline-block;
+    word-break: break-all;
+  }
   .update_button {
     padding: 0.3rem 0.5rem;
     font-family: "NotoSansSB";
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .request_info {

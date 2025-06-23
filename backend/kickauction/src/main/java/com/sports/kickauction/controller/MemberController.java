@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.service.MemberService;
+import com.sports.kickauction.service.SellerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
   
   private final MemberService memberService;
+  private final SellerService sellerService;
 
     // 매핑:이메일 체크
     @GetMapping("/email_check")
@@ -245,10 +247,17 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
     @PatchMapping("/changetoseller")
     public ResponseEntity<?> changetoseller(
            @RequestParam Long mno,
-           @RequestParam String sname,
-           @RequestParam String slocation) {
-
-          memberService.changeToSeller(mno, sname, slocation);
+           @RequestParam(required = false) String sname,
+           @RequestParam(required = false) String slocation) {
+         
+        if (!sellerService.existsSeller(mno)) {
+        if (sname == null || slocation == null) {
+            return ResponseEntity.badRequest().body("sname과 slocation이 필요합니다.");
+        }
+        memberService.changeToSeller(mno, sname, slocation);
+        } else {
+            memberService.updateSeller(mno);
+        }
           return ResponseEntity.ok("변경 완료");
     }
 
@@ -258,5 +267,13 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
           memberService.changeToUser(mno);
           return ResponseEntity.ok("변경 완료");
     }
+
+    // 매핑: seller로 변경된 회원의 seller데이터 조회 
+    @GetMapping("/checkseller")
+    public ResponseEntity<?> checkSellerExists(@RequestParam Long mno) {
+        boolean exists = sellerService.existsSeller(mno);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
 
 }

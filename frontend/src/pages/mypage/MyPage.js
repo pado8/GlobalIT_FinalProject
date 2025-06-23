@@ -10,6 +10,9 @@ const MyPage = () => {
   const { user } = useAuth();
   const [company, setCompany] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [showinputModal, setShowinputModal] = useState(false);
+  const [newSname, setNewSname] = useState("");
+  const [newSlocation, setNewSlocation] = useState("");
 
   const navigate = useNavigate();
 
@@ -38,33 +41,60 @@ const MyPage = () => {
 
   // 주석: ROLE변경
   const handleRoleToggle = async () => {
-    try {
-      if (user.role === "USER") {
-        const sname = prompt("업체명을 입력해주세요");
-        if (!sname) return alert("업체명을 입력해야 합니다.");
-
-        const slocation = prompt("업체 주소를 입력해주세요");
-        if (!slocation) return alert("업체 주소를 입력해야 합니다.");
-
-        await axios.patch(`http://localhost:8080/api/members/changetoseller`, null, {
-          params: {
-            mno: user.mno,
-            sname,
-            slocation,
-          },
+    if (user.role === "USER") {
+      // user에서 seller로
+      try {
+        const res = await axios.get(`http://localhost:8080/api/members/checkseller`, {
+          params: { mno: user.mno },
         });
-      } else {
-        await axios.patch(`http://localhost:8080/api/members/changetouser`, null, {
-          params: {
-            mno: user.mno,
-          },
-        });
+
+        if (res.data.exists) {
+          // 기존 seller데이터 존재
+          await axios.patch("http://localhost:8080/api/members/changetoseller", null, {
+            params: {
+              mno: user.mno,
+            },
+          });
+          alert("판매 업체로 변경되셨습니다.");
+          navigate(0);
+        } else {
+          // seller데이터 없음
+          setShowinputModal(true);
+        }
+      } catch (err) {
+        alert("변경 실패");
       }
-      alert("회원 타입이 변경되었어요.");
+    } else {
+      // seller에서 user로
+      await axios.patch("http://localhost:8080/api/members/changetouser", null, {
+        params: {
+          mno: user.mno,
+        },
+      });
+      alert("일반 유저로 변경되셨습니다.");
+      navigate(0);
+    }
+  };
+
+  // modal에서 업체 데이터 제출
+  const handleSubmitSellerInfo = async () => {
+    if (!newSname || !newSlocation) {
+      return alert("항목을 비울 수 없습니다.");
+    }
+
+    try {
+      await axios.patch("http://localhost:8080/api/members/changetoseller", null, {
+        params: {
+          mno: user.mno,
+          sname: newSname,
+          slocation: newSlocation,
+        },
+      });
+      alert("판매 업체로 변경되셨습니다.");
+      setShowinputModal(false);
       navigate(0);
     } catch (err) {
-      alert("ROLE 변경 실패: " + err.message);
-      console.error(err);
+      alert("전환 실패: " + err.message);
     }
   };
 
@@ -83,6 +113,21 @@ const MyPage = () => {
           </button>
         )}
       </div>
+
+      {/* ROLE 최초 변경시 SELLER필요데이터 입력MODAL */}
+      {showinputModal && (
+        <div className="modal_overlay">
+          <div className="modal_container">
+            <h3>업체 정보 입력</h3>
+            <input type="text" placeholder="업체명" value={newSname} onChange={(e) => setNewSname(e.target.value)} />
+            <input type="text" placeholder="업체 주소" value={newSlocation} onChange={(e) => setNewSlocation(e.target.value)} />
+            <div className="modal_buttons">
+              <button onClick={handleSubmitSellerInfo}>등록</button>
+              <button onClick={() => setShowinputModal(false)}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 회원 정보 */}
       <section className="mypage_section">
