@@ -18,7 +18,7 @@ import lombok.ToString;
 
 public class Member {
 
-    // 주석: 회원고유번호, 이메일, 비밀번호, 소셜여부(0=소셜, 1=일반가입), 유저분류(USER,SELLER,ADMIN), 닉네임, 전화번호
+    // 주석: 회원고유번호, 이메일, 비밀번호, 소셜여부(0=소셜, 1=일반가입), 유저분류(USER,SELLER,ADMIN), 닉네임, 전화번호, 프로필사진
    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mno;
@@ -34,11 +34,14 @@ public class Member {
 
     @Column(nullable = false)
     @Builder.Default
-    private String role = "USER"; 
+    private String role = "USER";
 
     @Column(unique = true)
     private String userName;
 
-    @Column(length = 11, unique = true)
+    @Column(length = 13, unique = true)
     private String phone;
+
+    @Column(name = "profileimg")
+    private String profileimg;
 }

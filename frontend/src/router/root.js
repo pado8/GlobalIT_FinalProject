@@ -5,14 +5,19 @@ import Layout from "../components/Layout";
 import communityRouter from "../router/communityRouter";
 import sellerRouter from "../router/sellerRouter";
 import requestRouter from "../router/requestRouter";
+import ErrorPage from "../pages/ErrorPage";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
 const Login = lazy(() => import("../pages/login/LoginPage"));
 const PreSignup = lazy(() => import("../pages/login/PreSignupPage"));
+const PreSignupSeller = lazy(() => import("../pages/login/PreSignupPageSeller"));
 const Signup = lazy(() => import("../pages/login/SignupPage"));
-const Signups = lazy(() => import("../pages/login/SignupPageSeller"));
+const SignupSeller = lazy(() => import("../pages/login/SignupPageSeller"));
 const Request = lazy(() => import("../pages/request/OrderMaster"));
+const MyPage = lazy(() => import("../pages/mypage/MyPage"));
+const Updateinfo = lazy(() => import("../pages/mypage/Updateinfo"));
+const Findinfo = lazy(() => import("../pages/login/Findinfo"));
 
 const Loading = <div>Loading...</div>;
 const root = createBrowserRouter([
@@ -42,10 +47,18 @@ const root = createBrowserRouter([
     ),
   },
   {
-    path: "signups",
+    path: "presignupseller",
     element: (
       <Suspense fallback={Loading}>
-        <Signups />
+        <PreSignupSeller />
+      </Suspense>
+    ),
+  },
+  {
+    path: "signupseller",
+    element: (
+      <Suspense fallback={Loading}>
+        <SignupSeller />
       </Suspense>
     ),
   },
@@ -61,6 +74,10 @@ const root = createBrowserRouter([
             <Main />
           </Suspense>
         ),
+      },
+      {
+          path: "error",
+          element: <ErrorPage />,  
       },
       {
         path: "community",
@@ -83,6 +100,30 @@ const root = createBrowserRouter([
       {
         path: "sellerlist",
         children: sellerRouter(),
+      },
+      {
+        path: "mypage",
+        element: (
+          <Suspense fallback={Loading}>
+            <MyPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "updateinfo",
+        element: (
+          <Suspense fallback={Loading}>
+            <Updateinfo />
+          </Suspense>
+        ),
+      },
+      {
+        path: "findinfo",
+        element: (
+          <Suspense fallback={Loading}>
+            <Findinfo />
+          </Suspense>
+        ),
       },
     ],
   },

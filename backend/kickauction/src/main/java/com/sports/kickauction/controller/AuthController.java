@@ -23,8 +23,9 @@ public class AuthController {
 
     private final MemberRepository memberRepository;
 
+    // 주석: 사용자 로그인 상태 
     @GetMapping("/me")
-public ResponseEntity<?> getLoginUser(Authentication authentication) {
+    public ResponseEntity<?> getLoginUser(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인되지 않음");
     }
@@ -58,8 +59,21 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
     Member member = memberRepository.findByUserId(email)
             .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원 없음"));
 
-    return ResponseEntity.ok(Map.of(
-    "nickname", member.getUserName(),
-    "mno", member.getMno()));
+    // 주석: 로그인 후 사용자 정보 파싱
+    Map<String, Object> response = new java.util.HashMap<>();
+    response.put("nickname", member.getUserName());
+    response.put("role", member.getRole());
+    response.put("mno", member.getMno());
+    response.put("user_id", member.getUserId());
+
+    // 주석: 소셜 사용자-조건부 파싱
+    if (member.getProfileimg() != null) {
+        response.put("profileimg", member.getProfileimg());
+    }
+    if (member.getPhone() != null) {
+        response.put("phone", member.getPhone());
+    }
+
+    return ResponseEntity.ok(response);
 }
 }

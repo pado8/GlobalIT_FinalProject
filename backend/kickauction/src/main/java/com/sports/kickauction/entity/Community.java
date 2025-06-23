@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 @Table(name = "POST")
 @Getter
@@ -20,8 +22,17 @@ public class Community {
     private Long pno;
 
     /** 회원번호 (mno) */
+    
+    // @ManyToOne
+    // @JoinColumn(name = "mno")
+    // private Member member;
+
     @Column(name = "mno", nullable = false)
     private Long mno;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mno", insertable = false, updatable = false)
+    private Member member;
 
     /** 제목 (ptitle) */
     @Column(name = "ptitle", nullable = false, length = 255)
@@ -32,9 +43,10 @@ public class Community {
     private String pcontent;
 
     /** 작성일 (pregdate) */
-    @Column(name = "pregdate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "pregdate", nullable = false, updatable = false)
     private LocalDateTime pregdate;
-
+    
     /** 조회수 (view) */
     @Column(name = "view", nullable = false)
     private Integer view;
@@ -43,16 +55,20 @@ public class Community {
     @Column(name = "pimage", length = 255)
     private String pimage;
 
+
     // 편의 메서드 (선택)
     public void changePtitle(String ptitle) {
         this.ptitle = ptitle;
     }
+
     public void changePcontent(String pcontent) {
         this.pcontent = pcontent;
     }
+
     public void changeViewCount(Integer view) {
         this.view = view;
     }
+
     public void changePimage(String pimage) {
         this.pimage = pimage;
     }

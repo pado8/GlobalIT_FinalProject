@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../login/SignupPage.css";
-import logo from "../../assets/img/kickauction_logo.png";
+import "../../css/Sharesheet.css";
+import logo from "../../assets/img/logo_v2.png";
 import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
 
@@ -18,11 +19,13 @@ function PreSignupPage() {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!regex.test(value)) {
       setEmailError("올바른 이메일 형식이 아닙니다.");
+      setIsDuplicate(false);
     } else {
       setEmailError("");
+      setIsDuplicate(false);
     }
   };
-  // 주석: 다음 클릭 시 중복체크 & signuppage로 이동
+  // 주석: [다음] 클릭 시 중복체크 & signuppage로 이동
   const preNext = async (e) => {
     e.preventDefault();
 
@@ -60,13 +63,16 @@ function PreSignupPage() {
     <div className="signup_container">
       <div className="signup_smallcontainer">
         {/* 로고 */}
-        <img src={logo} alt="킥옥션 로고" className="signup_logo" />
-        <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
+        <Link to="/">
+          <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+        </Link>
+        <h2 className="signup_title">일반 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <button type="button" className="change_toseller" onClick={() => navigate("/signups")}>
-          ↩ ㅤ업체 가입하기
-        </button>
+        <div className="change_toseller">
+          <Link to="/presignupseller">＃ 장비 대여·판매 업체로 가입하시겠어요?</Link>
+        </div>
+
         <form className="signup_form" onSubmit={preNext}>
           {/* 주석: 이메일 */}
           <div className="signup_input_container">
@@ -84,13 +90,14 @@ function PreSignupPage() {
           </div>
 
           {/* 주석: 에러메시지- 중복데이터 발견 시 로그인버튼 생성ㅇ */}
-          {emailError && <p className="email_error">{emailError}</p>}
+          {emailError && <p className="error">{emailError}</p>}
           {isDuplicate && (
-            <button className="login_link_button" onClick={() => navigate("/login")}>
-              로그인하러 가기
-            </button>
+            <div className="goto_login">
+              <Link to="/login">↩ㅤ로그인하러 가기</Link>
+            </div>
           )}
 
+          {/* 추가데이터 입력 */}
           <button type="submit" className="pre_signup_button">
             계속
           </button>
@@ -99,13 +106,15 @@ function PreSignupPage() {
             <span>또는</span>
           </div>
 
-          <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
-            <img className="socialicon" src={socialk}></img>
-            카카오 계정으로 회원가입
-          </button>
+          {/* 소셜 회원가입 */}
           <button type="button" className="social_signup_g" onClick={handleGoogleSignup}>
             <img className="socialicon" src={socialg}></img>
             구글 계정으로 회원가입
+          </button>
+
+          <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
+            <img className="socialicon" src={socialk}></img>
+            카카오 계정으로 회원가입
           </button>
         </form>
       </div>
