@@ -169,11 +169,42 @@ public class RequestServiceImpl implements RequestService {
             Request existingOrder = existingOrderOptional.get(); 
 
             // 논리적 삭제 (Soft Delete): finished 필드를 '취소' 상태(2)로 변경
-            existingOrder.setFinished(2); // 2: 취소된 견적
+            existingOrder.setFinished(2);
             requestRepository.save(existingOrder); // 변경된 상태 저장
 
             return true; // 논리적 삭제 성공
         }
         return false; // 해당 ono의 견적을 찾을 수 없음
+    }
+
+    // finished 상태 변경
+    @Override
+    public boolean updateFinished (RequestDTO requestDTO) {
+        Optional<Request> existingOrderOptional = requestRepository.findById(requestDTO.getOno());  
+
+        if (existingOrderOptional.isPresent()) {
+            Request existingOrder = existingOrderOptional.get();  
+            
+            final int active = 0;
+            final int end = 1;
+            final int cancel = 2;
+
+            if (requestDTO.getFinished()==active) {
+                existingOrder.setFinished(end);
+                requestRepository.save(existingOrder);  
+                return true;
+            }
+            else if (requestDTO.getFinished()==end) {
+                existingOrder.setFinished(active);
+                requestRepository.save(existingOrder);  
+                return true;
+            }
+            // else if (requestDTO.getFinished()==cancel) {
+            //     existingOrder.setFinished(active);
+            //     requestRepository.save(existingOrder);  
+            //     return true;
+            // }
+        }
+        return false;
     }
 }

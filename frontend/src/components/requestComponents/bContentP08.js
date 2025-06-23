@@ -93,7 +93,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
         <input
           type="text"
           name={field.name}
-          value={value}
+          value={value?value:""}
           onChange={handleChange}
           className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`}
           placeholder={currentPlaceholder}

@@ -70,17 +70,15 @@ public class RequestController {
             responseMap.put("datetime", datetimeString);
             responseMap.put("rentalDate", order.getRentalDate());
             responseMap.put("rentalTime", order.getRentalTime());
-            // "명" 추가해서 전달
-            // responseMap.put("person", order.getPerson() != null ? order.getPerson().toString() + "명" : null);
             responseMap.put("person", order.getPerson());
             responseMap.put("rentalEquipment", order.getRentalEquipment());
             responseMap.put("ocontent", order.getOcontent());
             responseMap.put("oregdate", order.getOregdate());
-            responseMap.put("finished", order.getFinished()); // "finished" 추가
+            responseMap.put("finished", order.getFinished());
+
 
             // 업체 목록 (companies)은 getOrderDetails 응답에 포함되지 않으므로,
             // 별도의 API 호출이 필요하거나 OrderDTO/RequestDTO에 포함되어야 합니다.
-            // 여기서는 임시로 빈 배열을 넣거나, 이 로직을 제거할 수 있습니다.
             responseMap.put("companies", new String[]{}); // 예시로 빈 배열
 
             return ResponseEntity.ok(responseMap);
@@ -98,7 +96,7 @@ public class RequestController {
         boolean updated = requestService.updateOrder(requestDTO); // 서비스 메서드 호출
 
         if (updated) {
-            return ResponseEntity.ok("견적이 성공적으로 수정되었습니다.");
+            return ResponseEntity.ok("수정 성공");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("견적을 찾을 수 없거나 수정에 실패했습니다.");
         }
@@ -161,4 +159,31 @@ public class RequestController {
             return ResponseEntity.noContent().build(); // 내용 없음 (204 No Content)
         }
     }
+
+    // 견적 마감상태 변경 PATCH
+    @PatchMapping("/finish/{ono}")
+    public ResponseEntity<String> finishOrder(@PathVariable("ono") int ono, @RequestBody RequestDTO requestDTO) {
+        // ono 값을 DTO에 설정하여 서비스로 전달
+        requestDTO.setOno(ono);
+        boolean updated = requestService.updateFinished(requestDTO); // 서비스 메서드 호출
+        if (updated) {
+            return ResponseEntity.ok("finish PATCH 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("finish PATCH 실패");
+        }
+    }
+
+    @PatchMapping("/delete/{ono}")
+    public ResponseEntity<String> deleteOrder(@PathVariable("ono") int ono, @RequestBody RequestDTO requestDTO) {
+        requestDTO.setOno(ono); // 경로에서 받은 ono를 DTO에 주입
+        
+        boolean deleted = requestService.deleteOrder(requestDTO);
+        if (deleted) {
+            return ResponseEntity.ok("논리 삭제 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("논리 삭제 실패");
+        }
+    }
+
+
 }
