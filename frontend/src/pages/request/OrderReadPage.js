@@ -16,37 +16,32 @@ const OrderReadPage = () => {
   const { ono } = useParams(); // URL에서 ono 값 가져오기
   const [quoteDetail, setQuoteDetail] = useState(null); // 견적 상세 정보 상태
   const [companies, setCompanies] = useState([]); // 업체 제안 목록 상태
-  const [timeMap, setTimeMap] = useState({}); //남은 시간 저장
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
+
       try {
         setLoading(true); // 데이터 가져오기 시작 시 로딩 상태 true
         const response = await axios.get(`/api/orders/${ono}`); // 백엔드 API 호출
         const data = response.data;
 
-        // // data.datetime이 존재하는지 먼저 확인
-        // const rawDatetime = data.datetime;
-        // let datePart = '';
-        // let timePart = '시간협의가능';
+        const now = new Date();
+        const regDate = new Date(data.oregdate);
+        const deadline = new Date(regDate);
+        deadline.setDate(regDate.getDate() + 7);
+        deadline.setHours(regDate.getHours()); // 시간 보정
 
-        // if (rawDatetime) { // rawDatetime이 undefined, null, 빈 문자열이 아닌 경우에만 처리
-        //   const parts = rawDatetime.split('|');
-        //   if (parts.length > 0) {
-        //     datePart = parts[0].trim().split(' ')[0]; // 날짜 부분 (공백으로 또 나눌 수 있으니 첫 번째만)
-        //     if (parts.length > 1) {
-        //       timePart = parts[1].trim(); // 시간 부분
-        //     }
-        //   } else {
-        //     // '|'이 없을 경우 전체를 날짜로 간주하거나, 다른 처리
-        //     datePart = rawDatetime.trim().split(' ')[0];
-        //   }
-        // }
+        const timeLeft = deadline - now;
 
-        // 백엔드 OrderController의 getOrder 메서드에서 보내는 필드명에 맞게 매핑.
-        
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        const timeLeftStr = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+
         setQuoteDetail({
           playType: data.playType, 
           region: data.region,
@@ -57,6 +52,7 @@ const OrderReadPage = () => {
           ocontent: data.ocontent,
           oregdate: data.oregdate,
           finished: data.finished,
+          timeLeftStr: timeLeftStr,
         });
 
         // NOTE :
@@ -77,12 +73,12 @@ const OrderReadPage = () => {
   }, [ono]); // ono 값이 변경될 때마다 useEffect 재실행
 
 
-  // 남은 시간 업데이트 훅 ************** 수정 필요
+  // 남은 시간 업데이트 훅
   useEffect(() => {
+    if (!quoteDetail) return;
+
     const interval = setInterval(() => {
       const now = new Date();
-      const newTimeMap = {};
-
       const regDate = new Date(quoteDetail.oregdate);
       const deadline = new Date(regDate);
       deadline.setDate(regDate.getDate() + 7);
@@ -95,11 +91,10 @@ const OrderReadPage = () => {
       const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-      const timeStr = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
-
-      newTimeMap[ono] = timeStr;
-
-      setTimeMap(newTimeMap);
+      setQuoteDetail((prev) => ({
+        ...prev,
+        timeLeftStr: `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`,
+      }));
     }, 1000); // 1초마다 갱신
 
     return () => clearInterval(interval); // 언마운트 시 정리
@@ -116,8 +111,7 @@ const OrderReadPage = () => {
       <div className="bg-cover bg-center min-h-screen pt-12">
         <Hero {...heroContent} />
         {/* quoteDetail이 로드된 후에만 BContentP11 렌더링 */}
-        <BContentP11 quote={quoteDetail} companies={companies} timeMap={timeMap}/>
-        {/* <BContentP11 quote={quoteDetail} companies={companies} /> */}
+        <BContentP11 quote={quoteDetail} companies={companies} />
       </div>
     </>
   );

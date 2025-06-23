@@ -4,6 +4,7 @@ import axios from "axios";
 // 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
 import DatePicker from "react-datepicker"; 
 import "react-datepicker/dist/react-datepicker.css";
+import "./requestDebugStyle.css";
 
 const formFields = {
   left: [
@@ -215,12 +216,7 @@ const BContentP09 = () => {
     // 최신 값을 savedRentalEquipment에 반영
     if (name === 'rentalEquipment' && formData.rental === "필요해요") {
         setSavedRentalEquipment(value);
-        console.log("rentalEquipment 직접 변경 감지 & savedRentalEquipment 업데이트:", value);
-    }
-
-    if (name === 'rental') {
-        console.log(`User selected rental: ${value}`);
-        console.log(`debug - ${savedRentalEquipment}`);
+        // console.log("rentalEquipment 직접 변경 감지 & savedRentalEquipment 업데이트:", value);
     }
   };
 
@@ -238,44 +234,46 @@ const BContentP09 = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
-      {/* 왼쪽 폼 */}
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        {formFields.left.map((field, idx) => (
-          <div key={idx} className="mt-4">
-            <label className="block font-semibold mb-1">{field.label}</label>
-            {/* {renderField(field, formData[field.name], handleChange)} */}
-            {
-              field.name === 'rentalEquipment' ?
-                renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
-                renderField(field, formData[field.name], handleChange)
-            }
-          </div>
-        ))}
-      </div>
-      {/* 오른쪽 폼 */}
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        {formFields.right.map((field, idx) => (
-          <div key={idx} className="mt-4">
-            <label className="block font-semibold mb-1">{field.label}</label>
-            {renderField(field, formData[field.name], handleChange)}
-          </div>
-        ))}
-        <div className="flex gap-4 mt-6">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="w-1/2 bg-gray-300 text-black py-2 rounded hover:bg-gray-400">
-            취소
-          </button>
-          <button
-            type="submit"
-            className="w-1/2 bg-black text-white py-2 rounded hover:bg-gray-800">
-            수정 완료
-          </button>
+    <div className='request-body'>
+      <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
+        {/* 왼쪽 폼 */}
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          {formFields.left.map((field, idx) => (
+            <div key={idx} className="mt-4">
+              <label className="block font-semibold mb-1">{field.label}</label>
+              {/* {renderField(field, formData[field.name], handleChange)} */}
+              {
+                field.name === 'rentalEquipment' ?
+                  renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
+                  renderField(field, formData[field.name], handleChange)
+              }
+            </div>
+          ))}
         </div>
-      </div>
-    </form>
+        {/* 오른쪽 폼 */}
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          {formFields.right.map((field, idx) => (
+            <div key={idx} className="mt-4">
+              <label className="block font-semibold mb-1">{field.label}</label>
+              {renderField(field, formData[field.name], handleChange)}
+            </div>
+          ))}
+          <div className="flex gap-4 mt-6">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="w-1/2 bg-gray-300 text-black py-2 rounded hover:bg-gray-400">
+              취소
+            </button>
+            <button
+              type="submit"
+              className="w-1/2 bg-black text-white py-2 rounded hover:bg-gray-800">
+              수정 완료
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 };
 

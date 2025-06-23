@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 // 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
 import DatePicker from "react-datepicker"; 
 import "react-datepicker/dist/react-datepicker.css";
+import "./requestDebugStyle.css";
 
 
 const formFields = {
@@ -154,36 +155,38 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
   }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
 
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
-      {/* 왼 */}
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        {formFields.left.map((field, idx) => (
-          <div key={idx} className="mt-4">
-            <label className="block font-semibold mb-1">{field.label}</label>
-            {/* {renderField(field, formData[field.name], handleChange)} */}
-            {
-              field.name === 'rentalEquipment' ?
-                renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
-                renderField(field, formData[field.name], handleChange)
-            }
-          </div>
-        ))}
-      </div>
-      {/* 오 */}
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        {formFields.right.map((field, idx) => (
-          <div key={idx} className="mt-4">
-            <label className="block font-semibold mb-1">{field.label}</label>
-            {renderField(field, formData[field.name], handleChange)}
-          </div>
-        ))}
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-2 mt-6 rounded hover:bg-gray-800">
-          등록하기
-        </button>
-      </div>
-    </form>
+    <div className='request-body'>
+      <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
+        {/* 왼 */}
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          {formFields.left.map((field, idx) => (
+            <div key={idx} className="mt-4">
+              <label className="block font-semibold mb-1">{field.label}</label>
+              {/* {renderField(field, formData[field.name], handleChange)} */}
+              {
+                field.name === 'rentalEquipment' ?
+                  renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
+                  renderField(field, formData[field.name], handleChange)
+              }
+            </div>
+          ))}
+        </div>
+        {/* 오 */}
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          {formFields.right.map((field, idx) => (
+            <div key={idx} className="mt-4">
+              <label className="block font-semibold mb-1">{field.label}</label>
+              {renderField(field, formData[field.name], handleChange)}
+            </div>
+          ))}
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2 mt-6 rounded hover:bg-gray-800">
+            등록하기
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
