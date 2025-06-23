@@ -176,20 +176,20 @@ public class SellerServiceImpl implements SellerService {
         Seller seller = sellerRepository.findById(mno)
             .orElseThrow(() -> new NoSuchElementException("해당 판매자 정보 없음"));
 
-        String simageCombined = buildSimageString(dto.getSimage());
+        SellerIntro intro = sellerIntroRepository.findById(mno)
+            .orElseThrow(() -> new NoSuchElementException("해당 업체 소개 정보 없음"));
 
+        // 수정
         seller.setSname(dto.getSname());
         seller.setSlocation(dto.getSlocation());
 
-        SellerIntro updatedIntro = SellerIntro.builder()
-            .seller(seller)
-            .simage(simageCombined)
-            .introContent(dto.getIntroContent())
-            .info(dto.getInfo())
-            .build();
+        intro.setSimage(buildSimageString(dto.getSimage()));
+        intro.setIntroContent(dto.getIntroContent());
+        intro.setInfo(dto.getInfo());
 
-        sellerIntroRepository.save(updatedIntro);
+        // 저장
+        sellerRepository.save(seller);         
+        sellerIntroRepository.save(intro);    
     }
-
 
 }

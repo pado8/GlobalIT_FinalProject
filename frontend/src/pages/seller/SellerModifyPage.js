@@ -1,20 +1,27 @@
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FaSearchLocation } from "react-icons/fa";
 import { useAuth } from "../../contexts/Authcontext";
 import { putSellerUpdate, getSellerModifyInfo, getSellerRegistered } from "../../api/SellerApi";
-import { uploadImage, getImageUrl } from "../../api/UploadImageApi";
+import { uploadImage, getImageUrl, removeImage, removeImageOnExit } from "../../api/UploadImageApi";
 import "../../css/SellerModifyPage.css";
 
 const SellerModifyPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef();
   const introInputRef = useRef();
+  const registeredRef = useRef(false);
+  const deleteQueueRef = useRef([]);
   const { user, loading } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false);
   const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
   const [slideIndex, setSlideIndex] = useState(0);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [prevAddress, setPrevAddress] = useState("");      // 원래 주소
+  const [hasTempAddress, setHasTempAddress] = useState(false); // 임시 주소 상태인지
+
   const [formData, setFormData] = useState({
     simage: [],
     introContent: "",
@@ -61,17 +68,53 @@ const SellerModifyPage = () => {
     init();
   }, [user, loading, navigate]);
 
+  useEffect(() => {
+    const cleanUpOnUnload = () => {
+      if (registeredRef.current) return;
+      deleteQueueRef.current.forEach(removeImageOnExit);
+    };
+    window.addEventListener("beforeunload", cleanUpOnUnload);
+    window.addEventListener("pagehide", cleanUpOnUnload);
+    return () => {
+      window.removeEventListener("beforeunload", cleanUpOnUnload);
+      window.removeEventListener("pagehide", cleanUpOnUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (!registeredRef.current) {
+        deleteQueueRef.current.forEach(removeImageOnExit);
+      }
+    };
+  }, [location.pathname]);
+
   if (loading || !user || !isRegistered) return null;
+
+  const handleAddressSearch = () => {
+  new window.daum.Postcode({
+    oncomplete: function (data) {
+      setPrevAddress(basicInfo.slocation); // 현재 주소 백업
+      setBasicInfo(prev => ({ ...prev, slocation: data.address }));
+      setHasTempAddress(true); // 취소 버튼 표시
+    }
+  }).open();
+};
+  const handleCancelAddress = () => {
+  setBasicInfo(prev => ({ ...prev, slocation: prevAddress }));
+  setHasTempAddress(false);
+};
 
   const handleMainChange = async (e) => {
     const file = e.target.files[0];
     if (!file || !file.type.startsWith("image/") || file.size > 10 * 1024 * 1024) {
-      alert("유효한 이미지 파일을 선택해주세요 (10MB 이하)");
+      alert("유효한 이미지 파일을 선택해주세요.");
       fileInputRef.current.value = null;
       return;
     }
     const uploaded = await uploadImage([file]);
     const path = uploaded[0].path;
+    deleteQueueRef.current.push(path);
     setFormData(prev => ({ ...prev, simage: [path, ...prev.simage.slice(1)] }));
     setPreviewUrls(prev => ({ ...prev, main: getImageUrl(path) }));
   };
@@ -80,13 +123,14 @@ const SellerModifyPage = () => {
     const files = Array.from(e.target.files);
     const invalid = files.find(f => !f.type.startsWith("image/") || f.size > 10 * 1024 * 1024);
     if (invalid) {
-      alert("10MB 이하 이미지 파일만 업로드 가능합니다.");
+      alert("유효한 이미지 파일을 선택해주세요.");
       introInputRef.current.value = null;
       return;
     }
     const uploaded = await uploadImage(files);
     const paths = uploaded.map(u => u.path);
     const urls = uploaded.map(u => u.url);
+    deleteQueueRef.current.push(...paths);
     setFormData(prev => ({
       ...prev,
       simage: [prev.simage[0], ...prev.simage.slice(1), ...paths]
@@ -117,9 +161,9 @@ const SellerModifyPage = () => {
 
   const handleSubmit = async () => {
     if (submitting) return;
-    const { sname, phone, slocation } = basicInfo;
+    const { sname, slocation } = basicInfo;
     let { simage, info, introContent } = formData;
-    if (!sname || !phone || !slocation || !info || !introContent) {
+    if (!sname || !slocation || !info || !introContent) {
       alert("모든 정보를 입력해주세요.");
       return;
     }
@@ -128,7 +172,9 @@ const SellerModifyPage = () => {
     }
     setSubmitting(true);
     try {
-      await putSellerUpdate({ simage, info, introContent, sname, phone, slocation });
+      await putSellerUpdate({ simage, info, introContent, sname, slocation });
+      registeredRef.current = true;
+      deleteQueueRef.current = [];
       alert("업체 정보가 수정되었습니다.");
       navigate("/sellerlist");
     } catch (e) {
@@ -146,20 +192,23 @@ const SellerModifyPage = () => {
           src={previewUrls.main || getImageUrl("default/default.png")}
           alt="대표 이미지"
           onClick={(e) => {
-            e.stopPropagation();
-            if (previewUrls.main) {
-              setEnlargedImage(previewUrls.main);
-            } else {
-              fileInputRef.current.click();
-            }
-          }}
+          e.stopPropagation();
+          if (
+            previewUrls.main &&
+            !previewUrls.main.includes("default/default.png")
+          ) {
+            setEnlargedImage(previewUrls.main);
+          } else {
+            fileInputRef.current.click();
+          }
+        }}
         />
       </div>
 
       <input type="file" hidden ref={fileInputRef} onChange={handleMainChange} accept="image/*" />
 
       <div className="button-group">
-        {!previewUrls.main ? (
+        {!previewUrls.main || previewUrls.main.includes("default/default.png") ? (
           <button className="button-blue" onClick={() => fileInputRef.current.click()}>대표 이미지 설정</button>
         ) : (
           <button className="button-red" onClick={handleMainCancel}>취소</button>
@@ -188,15 +237,32 @@ const SellerModifyPage = () => {
     />
   </div>
 
-  <div>
-    <label htmlFor="slocation">업체 주소</label>
+  <div className="address-input-wrapper">
+  <label htmlFor="slocation">업체 주소</label>
+  <div className="address-input">
     <input
       id="slocation"
       type="text"
       value={basicInfo.slocation}
-      onChange={(e) => setBasicInfo(prev => ({ ...prev, slocation: e.target.value }))}
+      readOnly
     />
+    <button
+      type="button"
+      className="address-search-button"
+      onClick={handleAddressSearch}
+      aria-label="주소 검색"
+    >
+      <FaSearchLocation />
+    </button>
+  {hasTempAddress && (
+  <div className="address-cancel-button-group">
+    <button className="button-red" onClick={handleCancelAddress}>취소</button>
   </div>
+)}
+  </div>
+
+</div>
+
 </div>
 
       {previewUrls.intros.length > 0 && (

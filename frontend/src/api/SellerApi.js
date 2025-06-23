@@ -47,4 +47,3 @@ export const putSellerUpdate = async (payload) => {
   const res = await axios.put(`${prefix}/modify`, payload);
   return res.data;
 };
-
