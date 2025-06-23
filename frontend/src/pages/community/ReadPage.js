@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOne, deleteOne } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
-import ResultModal from "./ResultModal";
 import { useAuth } from "../../contexts/Authcontext";
 import "../../css/ReadPage.css";
 
@@ -21,8 +20,10 @@ const ReadPage = () => {
     const { pno } = useParams();
     const [community, setCommunity] = useState(initState);
     const { moveToList, moveToModify } = useCustomMove();
-    const [result, setResult] = useState(null);
     const { user } = useAuth();
+
+    // **삭제 확인 모달 표시 여부**
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         getOne(pno)
@@ -30,13 +31,25 @@ const ReadPage = () => {
             .catch(err => console.error(err));
     }, [pno]);
 
+    // 1) 삭제 버튼 눌렀을 때 모달 띄우기
     const handleClickDelete = () => {
+        setShowConfirm(true);
+    };
+
+    // 2) 모달에서 “확인” 눌렀을 때 실제 삭제
+    const confirmDelete = () => {
         deleteOne(pno)
-            .then(() => setResult('Deleted'))
+            .then(() => {
+                setShowConfirm(false);
+                moveToList();  
+            })
             .catch(err => console.error(err));
     };
 
-    const closeModal = () => moveToList();
+    // 3) 모달에서 “취소” 눌렀을 때 닫기
+    const cancelDelete = () => {
+        setShowConfirm(false);
+    };
 
     function formatDisplayDate(isoString) {
         const d = new Date(isoString);
@@ -59,12 +72,20 @@ const ReadPage = () => {
 
     return (
         <div id="read_Page">
-            {result && (
-                <ResultModal
-                    title="처리결과"
-                    content={result}
-                    callbackFn={closeModal}
-                />
+            {/* 삭제 확인 모달 */}
+            {showConfirm && (
+                <>
+                    {/* 딤 배경 */}
+                    <div className="confirm-overlay" />
+                    {/* 중앙 모달 박스 */}
+                    <div className="confirm-modal">
+                        <p>정말 이 글을 삭제하시겠습니까?</p>
+                        <div className="confirm-buttons">
+                            <button className="btn" onClick={confirmDelete}>확인</button>
+                            <button className="btn" onClick={cancelDelete}>취소</button>
+                        </div>
+                    </div>
+                </>
             )}
 
             <div className="btn_box">
@@ -112,7 +133,7 @@ const ReadPage = () => {
                 <div className="comments_header">💬 댓글 8개</div>
                 <div className="comment_form clearfix">
                     <textarea className="comment_input" placeholder="댓글을 입력하세요..." />
-                    <button className="comment_submit" onClick={() => {}}>댓글 작성</button>
+                    <button className="comment_submit" onClick={() => { }}>댓글 작성</button>
                 </div>
             </div>
 
