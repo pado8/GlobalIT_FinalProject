@@ -1,11 +1,23 @@
-.body{
-  margin-top: 20vh;
+
+.request-component{
+    margin-top: 5vh;
+}
+
+
+
+
+
+.request-body{
+  margin-top: 2vh;
 }
 
 /* @media (prefers-reduced-motion: reduce)  */
 @media (max-width: 768px)
 {
-  .body{
-    margin-top: 20vh;
+  .request-component{
+    margin-top: 15vh;;
+  }
+  .request-body{
+    margin-top: 2vh;
   }
 }

@@ -234,44 +234,46 @@ const BContentP09 = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
-      {/* 왼쪽 폼 */}
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        {formFields.left.map((field, idx) => (
-          <div key={idx} className="mt-4">
-            <label className="block font-semibold mb-1">{field.label}</label>
-            {/* {renderField(field, formData[field.name], handleChange)} */}
-            {
-              field.name === 'rentalEquipment' ?
-                renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
-                renderField(field, formData[field.name], handleChange)
-            }
-          </div>
-        ))}
-      </div>
-      {/* 오른쪽 폼 */}
-      <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
-        {formFields.right.map((field, idx) => (
-          <div key={idx} className="mt-4">
-            <label className="block font-semibold mb-1">{field.label}</label>
-            {renderField(field, formData[field.name], handleChange)}
-          </div>
-        ))}
-        <div className="flex gap-4 mt-6">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="w-1/2 bg-gray-300 text-black py-2 rounded hover:bg-gray-400">
-            취소
-          </button>
-          <button
-            type="submit"
-            className="w-1/2 bg-black text-white py-2 rounded hover:bg-gray-800">
-            수정 완료
-          </button>
+    <div className='request-body'>
+      <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
+        {/* 왼쪽 폼 */}
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          {formFields.left.map((field, idx) => (
+            <div key={idx} className="mt-4">
+              <label className="block font-semibold mb-1">{field.label}</label>
+              {/* {renderField(field, formData[field.name], handleChange)} */}
+              {
+                field.name === 'rentalEquipment' ?
+                  renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
+                  renderField(field, formData[field.name], handleChange)
+              }
+            </div>
+          ))}
         </div>
-      </div>
-    </form>
+        {/* 오른쪽 폼 */}
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          {formFields.right.map((field, idx) => (
+            <div key={idx} className="mt-4">
+              <label className="block font-semibold mb-1">{field.label}</label>
+              {renderField(field, formData[field.name], handleChange)}
+            </div>
+          ))}
+          <div className="flex gap-4 mt-6">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="w-1/2 bg-gray-300 text-black py-2 rounded hover:bg-gray-400">
+              취소
+            </button>
+            <button
+              type="submit"
+              className="w-1/2 bg-black text-white py-2 rounded hover:bg-gray-800">
+              수정 완료
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 };
 
