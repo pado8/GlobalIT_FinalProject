@@ -86,7 +86,7 @@ const ListPage = () => {
     } else if (
       window.confirm("글 작성을 위해 로그인해야 합니다. 로그인 페이지로 이동할까요?")
     ) {
-      navigate("/login");
+       navigate("/login", { state: { from: "/community/write" } });
     }
   };
 

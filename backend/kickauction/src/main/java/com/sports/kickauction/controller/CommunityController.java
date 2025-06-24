@@ -1,16 +1,17 @@
 package com.sports.kickauction.controller;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -126,6 +127,25 @@ public class CommunityController {
             Authentication auth) {
         CommentDTO saved = commentService.writeComment(pno, dto, auth);
         return ResponseEntity.ok(saved);
+    }
+
+    @PatchMapping("/{pno}/comments/{cno}")
+    public ResponseEntity<CommentDTO> updateComment(
+            @PathVariable Long pno,
+            @PathVariable Long cno,
+            @RequestBody Map<String, String> body,
+            Authentication auth) {
+        String content = body.get("content");
+        return ResponseEntity.ok(commentService.updateComment(pno, cno, content, auth));
+    }
+
+    @DeleteMapping("/{pno}/comments/{cno}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long pno,
+            @PathVariable Long cno,
+            Authentication auth) {
+        commentService.deleteComment(pno, cno, auth);
+        return ResponseEntity.noContent().build();
     }
 
 }

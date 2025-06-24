@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { FaSearchLocation } from "react-icons/fa";
 import axios from "axios";
 import "../login/SignupPage.css";
 import "../../css/Sharesheet.css";
@@ -338,7 +339,7 @@ function SignupPageSeller() {
 
           {nicknameStatus === "duplicate" && <p className="error">❌ 이미 입력된 닉네임이 존재합니다.</p>}
           {nicknameStatus === "valid" && <p className="nickname_ok error">✔ 사용 가능한 닉네임입니다.</p>}
-          {nicknameStatus === "error" && <p className="error">⚠ 중복확인 중 오류가 발생했습니다.</p>}
+          {nicknameStatus === "error" && <p className="error"> 중복확인 중 오류가 발생했습니다.</p>}
 
           {/* 비밀번호 & 비밀번호 확인     */}
           <div className="signup_input_container">
@@ -414,22 +415,24 @@ function SignupPageSeller() {
             <input type="text" className="company_name_input input" placeholder="업체명" value={companyname} onChange={(e) => setCompanyname(e.target.value)} required />
           </div>
 
-          <div className="signup_input_container">
+          <div className="signup_input_container address_input_wrapper">
             <input type="text" className="company_address_input input" placeholder="업체 주소" value={companyaddress} readOnly required />
-            <button type="button" className="address_search_button" onClick={handleAddressSearch}>
-              주소 검색
-            </button>
-            {hasTempAddress && (
-              <button type="button" className="address_cancel_button" onClick={handleCancelAddress}>
-                취소
+            <div className="button_row">
+              <button type="button" className="address_search_button" onClick={handleAddressSearch} aria-label="주소 검색">
+                <FaSearchLocation className="search_icon" style={{ marginRight: "2px" }} /> 주소 찾기
               </button>
-            )}
+              {hasTempAddress && (
+                <button type="button" className="address_cancel_button" onClick={handleCancelAddress}>
+                  취소
+                </button>
+              )}
+            </div>
           </div>
 
           {/* 결과 오류 및 제출 */}
           <p className="error login_error">{resulterror || " "}</p>
 
-          <button type="submit" className="login_button">
+          <button type="submit" className="login_button_s">
             가입하기
           </button>
         </form>

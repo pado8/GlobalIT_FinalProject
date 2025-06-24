@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { FaSearchLocation } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
@@ -16,6 +17,8 @@ const MyPage = () => {
   const [showinputModal, setShowinputModal] = useState(false);
   const [newSname, setNewSname] = useState("");
   const [newSlocation, setNewSlocation] = useState("");
+  const [prevAddress, setPrevAddress] = useState("");
+  const [hasTempAddress, setHasTempAddress] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -102,6 +105,22 @@ const MyPage = () => {
     }
   };
 
+  // 주석: 주소선택
+  const handleAddressSearch = () => {
+    new window.daum.Postcode({
+      oncomplete: function (data) {
+        setPrevAddress(newSlocation);
+        setNewSlocation(data.address);
+        setHasTempAddress(true);
+      },
+    }).open();
+  };
+
+  const handleCancelAddress = () => {
+    setNewSlocation(prevAddress);
+    setHasTempAddress(false);
+  };
+
   return (
     <div className="mypage_container">
       <div className="mypage_header">
@@ -124,7 +143,19 @@ const MyPage = () => {
           <div className="modal_container">
             <h3>업체 정보 입력</h3>
             <input type="text" placeholder="업체명" value={newSname} onChange={(e) => setNewSname(e.target.value)} />
-            <input type="text" placeholder="업체 주소" value={newSlocation} onChange={(e) => setNewSlocation(e.target.value)} />
+            <div className="signup_input_container address_input_wrapper">
+              <input type="text" className="company_address_input" placeholder="업체 주소" value={newSlocation} readOnly required />
+              <div className="button_row">
+                <button type="button" className="address_search_button" onClick={handleAddressSearch} aria-label="주소 검색">
+                  <FaSearchLocation style={{ marginRight: "3px" }} /> 주소 찾기
+                </button>
+                {hasTempAddress && (
+                  <button type="button" className="address_cancel_button" onClick={handleCancelAddress}>
+                    취소
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="modal_buttons">
               <button onClick={handleSubmitSellerInfo}>등록</button>
               <button onClick={() => setShowinputModal(false)}>취소</button>
