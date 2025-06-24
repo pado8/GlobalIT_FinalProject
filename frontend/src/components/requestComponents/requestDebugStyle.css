@@ -351,6 +351,14 @@
   background-color: #F3F4F6; /* hover:bg-gray-100 */
 }
 
+.button-group .md-button {
+  background-color: #D1D5DB; /* bg-gray-300 */
+  color: black;
+}
+
+.button-group .md-button:hover {
+  background-color: #9CA3AF; /* hover:bg-gray-400 */
+}
 .button-group .confirm-button {
   background-color: #000;
   color: #fff;

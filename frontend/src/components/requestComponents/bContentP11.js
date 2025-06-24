@@ -102,13 +102,13 @@ const BContentP11 = ({ quote, companies }) => {
         <div className="flex justify-between mt-6   button-group">
           <button
             onClick={handleModifyClick}
-            className="border px-4 py-2 rounded hover:bg-gray-100"
+            className="md-button"
           >
             견적 요청 수정
           </button>
           <button
             onClick={handleDeleteClick}
-            className="border px-4 py-2 rounded hover:bg-gray-100"
+            className="md-button"
           >
             견적 요청 삭제
           </button>
