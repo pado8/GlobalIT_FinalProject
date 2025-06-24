@@ -37,10 +37,7 @@ public class FileCheckTask {
         for (String pathGroup : dbPaths) {
             String[] paths = pathGroup.split(",");
             for (String path : paths) {
-                // default 이미지는 삭제 대상에서 제외
-                if (!path.equals("default/default.png")) {
                     imagePathSet.add(path.trim());
-                }
             }
         }
 

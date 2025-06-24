@@ -13,6 +13,8 @@ const SellerModifyPage = () => {
   const introInputRef = useRef();
   const registeredRef = useRef(false);
   const deleteQueueRef = useRef([]);
+  const originalPathsRef = useRef([]);
+  
   const { user, loading } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false);
   const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
@@ -62,6 +64,9 @@ const SellerModifyPage = () => {
         introContent: info.introContent || "",
         info: info.info || ""
       });
+
+      originalPathsRef.current = info.simage || [];
+
       const urls = (info.simage || []).map(getImageUrl);
       setPreviewUrls({ main: urls[0] || null, intros: urls.slice(1) });
     };
@@ -138,40 +143,57 @@ const SellerModifyPage = () => {
     setPreviewUrls(prev => ({ ...prev, intros: [...prev.intros, ...urls] }));
   };
 
-  const handleIntroRemove = (index) => {
-    const updatedIntros = [...previewUrls.intros];
-    const updatedPaths = [...formData.simage.slice(1)];
-    updatedIntros.splice(index, 1);
-    updatedPaths.splice(index, 1);
-    setPreviewUrls(prev => ({ ...prev, intros: updatedIntros }));
-    setFormData(prev => ({ ...prev, simage: [prev.simage[0], ...updatedPaths] }));
+  const handleIntroRemove = async (index) => {
+    const paths = [...formData.simage.slice(1)];
+    const removed = paths[index];
+    const isOriginal = originalPathsRef.current.includes(removed);
+    if (!isOriginal && removed !== "default/default.png") await removeImage(removed);
+    deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== removed);
+    paths.splice(index, 1);
+    const urls = [...previewUrls.intros];
+    urls.splice(index, 1);
+    setFormData(prev => ({ ...prev, simage: [prev.simage[0], ...paths] }));
+    setPreviewUrls(prev => ({ ...prev, intros: urls }));
   };
 
-  const handleMainCancel = () => {
+  const handleMainCancel = async () => {
+    const mainPath = formData.simage[0];
+    const isOriginal = originalPathsRef.current.includes(mainPath);
+    if (mainPath && !isOriginal && mainPath !== "default/default.png") await removeImage(mainPath);
+    deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== mainPath);
     setFormData(prev => ({ ...prev, simage: [] }));
     setPreviewUrls(prev => ({ ...prev, main: null }));
     fileInputRef.current.value = null;
   };
 
   const handleIntroCancel = () => {
-    setFormData(prev => ({ ...prev, simage: [prev.simage[0]] }));
-    setPreviewUrls(prev => ({ ...prev, intros: [] }));
-    introInputRef.current.value = null;
-  };
+  const introPaths = formData.simage.slice(1); // 대표 이미지 제외 소개 이미지 경로들
+  introPaths.forEach((path) => {
+    const isOriginal = originalPathsRef.current.includes(path);
+    if (!isOriginal && path !== "default/default.png") {
+      removeImage(path); // 서버에서 삭제
+    }
+    // deleteQueueRef에서도 제거 (이미 removeImage 호출 시점에 등록된 경우)
+    deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== path);
+  });
+
+  setFormData(prev => ({ ...prev, simage: [prev.simage[0]] }));
+  setPreviewUrls(prev => ({ ...prev, intros: [] }));
+  introInputRef.current.value = null;
+};
+
 
   const handleSubmit = async () => {
     if (submitting) return;
     const { sname, slocation } = basicInfo;
     let { simage, info, introContent } = formData;
-    if (!sname || !slocation || !info || !introContent) {
-      alert("모든 정보를 입력해주세요.");
-      return;
-    }
-    if (!simage.length || !simage[0]) {
-      simage = ["default/default.png", ...simage.slice(1)];
-    }
+    if (!sname || !slocation || !info || !introContent) return alert("모든 정보를 입력해주세요.");
+    if (!simage.length || !simage[0]) simage = ["default/default.png", ...simage.slice(1)];
     setSubmitting(true);
     try {
+      const originals = originalPathsRef.current;
+      const removedOriginals = originals.filter(path => !simage.includes(path));
+      await Promise.all(removedOriginals.map(removeImage));
       await putSellerUpdate({ simage, info, introContent, sname, slocation });
       registeredRef.current = true;
       deleteQueueRef.current = [];

@@ -43,6 +43,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            // 서버 템플릿(Thymeleaf, JSP 등)은 <form> 안에 hidden input으로 CSRF 토큰을 넣어줌
+            // 하지만 React 같은 SPA는 form을 안 쓰고 JS로 요청하므로, CSRF 토큰을 수동으로 받아야 함
             // .csrf(csrf -> csrf
             // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .cors(withDefaults())
@@ -50,6 +52,20 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",
                                 "/images/**","/api/display/**")
+            // // SELLER만 가능한 API
+            // .requestMatchers("/api/seller/register", "/api/seller/register-info", "/api/seller/modify", "/api/seller/modify-info")
+            // .hasRole("SELLER")
+
+            // // 로그인만 하면 누구나 접근 가능한 API
+            // .requestMatchers("/api/seller/registered").authenticated()
+
+            // // 공개 API
+            // .requestMatchers("/api/seller/list", "/api/seller/detail").permitAll()
+
+            // 로그인한 사용자만 업로드·삭제 가능
+            //.requestMatchers("/api/uploadAjax", "/api/removeFile").authenticated()
+
+
                 .permitAll()
                 .anyRequest().authenticated())
             .formLogin(form -> form

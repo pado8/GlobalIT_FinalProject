@@ -120,6 +120,12 @@ const SellerListPage = () => {
     </button>
   </div>
 )}
+    <button
+      className="button-blue"
+      onClick={() => navigate("/sellerlist/orderlist")}
+    >
+      🛠 테스트용 견적목록 
+    </button>
       <Pagination
         className="fixed-pagination"
         current={sellerData.currentPage}
