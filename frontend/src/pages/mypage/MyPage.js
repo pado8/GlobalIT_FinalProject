@@ -6,11 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { getSellerRegisterInfo, getSellerRegistered } from "../../api/SellerApi";
 import "../../css/Sharesheet.css";
-import "../mypage/MyPage.css";
+import styles from "../mypage/MyPage.module.css";
 
 const MyPage = () => {
-  console.log("MyPage loaded");
-
   const { user } = useAuth();
   const [company, setCompany] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -122,16 +120,16 @@ const MyPage = () => {
   };
 
   return (
-    <div className="mypage_container">
-      <div className="mypage_header">
-        <h2 className="mypage_title">마이페이지</h2>
+    <div className={styles.mypage_container}>
+      <div className={styles.mypage_header}>
+        <h2 className={styles.mypage_title}>마이페이지</h2>
         {user.role === "USER" && (
-          <button className="role_change_button" onClick={handleRoleToggle}>
+          <button className={styles.role_change_button} onClick={handleRoleToggle}>
             ↺ ㅤ업체로 전환하기
           </button>
         )}
         {user.role === "SELLER" && (
-          <button className="role_change_button" onClick={handleRoleToggle}>
+          <button className={styles.role_change_button} onClick={handleRoleToggle}>
             ↺ ㅤ 일반 유저로 전환하기
           </button>
         )}
@@ -139,24 +137,24 @@ const MyPage = () => {
 
       {/* ROLE 최초 변경시 SELLER필요데이터 입력MODAL */}
       {showinputModal && (
-        <div className="modal_overlay">
-          <div className="modal_container">
+        <div className={styles.modal_overlay}>
+          <div className={styles.modal_container}>
             <h3>업체 정보 입력</h3>
             <input type="text" placeholder="업체명" value={newSname} onChange={(e) => setNewSname(e.target.value)} />
-            <div className="signup_input_container address_input_wrapper">
-              <input type="text" className="company_address_input" placeholder="업체 주소" value={newSlocation} readOnly required />
-              <div className="button_row">
-                <button type="button" className="address_search_button" onClick={handleAddressSearch} aria-label="주소 검색">
+            <div className={`${styles.signup_input_container} ${styles.address_input_wrapper}`}>
+              <input type="text" className={styles.company_address_input} placeholder="업체 주소" value={newSlocation} readOnly required />
+              <div className={styles.button_row}>
+                <button type="button" className={styles.address_search_button} onClick={handleAddressSearch} aria-label="주소 검색">
                   <FaSearchLocation style={{ marginRight: "3px" }} /> 주소 찾기
                 </button>
                 {hasTempAddress && (
-                  <button type="button" className="address_cancel_button" onClick={handleCancelAddress}>
+                  <button type="button" className={styles.address_cancel_button} onClick={handleCancelAddress}>
                     취소
                   </button>
                 )}
               </div>
             </div>
-            <div className="modal_buttons">
+            <div className={styles.modal_buttons}>
               <button onClick={handleSubmitSellerInfo}>등록</button>
               <button onClick={() => setShowinputModal(false)}>취소</button>
             </div>
@@ -165,67 +163,67 @@ const MyPage = () => {
       )}
 
       {/* 회원 정보 */}
-      <section className="mypage_section">
-        <h3 className="section_title">내 정보</h3>
+      <section className={styles.mypage_section}>
+        <h3 className={styles.section_title}>내 정보</h3>
 
         {/* 프사 */}
-        <div className="profile_image_wrapper">
-          <img key={user.profileimg} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}?t=${new Date().getTime()}`} alt="프로필 이미지" className="profile_image" />
+        <div className={styles.profile_image_wrapper}>
+          <img key={user.profileimg} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}?t=${new Date().getTime()}`} alt="프로필 이미지" className={styles.profile_image} />
         </div>
-        <div className="myinfo_wrapper">
-          <p className="user_name">
-            <strong>{user.nickname}</strong> 님{user.role === "USER" && <span className="role_badge badge_user">일반 유저</span>}
-            {user.role === "SELLER" && <span className="role_badge badge_seller">업체 유저</span>}
-            {user.role === "ADMIN" && <span className="role_badge badge_admin">운영진</span>}
+        <div className={styles.myinfo_wrapper}>
+          <p className={styles.user_name}>
+            <strong>{user.nickname}</strong> 님{user.role === "USER" && <span className={`${styles.role_badge} ${styles.badge_user}`}>일반 유저</span>}
+            {user.role === "SELLER" && <span className={`${styles.role_badge} ${styles.badge_seller}`}>업체 유저</span>}
+            {user.role === "ADMIN" && <span className={`${styles.role_badge} ${styles.badge_admin}`}>운영진</span>}
             <br />
-            <span className="user_email">({user.user_id})</span>
+            <span className={styles.user_email}>({user.user_id})</span>
           </p>
           <Link to={user.social === 0 ? "/updateinfosocial" : "/updateinfo"}>
-            <button className="update_button">회원정보 수정</button>
+            <button className={styles.update_button}>회원정보 수정</button>
           </Link>
         </div>
       </section>
 
       {/* 견적 정보 */}
-      <section className="mypage_section">
-        <div className="myrequest_wrapper">
-          <h3 className="section_title">내 견적</h3>
-          <div className="request_info_container">
-            <div className="request_texts">
-              <p className="request_info">
-                현재 진행중 견적: <strong className="textcolor1">n</strong>개
+      <section className={styles.mypage_section}>
+        <div className={styles.myrequest_wrapper}>
+          <h3 className={styles.section_title}>내 견적</h3>
+          <div className={styles.request_info_container}>
+            <div className={styles.request_texts}>
+              <p className={styles.request_info}>
+                현재 진행중 견적: <strong className={styles.textcolor1}>n</strong>개
               </p>
-              <p className="request_info">
-                완료된 견적: <strong className="textcolor2">n</strong>개
+              <p className={styles.request_info}>
+                완료된 견적: <strong className={styles.textcolor2}>n</strong>개
               </p>
             </div>
-            <button className="request_info_button">견적 상세정보</button>
+            <button className={styles.request_info_button}>견적 상세정보</button>
           </div>
         </div>
       </section>
 
       {/* 업체 정보 (SELLER 전용) */}
       {user?.role === "SELLER" && (
-        <section className="mypage_section">
-          <div className="mycomp_wrapper">
-            <h3 className="section_title">내 업체 정보</h3>
-            <div className="mycomp_container">
+        <section className={styles.mypage_section}>
+          <div className={styles.mycomp_wrapper}>
+            <h3 className={styles.section_title}>내 업체 정보</h3>
+            <div className={styles.mycomp_container}>
               {company ? (
-                <div className="company_infos">
-                  <p className="company_name">
+                <div className={styles.company_infos}>
+                  <p className={styles.company_name}>
                     {" "}
                     <strong>{company.sname}</strong>
                   </p>
-                  <p className="company_address"> {company.slocation}</p>
+                  <p className={styles.company_address}> {company.slocation}</p>
                 </div>
               ) : (
-                <p className="company_no"> 등록된 업체가 없습니다.</p>
+                <p className={styles.company_no}> 등록된 업체가 없습니다.</p>
               )}
 
               {isRegistered ? (
-                <button className="comp_info_button">업체정보 수정</button>
+                <button className={styles.comp_info_button}>업체정보 수정</button>
               ) : (
-                <button className="comp_info_button2" disabled>
+                <button className={styles.comp_info_button2} disabled>
                   수정 전 <br></br>업체소개 작성 필요
                 </button>
               )}
