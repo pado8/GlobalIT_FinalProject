@@ -43,6 +43,21 @@ public class CommunityController {
     @GetMapping("/{pno}")
     public ResponseEntity<CommunityDTO> getOne(@PathVariable Long pno) {
         CommunityDTO dto = service.get(pno);
+
+        // 2) 이전글 정보
+        CommunityDTO prev = service.getPrevious(pno);
+        if (prev != null) {
+            dto.setPrevPno(prev.getPno());
+            dto.setPrevTitle(prev.getPtitle());
+        }
+
+        // 3) 다음글 정보
+        CommunityDTO next = service.getNext(pno);
+        if (next != null) {
+            dto.setNextPno(next.getPno());
+            dto.setNextTitle(next.getPtitle());
+        }
+
         return ResponseEntity.ok(dto);
     }
 
@@ -91,24 +106,17 @@ public class CommunityController {
     // 1) 댓글 목록 조회 (로그인 없이 가능)
     @GetMapping("/{pno}/comments")
     public ResponseEntity<?> getComments(@PathVariable Long pno) {
-    log.info("▶▶▶ 댓글 조회 API 호출, pno={}", pno);
-    try {
-        List<CommentDTO> list = commentService.getComments(pno);
-        log.info("▶▶▶ 댓글 조회 성공, size={}", list.size());
-        return ResponseEntity.ok(list);
-    } catch (Exception e) {
-        // 예외 스택트레이스 전부 찍고
-        log.error("◆◆◆ 댓글 로드 중 예외 발생 ◆◆◆", e);
-        // 클라이언트로도 메시지 내려줌
-        Map<String, String> err = Map.of(
-          "message", e.getMessage(),
-          "trace", Arrays.stream(e.getStackTrace())
-                         .map(StackTraceElement::toString)
-                         .collect(Collectors.joining("\n"))
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+        try {
+            var list = commentService.getComments(pno);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            log.error("댓글 로드 예외", e);
+            Map<String, String> err = Map.of(
+                    "message", e.getMessage(),
+                    "trace", Arrays.stream(e.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n")));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+        }
     }
-}
 
     // 2) 댓글 등록 (로그인 필요)
     @PostMapping("/{pno}/comments")

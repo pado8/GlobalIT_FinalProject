@@ -316,6 +316,11 @@
     box-shadow: 0 6px 20px rgba(31, 156, 231, 0.1);
 }
 
+.nav_btn.disabled {
+  pointer-events: none;
+  opacity: 0.5
+}
+
 
 @media (max-width: 768px) {
     .container {
