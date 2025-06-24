@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getOne, deleteOne } from "../../api/communityApi";
+import { useParams, useNavigate } from "react-router-dom";
+import { getOne, deleteOne, getComments, postComment } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
-import ResultModal from "./ResultModal";
 import { useAuth } from "../../contexts/Authcontext";
 import "../../css/ReadPage.css";
 
@@ -21,8 +20,14 @@ const ReadPage = () => {
     const { pno } = useParams();
     const [community, setCommunity] = useState(initState);
     const { moveToList, moveToModify } = useCustomMove();
-    const [result, setResult] = useState(null);
     const { user } = useAuth();
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
+    const navigate = useNavigate();
+
+
+    // **삭제 확인 모달 표시 여부**
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         getOne(pno)
@@ -30,13 +35,65 @@ const ReadPage = () => {
             .catch(err => console.error(err));
     }, [pno]);
 
+
+    useEffect(() => {
+        getComments(pno)
+            .then(data => setComments(Array.isArray(data) ? data : []))
+            .catch(err => {
+                // status, response.data 까지 찍어 봅니다
+                console.error("댓글 로드 실패:", {
+                    status: err.response?.status,
+                    body: err.response?.data,
+                    message: err.message
+                });
+                setComments([]);
+            });
+    }, [pno]);
+
+
+    // 댓글 입력
+    const handleCommentChange = e => setNewComment(e.target.value);
+
+    // 댓글 제출
+    const handleCommentSubmit = () => {
+        if (!user) {
+            if (window.confirm("댓글을 작성하려면 로그인해야 합니다. 로그인 페이지로 이동할까요?")) {
+                return navigate("/login");
+            }
+            return;
+        }
+        if (!newComment.trim()) return;
+
+        postComment(pno, newComment)
+            .then(saved => {
+                setComments(prev => [saved, ...prev]);
+                setNewComment("");
+            })
+            .catch(err => {
+                console.error("댓글 작성 실패:", err);
+                alert("댓글 작성에 실패했습니다.");
+            });
+    };
+
+    // 1) 삭제 버튼 눌렀을 때 모달 띄우기
     const handleClickDelete = () => {
+        setShowConfirm(true);
+    };
+
+    // 2) 모달에서 “확인” 눌렀을 때 실제 삭제
+    const confirmDelete = () => {
         deleteOne(pno)
-            .then(() => setResult('Deleted'))
+            .then(() => {
+                setShowConfirm(false);
+                moveToList();
+            })
             .catch(err => console.error(err));
     };
 
-    const closeModal = () => moveToList();
+    // 3) 모달에서 “취소” 눌렀을 때 닫기
+    const cancelDelete = () => {
+        setShowConfirm(false);
+    };
 
     function formatDisplayDate(isoString) {
         const d = new Date(isoString);
@@ -59,12 +116,20 @@ const ReadPage = () => {
 
     return (
         <div id="read_Page">
-            {result && (
-                <ResultModal
-                    title="처리결과"
-                    content={result}
-                    callbackFn={closeModal}
-                />
+            {/* 삭제 확인 모달 */}
+            {showConfirm && (
+                <>
+                    {/* 딤 배경 */}
+                    <div className="confirm-overlay" />
+                    {/* 중앙 모달 박스 */}
+                    <div className="confirm-modal">
+                        <p>정말 이 글을 삭제하시겠습니까?</p>
+                        <div className="confirm-buttons">
+                            <button className="btn" onClick={confirmDelete}>확인</button>
+                            <button className="btn" onClick={cancelDelete}>취소</button>
+                        </div>
+                    </div>
+                </>
             )}
 
             <div className="btn_box">
@@ -109,10 +174,28 @@ const ReadPage = () => {
             </div>
 
             <div className="comments_section">
-                <div className="comments_header">💬 댓글 8개</div>
+                <div className="comments_header">💬 댓글 {comments.length}개</div>
+
+                {/* 댓글 리스트 */}
+                <ul className="comment_list">
+                    {comments.map(c => (
+                        <li key={c.cno} className="comment_item">
+                            <span className="comment_author">{c.writerName}</span>
+                            <span className="comment_date">
+                                {new Date(c.cregdate).toLocaleString()}
+                            </span>
+                            <p className="comment_text">{c.content}</p>
+                        </li>
+                    ))}
+                </ul>
                 <div className="comment_form clearfix">
-                    <textarea className="comment_input" placeholder="댓글을 입력하세요..." />
-                    <button className="comment_submit" onClick={() => {}}>댓글 작성</button>
+                    <textarea
+                        className="comment_input"
+                        placeholder="댓글을 입력하세요..."
+                        value={newComment}
+                        onChange={handleCommentChange}
+                    />
+                    <button className="comment_submit" onClick={handleCommentSubmit}>댓글 작성</button>
                 </div>
             </div>
 
