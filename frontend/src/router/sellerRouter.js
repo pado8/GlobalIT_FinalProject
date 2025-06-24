@@ -1,5 +1,6 @@
 // src/router/sellerRouter.js
 import { Suspense, lazy } from "react";
+import RequireAuth from "../components/RequireAuth.js"
 
 const SellerList = lazy(() => import("../pages/seller/SellerListPage"));
 const SellerRegister = lazy(() => import("../pages/seller/SellerRegisterPage"));
@@ -20,17 +21,21 @@ const sellerRouter = () => [
   {
     path: "register",
     element: (
+      <RequireAuth>
       <Suspense fallback={Loading}>
         <SellerRegister/>
       </Suspense>
+      </RequireAuth>
     ),
   },
   {
     path: "modify", // 임시 라우트 추가
     element: (
+      <RequireAuth>
       <Suspense fallback={Loading}>
         <SellerModify />
       </Suspense>
+      </RequireAuth>
     ),
   },
   {
