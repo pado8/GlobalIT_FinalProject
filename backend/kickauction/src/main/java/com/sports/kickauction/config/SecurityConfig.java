@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
@@ -42,40 +43,51 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            // .csrf(csrf -> csrf
-            // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .cors(withDefaults())
-            //api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",
-                                "/images/**","/api/display/**")
-                .permitAll()
-                .anyRequest().authenticated())
-            .formLogin(form -> form
-                .loginProcessingUrl("/login") 
-                .successHandler((req, res, auth) -> {
-                    SecurityContextHolder.getContext().setAuthentication(auth); //인증 세션 만들기
-                    res.setStatus(HttpServletResponse.SC_OK);
-                })
-                .failureHandler((req, res, ex) -> {
-                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    res.getWriter().write("로그인 실패");
-                })
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
-                .permitAll()
-            )
-            .oauth2Login(oauth -> oauth
-            .loginPage("/login")
-            .userInfoEndpoint(user -> user.userService(oAuth2UserService))
-            .successHandler((request, response, authentication) -> {
-            response.sendRedirect("http://localhost:3000/"); 
-              })
-);
+                .csrf(csrf -> csrf.disable())
+                // .csrf(csrf -> csrf
+                // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                // .cors(withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
+                .authorizeHttpRequests(auth -> auth
+                        // 1) 모든 옵션 요청 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 2) public 하게 열어둘 엔드포인트 (모두 slash 로 시작!)
+                        .requestMatchers(
+                                "/",
+                                "/presignup",
+                                "/presignups",
+                                "/signup",
+                                "/signups",
+                                "/login",
+                                "/api/**",
+                                "/images/**",
+                                "/api/display/**",
+                                "/api/members/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginProcessingUrl("/login")
+                        .successHandler((req, res, auth) -> {
+                            SecurityContextHolder.getContext().setAuthentication(auth); // 인증 세션 만들기
+                            res.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .failureHandler((req, res, ex) -> {
+                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.getWriter().write("로그인 실패");
+                        })
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
+                        .permitAll())
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/login")
+                        .userInfoEndpoint(user -> user.userService(oAuth2UserService))
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("http://localhost:3000/");
+                        }));
         return http.build();
     }
 
@@ -83,21 +95,20 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // 프론트 개발 서버 주소
-        //setAllowedOrigins(...) 대신 → setAllowedOriginPatterns(...) 사용함
-        //이유: setAllowCredentials(true)와 함께 사용할 수 있기 때문
+        // setAllowedOrigins(...) 대신 → setAllowedOriginPatterns(...) 사용함
+        // 이유: setAllowCredentials(true)와 함께 사용할 수 있기 때문
         config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         // 허용 HTTP 메서드
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         // 허용 헤더
         config.setAllowedHeaders(List.of("*"));
         // 쿠키 전송 허용하려면 true
         config.setAllowCredentials(true);
 
-        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // 모든 /api/** 경로에 위 정책 적용
         source.registerCorsConfiguration("/**", config);
-        source.registerCorsConfiguration("/images/**", config); 
+        source.registerCorsConfiguration("/images/**", config);
         return source;
     }
 
