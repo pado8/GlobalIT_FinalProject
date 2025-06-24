@@ -28,6 +28,8 @@ function SignupPageSeller() {
 
   const [companyname, setCompanyname] = useState("");
   const [companyaddress, setCompanyaddress] = useState("");
+  const [prevAddress, setPrevAddress] = useState("");
+  const [hasTempAddress, setHasTempAddress] = useState(false);
 
   // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
   const noVerify = () => {
@@ -209,6 +211,22 @@ function SignupPageSeller() {
 
     setIsVerified(false);
     setVerifyStatus(null);
+  };
+
+  // 주석: 주소선택
+  const handleAddressSearch = () => {
+    new window.daum.Postcode({
+      oncomplete: function (data) {
+        setPrevAddress(companyaddress);
+        setCompanyaddress(data.address);
+        setHasTempAddress(true);
+      },
+    }).open();
+  };
+
+  const handleCancelAddress = () => {
+    setCompanyaddress(prevAddress);
+    setHasTempAddress(false);
   };
 
   // 주석: 회원가입 처리 (api/members/signupseller 매핑, 위의 모든 검증과정 통과해야 동작함)
@@ -397,7 +415,15 @@ function SignupPageSeller() {
           </div>
 
           <div className="signup_input_container">
-            <input type="text" className="company_address_input input" placeholder="업체 주소" value={companyaddress} onChange={(e) => setCompanyaddress(e.target.value)} required />
+            <input type="text" className="company_address_input input" placeholder="업체 주소" value={companyaddress} readOnly required />
+            <button type="button" className="address_search_button" onClick={handleAddressSearch}>
+              주소 검색
+            </button>
+            {hasTempAddress && (
+              <button type="button" className="address_cancel_button" onClick={handleCancelAddress}>
+                취소
+              </button>
+            )}
           </div>
 
           {/* 결과 오류 및 제출 */}
