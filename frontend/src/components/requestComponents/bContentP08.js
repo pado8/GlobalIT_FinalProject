@@ -128,10 +128,14 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           />
       );
     case "date":
+      const today = new Date();
+      const dayLater = new Date().setMonth(today.getMonth()+6); //6개월뒤까지 가능
       return (
         <DatePicker
           selected={value}
           onChange={(date) => handleChange({ target: { name: field.name, value: date } })}
+          minDate={today}
+          maxDate={dayLater}
           className="w-full border px-3 py-2 rounded"
           dateFormat="yyyy/MM/dd"
           placeholderText="날짜를 선택하세요"
