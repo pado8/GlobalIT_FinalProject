@@ -1,6 +1,9 @@
+
+
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { getOne, deleteOne, getComments, postComment } from "../../api/communityApi";
+import { getOne, deleteOne, getComments, postComment, updateComment, deleteComment } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import { useAuth } from "../../contexts/Authcontext";
 import "../../css/ReadPage.css";
@@ -27,6 +30,8 @@ const ReadPage = () => {
     const [nextPost, setNextPost] = useState(null);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
+    const [editingCno, setEditingCno] = useState(null);
+    const [editContent, setEditContent] = useState("");
     const [showConfirm, setShowConfirm] = useState(false);
 
     const { moveToList, moveToModify } = useCustomMove();
@@ -95,6 +100,37 @@ const ReadPage = () => {
                 console.error("댓글 작성 실패:", err);
                 alert("댓글 작성에 실패했습니다.");
             });
+    };
+
+    // 댓글 삭제
+    const onCommentDelete = (cno) => {
+        if (!window.confirm("정말 댓글을 삭제하시겠습니까?")) return;
+        deleteComment(pno, cno)
+            .then(() => {
+                setComments(comments.filter(c => c.cno !== cno));
+            })
+            .catch(() => alert("삭제 실패"));
+    };
+
+    // 댓글 수정 시작
+    const onEditStart = (c) => {
+        setEditingCno(c.cno);
+        setEditContent(c.content);
+    };
+    // 댓글 수정 취소
+    const onEditCancel = () => {
+        setEditingCno(null);
+        setEditContent("");
+    };
+    // 댓글 수정 저장
+    const onEditSave = (cno) => {
+        if (!editContent.trim()) return;
+        updateComment(pno, cno, editContent)
+            .then(updated => {
+                setComments(comments.map(c => c.cno === cno ? updated : c));
+                onEditCancel();
+            })
+            .catch(() => alert("수정 실패"));
     };
 
     // 글 삭제 모달 핸들러
@@ -228,21 +264,55 @@ const ReadPage = () => {
                 </div>
                 <ul className="comment_list">
                     {comments.map((c) => (
-                        <li
-                            key={c.cno}
-                            className="comment_item"
-                        >
-                            <span className="comment_author">
-                                {c.writerName}
-                            </span>
-                            <span className="comment_date">
-                                {new Date(
-                                    c.cregdate
-                                ).toLocaleString()}
-                            </span>
-                            <p className="comment_text">
-                                {c.content}
-                            </p>
+                        <li key={c.cno} className="comment_item">
+                            <div className="comment_content">
+                                <span className="comment_author">{c.writerName}</span>
+                                <span className="comment_date">
+                                    {new Date(c.cregdate).toLocaleString()}
+                                </span>
+
+                                {/* 수정 중인 댓글이 아닐 때만 수정/삭제 버튼 노출 */}
+                                {user?.mno === c.mno && editingCno !== c.cno && (
+                                    <span className="comment_actions">
+                                        <button
+                                            className="tiny_btn btn"
+                                            onClick={() => onEditStart(c)}
+                                        >
+                                            수정
+                                        </button>
+                                        <button
+                                            className="tiny_btn btn"
+                                            onClick={() => onCommentDelete(c.cno)}
+                                        >
+                                            삭제
+                                        </button>
+                                    </span>
+                                )}
+                            </div>
+
+                            {editingCno === c.cno ? (
+                                <div className="edit_block">
+                                    <textarea
+                                        className="comment_input"
+                                        value={editContent}
+                                        onChange={(e) => setEditContent(e.target.value)}
+                                    />
+                                    <div className="comment_actions">
+                                        {/* 저장/취소만 */}
+                                        <button
+                                            className="tiny_btn btn"
+                                            onClick={() => onEditSave(c.cno)}
+                                        >
+                                            저장
+                                        </button>
+                                        <button className="tiny_btn btn" onClick={onEditCancel}>
+                                            취소
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="comment_text">{c.content}</p>
+                            )}
                         </li>
                     ))}
                 </ul>

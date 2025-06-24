@@ -69,14 +69,12 @@ const OrderCreatePage = () => {
 
   return (
     <>
-      <div className="bg-cover bg-center min-h-screen pt-12">
-        <Hero {...createHero} />
-        <BContentP08
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-        />
-      </div>
+      <Hero {...createHero} />
+      <BContentP08
+        formData={formData}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
     </>
   );
 };
