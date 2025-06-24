@@ -234,14 +234,13 @@ const BContentP09 = () => {
   };
 
   return (
-    <div className='request-body'>
-      <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
+    <div className='request-body bg-cover bg-center'>
+      <form onSubmit={handleSubmit} className="form-wrapper">
         {/* 왼쪽 폼 */}
-        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+        <div className="form-card">
           {formFields.left.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="block font-semibold mb-1">{field.label}</label>
-              {/* {renderField(field, formData[field.name], handleChange)} */}
+              <label >{field.label}</label>
               {
                 field.name === 'rentalEquipment' ?
                   renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
@@ -251,23 +250,23 @@ const BContentP09 = () => {
           ))}
         </div>
         {/* 오른쪽 폼 */}
-        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+        <div className="form-card">
           {formFields.right.map((field, idx) => (
             <div key={idx} className="mt-4">
               <label className="block font-semibold mb-1">{field.label}</label>
               {renderField(field, formData[field.name], handleChange)}
             </div>
           ))}
-          <div className="flex gap-4 mt-6">
+          <div className="button-group">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="w-1/2 bg-gray-300 text-black py-2 rounded hover:bg-gray-400">
+              className="cancel-button">
               취소
             </button>
             <button
               type="submit"
-              className="w-1/2 bg-black text-white py-2 rounded hover:bg-gray-800">
+              className="submit-button">
               수정 완료
             </button>
           </div>

@@ -21,18 +21,6 @@ const BContentP11 = ({ quote, companies }) => {
   const displayRentalEquipment = quote.rentalEquipment ? `${quote.rentalEquipment}` : '대여 장비 미신청';
   const displayOcontent = quote.ocontent ? `${quote.ocontent}` : '요청사항이 없어요';
 
-
-
-  //날짜 계산
-  const regDateObj = new Date(quote.regdate); //base
-  let endDateObj = new Date(quote.regdate);
-  endDateObj = new Date(endDateObj.setDate(regDateObj.getDate() + 7)); //7일뒤. 시간은 00으로 초기화됨
-  endDateObj.setHours(regDateObj.getHours()); // 원래 시간 설정
-
-  const timeLeft = endDateObj - new Date(); //남은 시간 계산 (밀리초)
-  const isUrgent = timeLeft < (1000*60*60*12) ? true : false;  // 12시간 이하면 true
-  let urgentStr = isUrgent===true?"True":"False"; //불리언 확인용
-
   const handleModifyClick = () => {
     navigate(`/request/modify/${ono}`);
   };
@@ -63,11 +51,19 @@ const BContentP11 = ({ quote, companies }) => {
   
 
   return (
-    <div className='request-body'>
-      <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto mt-6">
+    <div className='request-body bg-cover bg-center'>
+      <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto mt-6
+         bcontent-container">
         {/* 견적 제목 및 요약 */}
-        <div className="mb-4 border-b pb-4">
+        <div className="mb-4 border-b pb-4   bcontent-summary">
           <div className="text-sm text-gray-600">현재 견적</div>
+          <p>
+            {quote.finished ? (
+              <span style={{ color: 'red', fontWeight: 'bold' }}>마감됨</span>
+            ) : (
+              <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>진행중 : {quote.timeLeftStr}</span>
+            )}
+          </p>
           <div className="font-bold text-lg mt-1">신청 종목 : {quote.playType}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
             <div>지역📍 : {displayRegion}</div>
@@ -76,20 +72,19 @@ const BContentP11 = ({ quote, companies }) => {
             <div>요청사항 : {displayOcontent}</div>
             <div>시간📆 : {displayDate} {displayTime}</div>
           </div>
-          <div className="text-red-500 font-semibold mt-2">
-            마감 임박! {quote.timeLeftStr} 남았어요! + {urgentStr}
-          </div>
+          {quote.isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {quote.timeLeftStr} 남았어요!</div> )}
         </div>
 
         {/* 견적 제안 리스트 */}
         <div className="mb-4">
           <div className="text-sm text-gray-700 mb-2">견적 제안</div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4   company-grid">
             {companies.map((company) => (
               <div
                 key={company.id}
-                className={`border rounded p-3 cursor-pointer transition ${
-                  selectedCompanyId === company.id ? "border-blue-500 border-2 shadow-md" : ""
+                className={`border rounded p-3 cursor-pointer transition
+                  company-card ${
+                  selectedCompanyId === company.id ? "border-blue-500 border-2 shadow-md   selected" : ""
                 }`}
                 onClick={() => setSelectedCompanyId(company.id)}
               >
@@ -104,7 +99,7 @@ const BContentP11 = ({ quote, companies }) => {
         </div>
 
         {/* 하단 버튼 */}
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between mt-6   button-group">
           <button
             onClick={handleModifyClick}
             className="border px-4 py-2 rounded hover:bg-gray-100"
@@ -119,7 +114,7 @@ const BContentP11 = ({ quote, companies }) => {
           </button>
           <button
             onClick={handleConfirmClick}
-            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button"
           >
             선택된 업체 확정
           </button>
