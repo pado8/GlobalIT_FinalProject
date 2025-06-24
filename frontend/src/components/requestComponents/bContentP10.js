@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import "./requestDebugStyle.css";
 
 const List = ({ title, quotes, type }) => ( 
-  <div className='request-body'>
+  <div className='request-body omypMain'>
     <section className="mt-6">
       <h2 className="font-bold text-lg mb-2">{title}</h2> 
       <div>
@@ -21,36 +21,36 @@ const List = ({ title, quotes, type }) => (
           const displayPerson = quote.person ? `${quote.person}명` : '인원 null';
           const displayRegion = quote.region ? `${quote.region}` : '지역 null';
 
-          //날짜 계산
-          const regDateObj = new Date(quote.regdate); //base
-          let endDateObj = new Date(quote.regdate);
-          endDateObj = new Date(endDateObj.setDate(regDateObj.getDate() + 7)); //7일뒤. 시간은 00으로 초기화됨
-          endDateObj.setHours(regDateObj.getHours()); // 원래 시간 설정
-
-          const timeLeft = endDateObj - new Date(); //남은 시간 계산 (밀리초)
-          const isUrgent = timeLeft < (1000*60*60*12) ? true : false;  // 12시간 이하면 true
-          // let urgentStr = isUrgent===true?"True":"False"; //불리언 확인용
+          let urgentStr = quote.isUrgent===true?"True":"False"; //불리언 확인용
 
 
           return (
-            <li key={quote.ono || idx} className="bg-gray-100 p-3 rounded flex flex-col sm:flex-row justify-between items-start sm:items-center"> 
-              <div className="flex-1 mb-2 sm:mb-0">
-                <span className="font-semibold text-lg">{quote.ocontent} 견적 (글번호: {quote.ono})</span>
-                <div className="text-sm text-gray-600"> {displayRegion} | {displayDate} {displayTime} | {displayPerson} </div>
-                {type === 'active' && (
-                  <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr}</div>
-                )}
-                {/* {type === 'active' && ( <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr} | {urgentStr} </div> )} */}
-                {type === 'active' && isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {quote.timeLeftStr} 남았어요!</div> )}
-              </div>
+              <li key={quote.ono || idx} className="bg-gray-100 p-3 rounded flex flex-col sm:flex-row justify-between items-start sm:items-center"> 
+              {type === 'active' || type === 'closed' ? (
+                <Link 
+                  to={`/request/read/${quote.ono}`} 
+                  className="flex-1 mb-2 sm:mb-0 clickMyComponent"
+                  style={{ textDecoration: 'none', color: 'inherit' }} // Link의 기본 스타일 제거
+                >
+                  <span className="font-semibold text-lg">{quote.ocontent} 견적 (글번호: {quote.ono})</span>
+                  <div className="text-sm text-gray-600"> {displayRegion} | {displayDate} {displayTime} | {displayPerson} </div>
+                  {type === 'active' && (
+                    <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr}+{urgentStr}</div>
+                  )}
+                  {type === 'active' && quote.isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {quote.timeLeftStr} 남았어요!</div> )}
+                </Link>
+              ) : ( // 일반 div 렌더링
+                <div className="flex-1 mb-2 sm:mb-0 clickMyComponent">
+                  <span className="font-semibold text-lg">{quote.ocontent} 견적 (글번호: {quote.ono})</span>
+                  <div className="text-sm text-gray-600"> {displayRegion} | {displayDate} {displayTime} | {displayPerson} </div>
+                  {type === 'active' && (
+                    <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr}+{urgentStr}</div>
+                  )}
+                  {type === 'active' && quote.isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {quote.timeLeftStr} 남았어요!</div> )}
+                </div>
+              )}
+
               <div className="flex-shrink-0">
-                {type === 'active' && (
-                  <Link to={`/request/read/${quote.ono}`}> 
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm">
-                      견적 상세
-                    </button>
-                  </Link>
-                )}
                 {type === 'closed' && (
                 <button className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm"> 리뷰 작성 </button>
                 )}

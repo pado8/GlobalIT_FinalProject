@@ -155,14 +155,13 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
   }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
 
   return (
-    <div className='request-body'>
-      <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
+    <div className='request-body bg-cover bg-center'>
+      <form onSubmit={handleSubmit} className="form-wrapper">
         {/* 왼 */}
-        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+        <div className="form-card">
           {formFields.left.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="block font-semibold mb-1">{field.label}</label>
-              {/* {renderField(field, formData[field.name], handleChange)} */}
+              <label className="">{field.label}</label>
               {
                 field.name === 'rentalEquipment' ?
                   renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
@@ -172,16 +171,16 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
           ))}
         </div>
         {/* 오 */}
-        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+        <div className="form-card">
           {formFields.right.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="block font-semibold mb-1">{field.label}</label>
+              <label className="">{field.label}</label>
               {renderField(field, formData[field.name], handleChange)}
             </div>
           ))}
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 mt-6 rounded hover:bg-gray-800">
+            className="full-submit-button">
             등록하기
           </button>
         </div>

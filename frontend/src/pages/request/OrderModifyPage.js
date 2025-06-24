@@ -90,15 +90,12 @@ const OrderModifyPage = () => {
 
   return (
     <>
-      <div className="bg-cover bg-center min-h-screen pt-12">
-        <Hero {...modifyHero} />
-        {/* formData가 로드된 후에만 BContentP09 렌더링 */}
-        <BContentP09
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-        />
-      </div>
+      <Hero {...modifyHero} />
+      <BContentP09
+        formData={formData}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
     </>
   );
 };

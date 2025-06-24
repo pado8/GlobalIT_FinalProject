@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,7 @@ import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.service.RequestService;
 
-
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @Log4j2
 @RestController
 @RequestMapping("/api/orders")
@@ -173,6 +174,7 @@ public class RequestController {
         }
     }
 
+    // 견적 취소 요청(논리삭제)
     @PatchMapping("/delete/{ono}")
     public ResponseEntity<String> deleteOrder(@PathVariable("ono") int ono, @RequestBody RequestDTO requestDTO) {
         requestDTO.setOno(ono); // 경로에서 받은 ono를 DTO에 주입
