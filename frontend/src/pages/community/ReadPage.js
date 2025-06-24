@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getOne, deleteOne } from "../../api/communityApi";
+import { useParams, useNavigate } from "react-router-dom";
+import { getOne, deleteOne, getComments, postComment } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import { useAuth } from "../../contexts/Authcontext";
 import "../../css/ReadPage.css";
@@ -21,6 +21,10 @@ const ReadPage = () => {
     const [community, setCommunity] = useState(initState);
     const { moveToList, moveToModify } = useCustomMove();
     const { user } = useAuth();
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
+    const navigate = useNavigate();
+
 
     // **삭제 확인 모달 표시 여부**
     const [showConfirm, setShowConfirm] = useState(false);
@@ -30,6 +34,46 @@ const ReadPage = () => {
             .then((data) => setCommunity({ ...data }))
             .catch(err => console.error(err));
     }, [pno]);
+
+
+    useEffect(() => {
+        getComments(pno)
+            .then(data => setComments(Array.isArray(data) ? data : []))
+            .catch(err => {
+                // status, response.data 까지 찍어 봅니다
+                console.error("댓글 로드 실패:", {
+                    status: err.response?.status,
+                    body: err.response?.data,
+                    message: err.message
+                });
+                setComments([]);
+            });
+    }, [pno]);
+
+
+    // 댓글 입력
+    const handleCommentChange = e => setNewComment(e.target.value);
+
+    // 댓글 제출
+    const handleCommentSubmit = () => {
+        if (!user) {
+            if (window.confirm("댓글을 작성하려면 로그인해야 합니다. 로그인 페이지로 이동할까요?")) {
+                return navigate("/login");
+            }
+            return;
+        }
+        if (!newComment.trim()) return;
+
+        postComment(pno, newComment)
+            .then(saved => {
+                setComments(prev => [saved, ...prev]);
+                setNewComment("");
+            })
+            .catch(err => {
+                console.error("댓글 작성 실패:", err);
+                alert("댓글 작성에 실패했습니다.");
+            });
+    };
 
     // 1) 삭제 버튼 눌렀을 때 모달 띄우기
     const handleClickDelete = () => {
@@ -41,7 +85,7 @@ const ReadPage = () => {
         deleteOne(pno)
             .then(() => {
                 setShowConfirm(false);
-                moveToList();  
+                moveToList();
             })
             .catch(err => console.error(err));
     };
@@ -130,10 +174,28 @@ const ReadPage = () => {
             </div>
 
             <div className="comments_section">
-                <div className="comments_header">💬 댓글 8개</div>
+                <div className="comments_header">💬 댓글 {comments.length}개</div>
+
+                {/* 댓글 리스트 */}
+                <ul className="comment_list">
+                    {comments.map(c => (
+                        <li key={c.cno} className="comment_item">
+                            <span className="comment_author">{c.writerName}</span>
+                            <span className="comment_date">
+                                {new Date(c.cregdate).toLocaleString()}
+                            </span>
+                            <p className="comment_text">{c.content}</p>
+                        </li>
+                    ))}
+                </ul>
                 <div className="comment_form clearfix">
-                    <textarea className="comment_input" placeholder="댓글을 입력하세요..." />
-                    <button className="comment_submit" onClick={() => { }}>댓글 작성</button>
+                    <textarea
+                        className="comment_input"
+                        placeholder="댓글을 입력하세요..."
+                        value={newComment}
+                        onChange={handleCommentChange}
+                    />
+                    <button className="comment_submit" onClick={handleCommentSubmit}>댓글 작성</button>
                 </div>
             </div>
 

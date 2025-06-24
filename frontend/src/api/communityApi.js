@@ -43,3 +43,11 @@ export const updateOne = async (pno, communityDTO) => {
     const res = await axios.put(`${prefix}/${pno}`, communityDTO)
     return res.data
 };
+
+export const getComments = (pno) =>
+  axios.get(`${prefix}/${pno}/comments`).then(res => res.data);
+
+export const postComment = (pno, content) =>
+  axios
+    .post(`${prefix}/${pno}/comments`, { content })
+    .then(res => res.data);

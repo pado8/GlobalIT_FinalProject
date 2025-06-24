@@ -396,3 +396,13 @@
   display: flex;
   justify-content: space-around;
 }
+
+
+.comment_list { list-style: none; padding: 0; margin: .5rem 0; }
+.comment_item {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #eee;
+}
+.comment_author { font-weight: bold; margin-right: .5rem; }
+.comment_date   { color: #888; font-size: .85rem; }
+.comment_text   { margin: .25rem 0 0; }
