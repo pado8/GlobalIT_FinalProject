@@ -37,6 +37,12 @@ public class SellerServiceImpl implements SellerService {
 
     private static final String DEFAULT_IMAGE_PATH = "default/default.png";
 
+    // 주석: ROLE 전환으로, SELLER로 변경된 회원의 mno로 seller테이블을 조회해 새로운 seller데이터를 추가할지 넘어갈지 정하기 위해 추가..
+    @Override
+    public boolean existsSeller(Long mno) {
+        return sellerRepository.existsById(mno);
+    }
+
 
     private String buildSimageString(List<String> simageList) {
     return (simageList == null || simageList.isEmpty())
@@ -52,7 +58,6 @@ public class SellerServiceImpl implements SellerService {
                     .collect(Collectors.toList())
             : List.of(DEFAULT_IMAGE_PATH);
 }
-
     @Override
     public SellerReadDTO getSellerByMno(Long mno) {
         SellerIntro intro = sellerIntroRepository.findById(mno)
@@ -136,6 +141,7 @@ public class SellerServiceImpl implements SellerService {
                 .totalCount(result.getTotalElements())
                 .build();
     }
+
     @Override
     public SellerRegisterReadDTO getSellerRegisterInfo(Long mno) {
         Seller seller = sellerRepository.findById(mno)

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
@@ -47,26 +48,27 @@ public class SecurityConfig {
             // 하지만 React 같은 SPA는 form을 안 쓰고 JS로 요청하므로, CSRF 토큰을 수동으로 받아야 함
             // .csrf(csrf -> csrf
             // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .cors(withDefaults())
+            // .cors(withDefaults())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             //api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",
-                                "/images/**","/api/display/**")
-            // // SELLER만 가능한 API
-            // .requestMatchers("/api/seller/register", "/api/seller/register-info", "/api/seller/modify", "/api/seller/modify-info")
-            // .hasRole("SELLER")
+                                "/images/**","/api/display/**", "api/members/**")
 
-            // // 로그인만 하면 누구나 접근 가능한 API
-            // .requestMatchers("/api/seller/registered").authenticated()
+                // SELLER만 가능한 API
+                // .requestMatchers("/api/seller/register", "/api/seller/register-info", "/api/seller/modify", "/api/seller/modify-info")
+                // .hasRole("SELLER")
 
-            // // 공개 API
-            // .requestMatchers("/api/seller/list", "/api/seller/detail").permitAll()
+                // // 로그인만 하면 누구나 접근 가능한 API
+                // .requestMatchers("/api/seller/registered").authenticated()
 
-            // 로그인한 사용자만 업로드·삭제 가능
-            //.requestMatchers("/api/uploadAjax", "/api/removeFile").authenticated()
+                // // 공개 API
+                // .requestMatchers("/api/seller/list", "/api/seller/detail").permitAll()
 
-
-                .permitAll()
+                // 로그인한 사용자만 업로드·삭제 가능
+                //.requestMatchers("/api/uploadAjax", "/api/removeFile").authenticated()
+                .permitAll()    
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginProcessingUrl("/login") 
@@ -103,7 +105,7 @@ public class SecurityConfig {
         //이유: setAllowCredentials(true)와 함께 사용할 수 있기 때문
         config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         // 허용 HTTP 메서드
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         // 허용 헤더
         config.setAllowedHeaders(List.of("*"));
         // 쿠키 전송 허용하려면 true

@@ -2,12 +2,15 @@ package com.sports.kickauction.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.service.MemberService;
+import com.sports.kickauction.service.SellerService;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
   
   private final MemberService memberService;
+  private final SellerService sellerService;
 
     // 매핑:이메일 체크
     @GetMapping("/email_check")
@@ -36,6 +40,15 @@ public class MemberController {
             boolean exists = memberService.existsByUserId(email);
             return ResponseEntity.ok(Map.of("exists", exists));
         }
+
+    // 매핑:이메일-전화번호 동시 체크
+    @GetMapping("/emaillink_check")
+    public ResponseEntity<?> checkEmailPhoneMatch(@RequestParam String email, @RequestParam String phone) {
+    Member member = memberService.findByUserIdAndPhone(email, phone);
+    boolean match = (member != null);
+    return ResponseEntity.ok(Map.of("match", match));
+    }
+    
     // 매핑:닉네임 체크
     @GetMapping("/nickname_check")
         public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
@@ -133,7 +146,7 @@ public class MemberController {
     public ResponseEntity<?> updateMember(
         @RequestParam Long mno,
         @RequestParam String userName,
-        @RequestParam String userPw,
+        @RequestParam(required = false) String userPw,
         @RequestParam String phone,
         @RequestParam(required = false) MultipartFile profileimg,
         @RequestParam(required = false) String remove
@@ -146,14 +159,16 @@ public class MemberController {
             if (!existing.getUserName().equals(userName) && memberService.existsByUserName(userName)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
             }
-            if (!existing.getPhone().equals(phone) && memberService.existsByPhone(phone)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
+            if (!Objects.equals(existing.getPhone(), phone) && memberService.existsByPhone(phone)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
             }
 
             // 수정 적용
             existing.setUserName(userName);
             existing.setPhone(phone);
-            existing.setUserPw(userPw); 
+            if (userPw != null && !userPw.isBlank()) {
+            existing.setUserPw(userPw);
+            }
 
             // 파일 업로드 경로
                 String uploadDir = "C:/upload/";
@@ -169,7 +184,7 @@ public class MemberController {
                 }
 
                 // 2) 새 프로필 이미지 업로드 처리
-                if (profileimg != null && !profileimg.isEmpty()) {
+                else if (profileimg != null && !profileimg.isEmpty()) {
                     // 기존 이미지 삭제
                     if (currentImg != null && !currentImg.equals("baseprofile.png")) {
                         File oldFile = new File(uploadDir + currentImg);
@@ -236,5 +251,38 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
 }
+
+    // 매핑: 마이페이지- ROLE변경(->seller)
+    @PatchMapping("/changetoseller")
+    public ResponseEntity<?> changetoseller(
+           @RequestParam Long mno,
+           @RequestParam(required = false) String sname,
+           @RequestParam(required = false) String slocation) {
+         
+        if (!sellerService.existsSeller(mno)) {
+        if (sname == null || slocation == null) {
+            return ResponseEntity.badRequest().body("sname과 slocation이 필요합니다.");
+        }
+        memberService.changeToSeller(mno, sname, slocation);
+        } else {
+            memberService.updateSeller(mno);
+        }
+          return ResponseEntity.ok("변경 완료");
+    }
+
+    // 매핑: 마이페이지- ROLE변경(->user)
+    @PatchMapping("/changetouser")
+    public ResponseEntity<?> changetouser(@RequestParam Long mno) {
+          memberService.changeToUser(mno);
+          return ResponseEntity.ok("변경 완료");
+    }
+
+    // 매핑: seller로 변경된 회원의 seller데이터 조회 
+    @GetMapping("/checkseller")
+    public ResponseEntity<?> checkSellerExists(@RequestParam Long mno) {
+        boolean exists = sellerService.existsSeller(mno);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
 
 }
