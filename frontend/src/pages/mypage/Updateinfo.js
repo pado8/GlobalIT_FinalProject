@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../contexts/Authcontext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../mypage/Updateinfo.css";
+import styles from "../mypage/Updateinfo.module.css";
 import "../../css/Sharesheet.css";
 
 function Updateinfo() {
@@ -267,12 +267,12 @@ function Updateinfo() {
   };
 
   return (
-    <div className="signup_container">
-      <div className="signup_smallcontainer">
-        <h2 className="signup_title">회원정보 수정</h2>
-        <form className="signup_form" onSubmit={handleSubmit}>
+    <div className={styles.signup_container}>
+      <div className={styles.signup_smallcontainer}>
+        <h2 className={styles.signup_title}>회원정보 수정</h2>
+        <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 프로필사진 첨부 */}
-          <div className="img_input_container">
+          <div className={styles.img_input_container}>
             <img
               src={preview}
               alt="프로필 미리보기"
@@ -281,11 +281,11 @@ function Updateinfo() {
                 e.target.src = "/images/baseprofile.png";
               }}
             />
-            <div className="img_buttons">
+            <div className={styles.img_buttons}>
               <button type="button" onClick={() => fileInputRef.current.click()} style={{ marginRight: "0.5rem" }}>
                 사진 변경
               </button>
-              <button type="button" className="delete_button" onClick={handleDeletePhoto}>
+              <button type="button" className={styles.delete_button} onClick={handleDeletePhoto}>
                 사진 삭제
               </button>
             </div>
@@ -293,15 +293,15 @@ function Updateinfo() {
           </div>
 
           {/* 이메일 */}
-          <div className="signup_input_container">
-            <input type="email" className="input" value={email} readOnly />
+          <div className={styles.signup_input_container}>
+            <input type="email" className={styles.input} value={email} readOnly />
           </div>
 
           {/* 닉네임 */}
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="text"
-              className="input"
+              className={styles.input}
               placeholder="닉네임"
               value={nickname}
               onChange={(e) => {
@@ -310,20 +310,20 @@ function Updateinfo() {
               }}
               required
             />
-            <button type="button" className="nickname_duplicheck" onClick={handleNicknameCheck}>
+            <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
             </button>
           </div>
 
-          {nicknameStatus === "duplicate" && <p className="error">❌ 이미 입력된 닉네임이 존재합니다.</p>}
-          {nicknameStatus === "valid" && <p className="nickname_ok error">✔ 사용 가능한 닉네임입니다.</p>}
-          {nicknameStatus === "error" && <p className="error">⚠ 중복확인 중 오류가 발생했습니다.</p>}
+          {nicknameStatus === "duplicate" && <p className={styles.error}>❌ 이미 입력된 닉네임이 존재합니다.</p>}
+          {nicknameStatus === "valid" && <p className={`${styles.nickname_ok} ${styles.error}`}>✔ 사용 가능한 닉네임입니다.</p>}
+          {nicknameStatus === "error" && <p className={styles.error}>중복확인 중 오류가 발생했습니다.</p>}
 
           {/* 전화번호 수정 */}
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="tel"
-              className="input"
+              className={styles.input}
               placeholder="본인 명의의 전화번호만 가능합니다."
               value={phone}
               onChange={handlePhoneChange}
@@ -336,31 +336,31 @@ function Updateinfo() {
                 }
               }}
             />
-            <button type="button" className="check_button" onClick={handleSendSMS}>
+            <button type="button" className={styles.check_button} onClick={handleSendSMS}>
               인증받기
             </button>
           </div>
 
-          {verifyStatus === "success" && <p className="error sms_ok">✔ 인증 완료</p>}
-          {verifyStatus === "fail" && <p className="error">❗ 인증되지 않음</p>}
+          {verifyStatus === "success" && <p className={`${styles.error} ${styles.sms_ok}`}>✔ 인증 완료</p>}
+          {verifyStatus === "fail" && <p className={styles.error}>❗ 인증되지 않음</p>}
 
           {/* 인증 모달 */}
           {isModalOpen && (
-            <div className="modal_overlay">
-              <div className="modal_container">
+            <div className={styles.modal_overlay}>
+              <div className={styles.modal_container}>
                 <h3>인증번호 확인</h3>
                 <p>입력하신 번호로 SMS 인증번호가 전송되었습니다.</p>
-                <p className="timer">
+                <p className={styles.timer}>
                   남은 시간: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
                 </p>
 
-                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className="auth_input" />
+                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className={styles.auth_input} />
 
-                <div className="modal_buttons">
-                  <button type="button" className="modal_button" onClick={handleVerifySMS}>
+                <div className={styles.modal_buttons}>
+                  <button type="button" className={styles.modal_button} onClick={handleVerifySMS}>
                     확인
                   </button>
-                  <button type="button" className="modal_button cancel" onClick={handleCloseModal}>
+                  <button type="button" className={`${styles.modal_button} ${styles.cancel}`} onClick={handleCloseModal}>
                     닫기
                   </button>
                 </div>
@@ -369,17 +369,17 @@ function Updateinfo() {
           )}
 
           {/* 비밀번호 & 비밀번호 확인     */}
-          <div className="signup_input_container">
-            <input type="password" className={`password_input input ${pwStatus}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
+          <div className={styles.signup_input_container}>
+            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus]}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
           </div>
 
-          {pwStatus === "invalid" && <p className="error">❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
-          {pwStatus === "valid" && <p className="error password_ok">✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
+          {pwStatus === "invalid" && <p className={styles.error}>❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
+          {pwStatus === "valid" && <p className={`${styles.error} ${styles.password_ok}`}>✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
 
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="password"
-              className={`password_check_input input ${confirmPw && confirmPw === password ? "valid" : confirmPw && confirmPw !== password ? "invalid" : ""}`}
+              className={`${styles.password_check_input} ${styles.input} ${confirmPw ? (confirmPw === password ? styles.valid : styles.invalid) : ""}`}
               placeholder="비밀번호 재입력"
               value={confirmPw}
               onChange={handleConfirmPwChange}
@@ -387,9 +387,9 @@ function Updateinfo() {
             />
           </div>
 
-          {pw2Error && <p className={`password_check_message ${confirmPw === password ? "error pw2_ok" : "error"}`}>{pw2Error}</p>}
+          {pw2Error && <p className={`${styles.password_check_message} ${confirmPw === password ? `${styles.error} ${styles.pw2_ok}` : styles.error}`}>{pw2Error}</p>}
 
-          <button type="submit" className="login_button">
+          <button type="submit" className={styles.login_button}>
             정보 수정하기
           </button>
         </form>

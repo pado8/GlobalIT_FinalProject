@@ -248,7 +248,7 @@ body {
   background-color: white;
   padding: 2rem;
   border-radius: 10px;
-  width: 400px;
+  width: 500px;
   max-width: 90%;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   text-align: center;
@@ -270,6 +270,71 @@ body {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
+}
+
+/* 주소 입력 */
+
+.address_input_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.company_address_input {
+  flex: 1;
+  height: 48px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0rem !important;
+}
+
+/* 주석:주소 검색 버튼 */
+.address_search_button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #151515;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0 12px;
+  height: 48px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: rgb(246, 246, 246);
+  transition: background-color 0.2s ease;
+  font-family: "NotoSansRG";
+}
+
+.address_search_button:hover {
+  background-color: rgb(0, 0, 0);
+}
+
+/* 주석: 주소 선택 취소 버튼 */
+.address_cancel_button {
+  background-color: #ececec;
+  border: none;
+  border-radius: 6px;
+  padding: 0 12px;
+  height: 48px;
+  font-size: 0.9rem;
+  color: #cc0000;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: "NotoSansRG";
+}
+
+.address_cancel_button:hover {
+  background-color: #ffe0e0;
+}
+
+.button_row {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
 }
 
 .modal_buttons {
@@ -297,41 +362,6 @@ body {
 
 .modal_buttons button:hover {
   opacity: 0.9;
-}
-
-/* 모달: social유저 블락 모달 */
-.slide_modal {
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #111;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: bold;
-  text-align: center;
-  animation: slideDownUp 3s ease-in-out;
-  z-index: 9999;
-}
-
-@keyframes slideDownUp {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50px);
-  }
-  10% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  90% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50px);
-  }
 }
 
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
@@ -382,5 +412,39 @@ body {
     font-family: "NotoSansSB";
     font-size: 1rem;
     margin: 0.2rem 0;
+  }
+
+  /* 주석: 모바일-업체정보 줄바꿈 */
+  .address_input_wrapper {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .company_address_input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    min-height: 48px;
+  }
+
+  .button_row {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 8px;
+    width: 100%;
+  }
+  .address_search_button,
+  .address_cancel_button {
+    height: 44px;
+    padding: 0;
+    font-size: 0.9rem;
+    width: 45%;
+    text-align: center;
+    justify-content: center;
+    border-radius: 999px;
+  }
+
+  .modal_buttons {
+    margin-top: 1.35rem;
   }
 }
