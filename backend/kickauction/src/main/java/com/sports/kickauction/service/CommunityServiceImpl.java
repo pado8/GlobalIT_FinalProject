@@ -200,18 +200,19 @@ public class CommunityServiceImpl implements CommunityService {
         return next.map(this::entityToDto).orElse(null);
     }
 
-     private CommunityDTO entityToDto(Community e) {
+    private CommunityDTO entityToDto(Community e) {
         return CommunityDTO.builder()
-            .pno(e.getPno())
-            .mno(e.getMno())
-            .writerName(e.getMember().getUserName())
-            .ptitle(e.getPtitle())
-            .pcontent(e.getPcontent())
-            .pregdate(e.getPregdate())
-            .view(e.getView())
-            .pimage(e.getPimage())
-            // prev/next 필드는 컨트롤러에서 채워줍니다.
-            .build();
+                .pno(e.getPno())
+                .mno(e.getMno())
+                .writerName(e.getMember().getUserName())
+                .mprofileimg(e.getMember().getProfileimg())
+                .ptitle(e.getPtitle())
+                .pcontent(e.getPcontent())
+                .pregdate(e.getPregdate())
+                .view(e.getView())
+                .pimage(e.getPimage())
+                // prev/next 필드는 컨트롤러에서 채워줍니다.
+                .build();
     }
 
 }

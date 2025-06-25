@@ -2,7 +2,7 @@
 
 
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getOne, deleteOne, getComments, postComment, updateComment, deleteComment } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import { useAuth } from "../../contexts/Authcontext";
@@ -16,15 +16,12 @@ const initState = {
     mno: 0,
     writerName: "",
     ptitle: "",
-    view: 0
+    view: 0,
+    mprofileimg: ""
 };
 
 const ReadPage = () => {
     const { pno } = useParams();
-    const [searchParams] = useSearchParams();
-    const page = searchParams.get("page") || "1";
-    const size = searchParams.get("size") || "10";
-
     const [community, setCommunity] = useState(initState);
     const [prevPost, setPrevPost] = useState(null);
     const [nextPost, setNextPost] = useState(null);
@@ -266,6 +263,13 @@ const ReadPage = () => {
                     {comments.map((c) => (
                         <li key={c.cno} className="comment_item">
                             <div className="comment_content">
+                                <span className="comment_profile">
+                                    <img
+                                        src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"
+                                            }/images/${c.mprofileimg || "baseprofile.png"}?t=${Date.now()}`}
+                                        alt={`${c.writerName} 프로필`}
+                                    />
+                                </span>
                                 <span className="comment_author">{c.writerName}</span>
                                 <span className="comment_date">
                                     {new Date(c.cregdate).toLocaleString()}

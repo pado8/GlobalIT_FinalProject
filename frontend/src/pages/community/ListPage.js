@@ -97,7 +97,7 @@ const ListPage = () => {
   return (
     <div id="list_page">
       <div className="list_header">
-        <div className="list_title">커뮤니티</div>
+        <div className="list_title">자유게시판</div>
         <div className="search_box">
           <select
             value={searchType}
