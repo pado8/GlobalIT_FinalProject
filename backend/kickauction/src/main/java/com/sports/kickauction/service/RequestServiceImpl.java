@@ -92,17 +92,15 @@ public class RequestServiceImpl implements RequestService {
             .finished(0)
             .build();
 
-            try {
-                requestRepository.save(newOrder);
-                System.out.println("wtf : "+newOrder);
-            } catch (Exception e) {
-                log.error("견적 생성 중 데이터베이스 저장 오류 발생: " + e.getMessage(), e);
-                System.out.println("wtf : "+newOrder);
-            }
-        Request savedOrder = requestRepository.save(newOrder);  
-        requestDTO.setOno(savedOrder.getOno());
-
-        return savedOrder.getOno() > 0;
+        try {
+            Request savedOrder = requestRepository.save(newOrder);
+            requestDTO.setOno(savedOrder.getOno());
+            // System.out.println("견적 저장 성공 ono: " + savedOrder.getOno());
+            return savedOrder.getOno() > 0;
+        } catch (Exception e) {
+            log.error("견적 생성 중 DB 저장 오류 발생: " + e.getMessage(), e);
+            return false;
+        }
     }
 
     @Override
