@@ -19,6 +19,7 @@ const MyPage = lazy(() => import("../pages/mypage/MyPage"));
 const Updateinfo = lazy(() => import("../pages/mypage/Updateinfo"));
 const UpdateinfoSocial = lazy(() => import("../pages/mypage/UpdateinfoSocial"));
 const Findinfo = lazy(() => import("../pages/login/Findinfo"));
+const Help = lazy(() => import("../pages/help/HelpPage"));
 
 const Loading = <div>Loading...</div>;
 const root = createBrowserRouter([
@@ -131,6 +132,14 @@ const root = createBrowserRouter([
         element: (
           <Suspense fallback={Loading}>
             <Findinfo />
+          </Suspense>
+        ),
+      },
+      {
+        path: "help",
+        element: (
+          <Suspense fallback={Loading}>
+            <Help />
           </Suspense>
         ),
       },
