@@ -35,6 +35,8 @@ const SellerModifyPage = () => {
     slocation: ""
   });
 
+  
+  
   useEffect(() => {
     if (loading) return;
     const init = async () => {
@@ -44,6 +46,12 @@ const SellerModifyPage = () => {
       }
       if (user.role !== "SELLER") {
         navigate("/error");
+        return;
+      }
+      // phone 미등록 회원->마이페이지로
+      if (user?.phone?.startsWith("t") && location.pathname.startsWith("/sellerlist/modify")) {
+        alert("미인증 회원에게 제한된 컨텐츠입니다.\n전화번호 인증을 먼저 해야 합니다.");
+        navigate("/updateinfosocial");
         return;
       }
       const registered = await getSellerRegistered();
@@ -71,7 +79,7 @@ const SellerModifyPage = () => {
       setPreviewUrls({ main: urls[0] || null, intros: urls.slice(1) });
     };
     init();
-  }, [user, loading, navigate]);
+  }, [user, loading, location, navigate]);
 
   useEffect(() => {
     const cleanUpOnUnload = () => {

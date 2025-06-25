@@ -1,16 +1,28 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import titleImage from "../../assets/img/title.png";
+import { getOrderList } from "../../api/RequestApi";
+import { FaRunning,FaMapMarkerAlt,FaRegCalendarAlt } from "react-icons/fa";
+import AreaDropdown from "../../components/AreaDropdown";
+import Pagination from "../../components/paging/Pagination";
 import "../../css/OrderListPage.css";
 
 function OrderListPage() {
   const [orders, setOrders] = useState([]);
+  const [pageData, setPageData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // useEffect(() => {
-  //   axios.get("/api/request/list")
-  //     .then(res => setOrders(res.data))
-  //     .catch(err => console.error("주문 목록 로딩 실패", err));
-  // }, []);
+  useEffect(() => {
+  getOrderList(currentPage, 5)
+    .then(data => {
+      setOrders(data.dtoList);
+      setPageData(data);
+    })
+    .catch(err => console.error("주문 목록 로딩 실패", err));
+}, [currentPage]);
+
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+};
 
   return (
     <div className="order-title-container">
@@ -28,37 +40,43 @@ function OrderListPage() {
       <div className="order-box">
         <div className="order-box-header">
           <span className="order-box-title">견적 목록</span>
-          <select className="order-select">
-            <option>전체</option>
-            <option>진행중</option>
-            <option>완료</option>
-          </select>
+            <AreaDropdown />
         </div>
 
         <ul className="order-list">
-          {orders.map((order) => (
-            <li key={order.ono} className="order-list-item">
-              <div className="order-item-content">
-                <div>
-                  <p className="order-item-title">요청사항 | {order.playType}</p>
-                  <p className="order-item-sub">{order.olocation}, {order.rentalDate?.slice(0, 10)}</p>
+            {orders.map((order) => (
+              <li key={order.ono} className="order-list-item">
+                <div className="order-card">
+                  <div className="order-card-left">
+                    <h4 className="order-title">{order.ocontent}</h4>
+                    <p className="order-playtype"><FaRunning /> {order.playType}</p>
+                    <p className="order-location"><FaMapMarkerAlt /> {order.olocation}</p>
+                    <p className="order-date"><FaRegCalendarAlt /> {order.rentalDate?.slice(0, 10)}</p>
+                  </div>
+                  <div className="order-card-right">
+                    <p className="order-regdate-label">작성일</p>
+                    <p className="order-regdate">{order.oregdate?.slice(0, 10)}</p>
+                  </div>
                 </div>
-                <div className="order-item-date">
-                  <p>작성일</p>
-                  <p>{order.oregdate?.slice(0, 10)}</p>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
 
-        <div className="order-pagination">
-          <button className="order-page-btn">Previous</button>
-          <button className="order-page-btn">Next</button>
-        </div>
-      </div>
-    </div>
-  
+
+        {pageData && (
+    <Pagination
+      current={pageData.currentPage}
+      pageList={pageData.pageList}
+      prev={pageData.prev}
+      next={pageData.next}
+      prevPage={pageData.prevPage}
+      nextPage={pageData.nextPage}
+      onPageChange={handlePageChange}
+      className="order-pagination"
+    />
+  )}
+</div>
+</div>
 </div>
 
   );

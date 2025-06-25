@@ -9,8 +9,8 @@ import {
 import {
   uploadImage,
   getImageUrl,
-  removeImage,
-  removeImageOnExit
+  removeImageOnExit,
+  removeImage
 } from "../../api/UploadImageApi";
 import styles from "../../css/SellerRegisterPage.module.css";
 
@@ -39,6 +39,8 @@ const SellerRegisterPage = () => {
     slocation: "",
   });
 
+  
+  
   useEffect(() => {
     if (loading) return;
     const init = async () => {
@@ -48,6 +50,12 @@ const SellerRegisterPage = () => {
       }
       if (user.role !== "SELLER") {
         navigate("/error");
+        return;
+      }
+      // phone 미등록 회원->마이페이지로
+      if (user?.phone?.startsWith("t") && location.pathname.startsWith("/sellerlist/register")) {
+        alert("미인증 회원에게 제한된 컨텐츠입니다.\n전화번호 인증을 먼저 해야 합니다.");
+        navigate("/updateinfosocial");
         return;
       }
       const registered = await getSellerRegistered();
@@ -64,7 +72,7 @@ const SellerRegisterPage = () => {
       setIsRegistered(true);
     };
     init();
-  }, [user, loading, navigate]);
+  }, [user, loading,location, navigate]);
 
   useEffect(() => {
     const cleanUpOnUnload = () => {
@@ -180,7 +188,7 @@ const SellerRegisterPage = () => {
   const mainPath = formData.simage[0];
 
   if (mainPath && mainPath !== "default/default.png") {
-    removeImageOnExit(mainPath); // 서버에서 삭제 요청
+    removeImage(mainPath); // 서버에서 삭제 요청
     deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== mainPath); // 삭제 큐에서 제거
   }
 
@@ -198,7 +206,7 @@ const SellerRegisterPage = () => {
       introPaths
         .filter(path => path !== "default/default.png") // 기본 이미지 제외
         .map(path => {
-          removeImageOnExit(path); // 서버에서 삭제 요청
+          removeImage(path); // 서버에서 삭제 요청
           return path;
         })
     );
@@ -222,7 +230,7 @@ const SellerRegisterPage = () => {
 
   if (removedPath && removedPath !== "default/default.png") {
     try {
-      removeImageOnExit(removedPath); // 서버에서 삭제 요청
+      removeImage(removedPath); // 서버에서 삭제 요청
       deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== removedPath); // 삭제 큐에서 제거
     } catch (err) {
       console.error("소개 이미지 삭제 실패", err);

@@ -14,7 +14,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageRequestDTO;
+import com.sports.kickauction.dto.RequestPageResponseDTO;
+import com.sports.kickauction.dto.RequestReadDTO;
 import com.sports.kickauction.entity.Request;
 import com.sports.kickauction.repository.RequestRepository;
 
@@ -204,4 +211,31 @@ public class RequestServiceImpl implements RequestService {
         }
         return false;
     }
+
+    //견적 리스트
+    @Override
+    public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO requestPageRequestDTO) {
+
+    Pageable pageable = requestPageRequestDTO.getPageable(Sort.by("ono").descending());
+    Page<Request> result = requestRepository.findAll(pageable);
+
+    List<RequestReadDTO> dtoList = result.getContent().stream()
+        .map(request -> RequestReadDTO.builder()
+            .ono(request.getOno())
+            .ocontent(request.getOcontent())
+            .playType(request.getPlayType())
+            .olocation(request.getOlocation())
+            .rentalDate(request.getRentalDate())
+            .oregdate(request.getOregdate())
+            .rentaltime(request.getRentalTime())
+            .build())
+        .collect(Collectors.toList());
+
+    return RequestPageResponseDTO.<RequestReadDTO>builder()
+        .dtoList(dtoList)
+        .totalCount(result.getTotalElements())
+        .RequestPageRequestDTO(requestPageRequestDTO)
+        .build();
+}
+
 }
