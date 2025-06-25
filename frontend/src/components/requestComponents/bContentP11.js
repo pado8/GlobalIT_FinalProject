@@ -99,7 +99,7 @@ const BContentP11 = ({ quote, companies }) => {
         </div>
 
         {/* 하단 버튼 */}
-        <div className="flex justify-between mt-6   button-group">
+        <div className="flex justify-between mt-6   rq-button-group">
           <button
             onClick={handleModifyClick}
             className="md-button"

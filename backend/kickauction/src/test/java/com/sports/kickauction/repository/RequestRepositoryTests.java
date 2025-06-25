@@ -23,7 +23,8 @@ public class RequestRepositoryTests {
 
     private final Random random = new Random();
 
-    private final List<String> locations = List.of("서울특별시 강남구", "서울특별시 관악구", "서울특별시 마포구", "서울특별시 송파구", "서울특별시 중구");
+    private final List<String> locations = List.of("서울특별시 강남구", "서울특별시 관악구", "서울특별시 마포구", "서울특별시 송파구", "서울특별시 중구",
+        "제주특별자치도", "세종특별시", "대전광역시", "광주광역시", "대구광역시", "울산광역시", "경기도", "강원도", "충청북도","부산광역시", "인천광역시");
     private final List<String> contents = List.of(
             "경기 전 워밍업까지 필요합니다.",
             "골키퍼 장비도 대여 가능한가요?",
@@ -52,7 +53,7 @@ public class RequestRepositoryTests {
                 String rentalEquipment = playType.equals("축구") ? "축구장비" : "풋살장비";
 
                 Request request = Request.builder()
-                        .mno(2)
+                        .mno(5)
                         .playType(playType)
                         .olocation(randomLocation())
                         .rentalDate(randomFutureDate())
@@ -87,4 +88,5 @@ public class RequestRepositoryTests {
         int hour = random.nextInt(16) + 7; // 7~22
         return hour + ":00";
     }
+    
 }
