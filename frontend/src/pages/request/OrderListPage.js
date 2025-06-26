@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import titleImage from "../../assets/img/title.png";
 import { getOrderList } from "../../api/RequestApi";
+import { useSearchParams } from "react-router-dom";
 import { FaRunning,FaMapMarkerAlt,FaRegCalendarAlt } from "react-icons/fa";
+import titleImage from "../../assets/img/title.png";
 import AreaDropdown from "../../components/AreaDropdown";
 import Pagination from "../../components/paging/Pagination";
 import "../../css/OrderListPage.css";
@@ -10,15 +11,42 @@ function OrderListPage() {
   const [orders, setOrders] = useState([]);
   const [pageData, setPageData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedArea, setSelectedArea] = useState({ city: null, district: null });
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-  getOrderList(currentPage, 5)
+useEffect(() => {
+  setSearchParams({
+    page: currentPage,
+    city: selectedCity || "",       // 선택된 시/도
+    district: selectedDistrict || "" // 선택된 구/군
+  });
+}, [currentPage, selectedCity, selectedDistrict]);  
+
+useEffect(() => {
+  const pageFromUrl = parseInt(searchParams.get("page")) || 1;
+  const cityFromUrl = searchParams.get("city") || "";
+  const districtFromUrl = searchParams.get("district") || "";
+
+  setCurrentPage(pageFromUrl);
+  setSelectedCity(cityFromUrl);
+  setSelectedDistrict(districtFromUrl);
+  setSelectedArea({ city: cityFromUrl, district: districtFromUrl });
+  setInitialized(true);
+}, [searchParams]);
+
+
+useEffect(() => {
+  if (!initialized) return;
+  getOrderList(currentPage, 5, selectedArea.city, selectedArea.district)
     .then(data => {
       setOrders(data.dtoList);
       setPageData(data);
     })
     .catch(err => console.error("주문 목록 로딩 실패", err));
-}, [currentPage]);
+}, [currentPage, selectedArea]);
 
 const handlePageChange = (page) => {
   setCurrentPage(page);
@@ -40,11 +68,23 @@ const handlePageChange = (page) => {
       <div className="order-box">
         <div className="order-box-header">
           <span className="order-box-title">견적 목록</span>
-            <AreaDropdown />
+                      <AreaDropdown
+                        city={selectedCity}
+                        district={selectedDistrict}
+                        onChange={({ city, district }) => {
+                          setSelectedArea({ city, district });
+                          setSelectedCity(city);         
+                          setSelectedDistrict(district);
+                          setCurrentPage(1); // 필터 바뀌면 첫 페이지로
+                        }}
+                      />
         </div>
 
         <ul className="order-list">
-            {orders.map((order) => (
+          {orders.length === 0 ? (
+            <li className="order-list-item empty">해당 지역의 견적이 없습니다.</li>
+          ) : (
+            orders.map((order) => (
               <li key={order.ono} className="order-list-item">
                 <div className="order-card">
                   <div className="order-card-left">
@@ -59,12 +99,13 @@ const handlePageChange = (page) => {
                   </div>
                 </div>
               </li>
-            ))}
-          </ul>
+            ))
+          )}
+        </ul>
 
 
         {pageData && (
-    <Pagination
+      <Pagination
       current={pageData.currentPage}
       pageList={pageData.pageList}
       prev={pageData.prev}

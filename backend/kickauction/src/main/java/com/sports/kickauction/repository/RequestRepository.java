@@ -1,7 +1,12 @@
 package com.sports.kickauction.repository;
 
 import com.sports.kickauction.entity.Request;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List; // findByMno
@@ -9,6 +14,10 @@ import java.util.List; // findByMno
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Integer> {
+    
+    @Query("SELECT r FROM Request r WHERE r.olocation LIKE CONCAT(:location, '%')")
+    Page<Request> findByLocation(@Param("location") String location, Pageable pageable);
+
 
     List<Request> findByMno(int mno); // getMyOrdersByMemberNo에서 사용 메서드
     List<Request> findByMnoAndFinished(int mno, int finished); // finished 상태별 조회

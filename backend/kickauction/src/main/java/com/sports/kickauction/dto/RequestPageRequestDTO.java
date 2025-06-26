@@ -15,6 +15,9 @@ public class RequestPageRequestDTO {
   private int page;
   private int size;
 
+  private String city;     
+  private String district;
+
   public RequestPageRequestDTO() {
         this.page = 1;
         this.size = 5;  

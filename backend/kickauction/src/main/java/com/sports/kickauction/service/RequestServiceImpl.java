@@ -214,8 +214,44 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO requestPageRequestDTO) {
 
-    Pageable pageable = requestPageRequestDTO.getPageable(Sort.by("ono").descending());
-    Page<Request> result = requestRepository.findAll(pageable);
+    Pageable pageable = requestPageRequestDTO.getPageable(Sort.by("oregdate").descending());
+
+    Page<Request> result;
+
+    // 필터 조건
+    String city = requestPageRequestDTO.getCity();
+    String district = requestPageRequestDTO.getDistrict();
+
+    // 간단명 → 전체 행정명 매핑
+    Map<String, String> fullCityMap = new HashMap<>();
+    fullCityMap.put("서울", "서울특별시");
+    fullCityMap.put("부산", "부산광역시");
+    fullCityMap.put("대구", "대구광역시");
+    fullCityMap.put("인천", "인천광역시");
+    fullCityMap.put("광주", "광주광역시");
+    fullCityMap.put("대전", "대전광역시");
+    fullCityMap.put("울산", "울산광역시");
+    fullCityMap.put("세종", "세종특별자치시");
+    fullCityMap.put("경기", "경기도");
+    fullCityMap.put("강원", "강원도");
+    fullCityMap.put("충북", "충청북도");
+    fullCityMap.put("충남", "충청남도");
+    fullCityMap.put("전북", "전라북도");
+    fullCityMap.put("전남", "전라남도");
+    fullCityMap.put("경북", "경상북도");
+    fullCityMap.put("경남", "경상남도");
+    fullCityMap.put("제주", "제주특별자치도");
+
+    if (city != null && !city.equals("전국")) {
+        String fullCity = fullCityMap.getOrDefault(city, city); // 매핑 없으면 그대로 사용
+        String locationPrefix = (district != null && !district.isBlank())
+            ? fullCity + " " + district
+            : fullCity;
+
+        result = requestRepository.findByLocation(locationPrefix, pageable);
+    } else {
+        result = requestRepository.findAll(pageable);
+    }
 
     List<RequestReadDTO> dtoList = result.getContent().stream()
         .map(request -> RequestReadDTO.builder()
@@ -235,5 +271,7 @@ public class RequestServiceImpl implements RequestService {
         .RequestPageRequestDTO(requestPageRequestDTO)
         .build();
 }
+
+
 
 }

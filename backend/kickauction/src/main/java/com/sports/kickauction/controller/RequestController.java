@@ -53,7 +53,7 @@ public class RequestController {
         this.memberRepository = memberRepository;
         this.requestRepository = requestRepository;
     }
-    
+    //견적 리스트
     @GetMapping("/list")
     public ResponseEntity<RequestPageResponseDTO<RequestReadDTO>> getOrderList(RequestPageRequestDTO requestPageRequestDTO) {
         RequestPageResponseDTO<RequestReadDTO> result = requestService.getOrderList(requestPageRequestDTO);
