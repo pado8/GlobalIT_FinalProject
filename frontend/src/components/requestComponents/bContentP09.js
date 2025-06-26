@@ -261,7 +261,7 @@ const BContentP09 = () => {
               {renderField(field, formData[field.name], handleChange)}
             </div>
           ))}
-          <div className="button-group">
+          <div className="rq-button-group">
             <button
               type="button"
               onClick={() => navigate(-1)}
