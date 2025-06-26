@@ -1,6 +1,5 @@
 
 .request-component{
-    margin-top: 6.5vh;
     min-height: 100vh;
     background-color: skyblue;
 }
@@ -8,9 +7,7 @@
 
 /* @media (prefers-reduced-motion: reduce)  */
 @media (min-width: 750px) {
-  .request-component{
-    margin-top: 0vh;
-  }
+  /* .request-component{} */
   /* .request-body{} */
 }
 

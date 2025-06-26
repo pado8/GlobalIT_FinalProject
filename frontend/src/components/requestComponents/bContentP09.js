@@ -144,7 +144,6 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
   }
 };
 
-
 const initialFields = {
   playType: "",
   rental: "",
@@ -156,30 +155,44 @@ const initialFields = {
   ocontent: ""
 };
 
+
 const BContentP09 = () => {
   const navigate = useNavigate();
   const { ono } = useParams();
   const [formData, setFormData] = useState(initialFields);
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [savedRentalEquipment, setSavedRentalEquipment] = useState('');
+  const [sidoList, setSidoList] = useState([]);
+  const [selectedSido, setSelectedSido] = useState("");
+  const [sigunguList, setSigunguList] = useState([]);
 
+  //처음 랜더 훅
   useEffect(() => {
-    axios.get(`/api/orders/${ono}`)
-      .then((res) => {
-        const fetchedData = res.data;
-        
-        // rentalEquipment 값에 따라 설정
-        let defaultRental = "필요없어요"; // 기본값
-        if (fetchedData.rentalEquipment && fetchedData.rentalEquipment.trim() !== "") {
-          defaultRental = "필요해요";
-        }
+    const fetchData = async () => {
+      try {
+        const [sidoRes, orderRes] = await Promise.all([
+          fetch("/api/vworld/sido").then(res => res.json()),
+          axios.get(`/api/orders/${ono}`)
+        ]);
+
+        const fetchedData = orderRes.data;
+
+        // 시도 리스트
+        const sidoListData = sidoRes.response.result.featureCollection.features.map(f => ({
+          code: f.properties.ctprvn_cd,
+          name: f.properties.ctp_kor_nm
+        }));
+        setSidoList(sidoListData);
+
+        // rental 여부 판단
+        const defaultRental = (fetchedData.rentalEquipment && fetchedData.rentalEquipment.trim() !== "")
+          ? "필요해요" : "필요없어요";
 
         setSavedRentalEquipment(fetchedData.rentalEquipment || '');
 
-
-        // 받아온 데이터를 기반으로 formData 업데이트
+        // 모든 필드에 대해 null/undefined 방지 및 기본값 설정
+        // (initialFields에 없더라도 여기에 추가하면 formData에 포함됨)
         setFormData({
-          // 모든 필드에 대해 null/undefined 방지 및 기본값 설정
           playType: fetchedData.playType || "",
           rental: defaultRental,
           rentalEquipment: fetchedData.rentalEquipment || "",
@@ -188,16 +201,28 @@ const BContentP09 = () => {
           rentalTime: fetchedData.rentalTime || "",
           person: fetchedData.person || "",
           ocontent: fetchedData.ocontent || "",
-          // (initialFields에 없더라도 여기에 추가하면 formData에 포함됨)
           ono: fetchedData.ono,
           mno: fetchedData.mno,
           oregdate: fetchedData.oregdate,
           finished: fetchedData.finished,
         });
-      })
-      .catch((err) => console.error("견적 정보 불러오기 실패:", err));
+
+        // 시도 선택값 추출
+        const regionParts = fetchedData.region?.split(" ");
+        if (regionParts?.length >= 1) {
+          setSelectedSido(regionParts[0]);
+        }
+
+      } catch (err) {
+        console.error("시도/견적 데이터 로딩 실패:", err);
+      }
+    };
+
+    fetchData();
   }, [ono]);
 
+
+  // 장비대여여부 전환 훅
   useEffect(() => {
     if (formData.rental === "필요없어요") {
       setSavedRentalEquipment(formData.rentalEquipment); 
@@ -211,8 +236,6 @@ const BContentP09 = () => {
     }
   }, [formData.rental, savedRentalEquipment]);
 
-
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -224,6 +247,64 @@ const BContentP09 = () => {
     }
   };
 
+  //지역 정보를 select 두개로 나눠서 표기하기 위한 훅
+  useEffect(() => {
+    if (formData.region) {
+      const parts = formData.region.split(" ");
+      if (parts.length === 2) {
+        setSelectedSido(parts[0]);
+      } else if (parts.length === 1) {
+        // 예외: 세종시 같은 단일 행정구역
+        setSelectedSido(parts[0]);
+      }
+    }
+  }, [formData.region],sidoList);
+  // 시/도 목록 로드
+  useEffect(() => {
+    fetch("/api/vworld/sido")
+      .then(res => res.json())
+      .then(json => {
+        const list = json.response.result.featureCollection.features.map(f => ({
+          code: f.properties.ctprvn_cd,
+          name: f.properties.ctp_kor_nm
+        }));
+        setSidoList(list);
+      })
+      .catch(console.error);
+  }, []);
+  // 지역정보 api 훅
+  useEffect(() => {
+    if (!selectedSido) return;
+
+    if (selectedSido === "세종특별자치시") {
+      setSigunguList([]); // 시군구 없음
+      return;
+    }
+
+    fetch(`/api/vworld/sigungu?sidoName=${encodeURIComponent(selectedSido)}`)
+      .then(res => res.json())
+      .then(json => {
+        if (
+          json?.response?.status === "OK" &&
+          json?.response?.result?.featureCollection?.features
+        ) {
+          const list = json.response.result.featureCollection.features.map(f => ({
+            code: f.properties.sig_cd,
+            name: f.properties.sig_kor_nm
+          }));
+          setSigunguList(list);
+        } else {
+          setSigunguList([]);
+        }
+      })
+      .catch(err => {
+        console.error("시군구 API 요청 실패:", err);
+        setSigunguList([]);
+      });
+  }, [selectedSido]);
+
+
+  // 완료 버튼 동작
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.patch(`/api/orders/${ono}`, formData)
@@ -258,7 +339,49 @@ const BContentP09 = () => {
           {formFields.right.map((field, idx) => (
             <div key={idx} className="mt-4">
               <label className="block font-semibold mb-1">{field.label}</label>
-              {renderField(field, formData[field.name], handleChange)}
+              {
+                field.name === "region" ? (
+                  <div className="flex gap-4">
+                    <select
+                      value={selectedSido}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setSelectedSido(value);
+
+                        if (value === "세종특별자치시") {
+                          handleChange({ target: { name: "region", value } });
+                          setSigunguList([]);
+                        } else {
+                          handleChange({ target: { name: "region", value: "" } });
+                        }
+                      }}
+                    >
+                      <option value="">시/도</option>
+                      {sidoList.map(s => (
+                        <option key={s.code} value={s.name}>{s.name}</option>
+                      ))}
+                    </select>
+
+                    {selectedSido !== "세종특별자치시" && (
+                      <select
+                        value={formData.region.split(" ")[1] || ""}
+                        onChange={(e) => {
+                          const region = `${selectedSido} ${e.target.value}`;
+                          handleChange({ target: { name: "region", value: region } });
+                        }}
+                        disabled={!sigunguList.length}
+                      >
+                        <option value="">시/군/구</option>
+                        {sigunguList.map(s => (
+                          <option key={s.code} value={s.name}>{s.name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                ) : (
+                  renderField(field, formData[field.name], handleChange)
+                )
+              }
             </div>
           ))}
           <div className="rq-button-group">
@@ -271,7 +394,7 @@ const BContentP09 = () => {
             <button
               type="submit"
               className="submit-button">
-              수정 완료
+              등록
             </button>
           </div>
         </div>

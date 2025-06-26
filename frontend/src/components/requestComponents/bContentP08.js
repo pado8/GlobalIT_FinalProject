@@ -148,6 +148,9 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
 
 const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
+  const [sidoList, setSidoList] = useState([]);
+  const [selectedSido, setSelectedSido] = useState("");
+  const [sigunguList, setSigunguList] = useState([]);
 
   useEffect(() => {
     if (formData.rental === '필요없어요') {
@@ -157,7 +160,59 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
       setIsRentalEquipmentReadOnly(false);
     }
   }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
+  
 
+
+
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< region <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  useEffect(() => {
+    fetch("/api/vworld/sido")
+      .then(res => res.json())
+      .then(json => {
+        const list = json.response.result.featureCollection.features.map(f => ({
+          code: f.properties.ctprvn_cd,
+          name: f.properties.ctp_kor_nm
+        }));
+        setSidoList(list);
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedSido) return;
+    fetch(`/api/vworld/sigungu?sidoName=${encodeURIComponent(selectedSido)}`)
+      .then(res => res.json())
+      .then(json => {
+        if (
+          json?.response?.status === "OK" &&
+          json?.response?.result?.featureCollection?.features
+        ) {
+          const list = json.response.result.featureCollection.features.map(f => ({
+            code: f.properties.sig_cd,
+            name: f.properties.sig_kor_nm
+          }));
+          setSigunguList(list);
+        } else {
+          if(!selectedSido=="세종특별자치시"){
+            console.warn("시군구 데이터 없음 또는 응답 실패", json);
+          }
+          setSigunguList([]);
+        }
+      })
+      .catch(err => {
+        console.error("시군구 API 요청 실패:", err);
+        setSigunguList([]);
+      });
+  }, [selectedSido]);
+
+  // 지역 변경 핸들러
+  const handleRegionChange = (regionString) => {
+    handleChange({ target: { name: "region", value: regionString } });
+    console.log("지역이 변경되었습니다:", regionString);
+  };
+
+
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  return   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   return (
     <div className='request-body bg-cover bg-center'>
       <form onSubmit={handleSubmit} className="form-wrapper">
@@ -179,13 +234,54 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
           {formFields.right.map((field, idx) => (
             <div key={idx} className="mt-4">
               <label className="">{field.label}</label>
-              {renderField(field, formData[field.name], handleChange)}
+              {
+                field.name === 'region' ?
+                // 여기에 지역을 입력받을 새로운 필드 랜더링
+                (
+                  <div className="">
+                    <select value={selectedSido} onChange={e => {
+                      const value = e.target.value;
+                      setSelectedSido(value);
+
+                      // 세종시인 경우 바로 지역 지정
+                      if (value === "세종특별자치시") {
+                        handleRegionChange("세종특별자치시");
+                        setSigunguList([]); // 시군구 비움
+                      } else {
+                        handleRegionChange(""); // 초기화
+                      }
+                    }}>
+                      <option value="">시/도</option>
+                      {sidoList.map(s => (
+                        <option key={s.code} value={s.name}>{s.name}</option>
+                      ))}
+                    </select>
+                    {selectedSido !== "세종특별자치시" && (
+                      <select
+                        value={formData.region?.split(" ")[1] || ""}
+                        onChange={e => {
+                          const region = `${selectedSido} ${e.target.value}`;
+                          handleRegionChange(region);
+                        }}
+                        disabled={!sigunguList.length}
+                      >
+                        <option value="">시/군/구</option>
+                        {sigunguList.map(s => (
+                          <option key={s.code} value={s.name}>{s.name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )
+                // 일반 입력 필드 생성
+                : (renderField(field, formData[field.name], handleChange))
+              }
             </div>
           ))}
           <button
             type="submit"
             className="full-submit-button">
-            등록하기
+            등록
           </button>
         </div>
       </form>

@@ -55,10 +55,9 @@ const OrderCreatePage = () => {
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
       delete dataToSend.ono;
 
-      console.log(dataToSend);
+      // console.log(dataToSend);
       const response = await axios.post('/api/orders', dataToSend);
-      const newOno = response.data.ono; // 백엔드에서 생성된 ono를 반환한다고 가정
-      console.log(newOno);
+      const newOno = response.data.ono; // 백엔드에서 생성된 ono를 map으로 받아옴
 
       alert("견적 생성 성공");
       navigate(`/request/read/${newOno}`); // 생성 후 상세 페이지로 이동

@@ -4,9 +4,11 @@ import java.time.LocalDateTime; // JPA annotations
 
 import jakarta.persistence.Column; // Lombok annotations
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +32,7 @@ public class Request {
     @Column(name = "ono")
     private int ono;
 
+    // @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "mno", nullable = false)
     private int mno;
 
