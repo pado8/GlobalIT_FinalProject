@@ -14,7 +14,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageRequestDTO;
+import com.sports.kickauction.dto.RequestPageResponseDTO;
+import com.sports.kickauction.dto.RequestReadDTO;
 import com.sports.kickauction.entity.Request;
 import com.sports.kickauction.repository.RequestRepository;
 
@@ -202,4 +209,64 @@ public class RequestServiceImpl implements RequestService {
         }
         return false;
     }
+
+    //견적 리스트
+    @Override
+public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO dto) {
+    Pageable pageable = dto.getPageable(Sort.by("oregdate").descending());
+
+    String city = dto.getCity();
+    String district = dto.getDistrict();
+    String playType = dto.getPlayType();
+
+    Map<String, String> fullCityMap = new HashMap<>();
+    fullCityMap.put("서울", "서울특별시");
+    fullCityMap.put("부산", "부산광역시");
+    fullCityMap.put("대구", "대구광역시");
+    fullCityMap.put("인천", "인천광역시");
+    fullCityMap.put("광주", "광주광역시");
+    fullCityMap.put("대전", "대전광역시");
+    fullCityMap.put("울산", "울산광역시");
+    fullCityMap.put("세종", "세종특별자치시");
+    fullCityMap.put("경기", "경기도");
+    fullCityMap.put("강원", "강원도");
+    fullCityMap.put("충북", "충청북도");
+    fullCityMap.put("충남", "충청남도");
+    fullCityMap.put("전북", "전라북도");
+    fullCityMap.put("전남", "전라남도");
+    fullCityMap.put("경북", "경상북도");
+    fullCityMap.put("경남", "경상남도");
+    fullCityMap.put("제주", "제주특별자치도");
+
+    String fullCity = (city != null && !city.equals("전국") && !city.isBlank())
+        ? fullCityMap.getOrDefault(city, city)
+        : null;
+
+    String districtParam = (district != null && !district.isBlank()) ? district : null;
+    String playTypeParam = (playType != null && !playType.isBlank()) ? playType : null;
+
+    Page<Request> result = requestRepository.findFilteredRequests(fullCity, districtParam, playTypeParam, pageable);
+
+    List<RequestReadDTO> dtoList = result.getContent().stream()
+        .map(req -> RequestReadDTO.builder()
+            .ono(req.getOno())
+            .ocontent(req.getOcontent())
+            .playType(req.getPlayType())
+            .olocation(req.getOlocation())
+            .rentalDate(req.getRentalDate())
+            .oregdate(req.getOregdate())
+            .rentaltime(req.getRentalTime())
+            .build())
+        .collect(Collectors.toList());
+
+    return RequestPageResponseDTO.<RequestReadDTO>builder()
+        .dtoList(dtoList)
+        .totalCount(result.getTotalElements())
+        .RequestPageRequestDTO(dto)
+        .build();
+}
+
+
+
+
 }
