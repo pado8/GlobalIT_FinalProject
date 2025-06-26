@@ -17,6 +17,7 @@ public class RequestPageRequestDTO {
 
   private String city;     
   private String district;
+  private String playType;
 
   public RequestPageRequestDTO() {
         this.page = 1;

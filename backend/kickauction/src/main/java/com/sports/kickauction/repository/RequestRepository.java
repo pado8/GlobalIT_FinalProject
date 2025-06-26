@@ -15,8 +15,11 @@ import java.util.List; // findByMno
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Integer> {
     
-    @Query("SELECT r FROM Request r WHERE r.olocation LIKE CONCAT(:location, '%')")
-    Page<Request> findByLocation(@Param("location") String location, Pageable pageable);
+    @Query("SELECT r FROM Request r " +
+       "WHERE (:city IS NULL OR r.olocation LIKE CONCAT(:city, '%')) " +
+       "AND (:district IS NULL OR r.olocation LIKE CONCAT('%', :district, '%')) " +
+       "AND (:playType IS NULL OR r.playType = :playType)")
+    Page<Request> findFilteredRequests(@Param("city") String city,@Param("district") String district,@Param("playType") String playType,Pageable pageable);
 
 
     List<Request> findByMno(int mno); // getMyOrdersByMemberNo에서 사용 메서드

@@ -212,17 +212,13 @@ public class RequestServiceImpl implements RequestService {
 
     //견적 리스트
     @Override
-    public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO requestPageRequestDTO) {
+public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO dto) {
+    Pageable pageable = dto.getPageable(Sort.by("oregdate").descending());
 
-    Pageable pageable = requestPageRequestDTO.getPageable(Sort.by("oregdate").descending());
+    String city = dto.getCity();
+    String district = dto.getDistrict();
+    String playType = dto.getPlayType();
 
-    Page<Request> result;
-
-    // 필터 조건
-    String city = requestPageRequestDTO.getCity();
-    String district = requestPageRequestDTO.getDistrict();
-
-    // 간단명 → 전체 행정명 매핑
     Map<String, String> fullCityMap = new HashMap<>();
     fullCityMap.put("서울", "서울특별시");
     fullCityMap.put("부산", "부산광역시");
@@ -242,35 +238,34 @@ public class RequestServiceImpl implements RequestService {
     fullCityMap.put("경남", "경상남도");
     fullCityMap.put("제주", "제주특별자치도");
 
-    if (city != null && !city.equals("전국")) {
-        String fullCity = fullCityMap.getOrDefault(city, city); // 매핑 없으면 그대로 사용
-        String locationPrefix = (district != null && !district.isBlank())
-            ? fullCity + " " + district
-            : fullCity;
+    String fullCity = (city != null && !city.equals("전국") && !city.isBlank())
+        ? fullCityMap.getOrDefault(city, city)
+        : null;
 
-        result = requestRepository.findByLocation(locationPrefix, pageable);
-    } else {
-        result = requestRepository.findAll(pageable);
-    }
+    String districtParam = (district != null && !district.isBlank()) ? district : null;
+    String playTypeParam = (playType != null && !playType.isBlank()) ? playType : null;
+
+    Page<Request> result = requestRepository.findFilteredRequests(fullCity, districtParam, playTypeParam, pageable);
 
     List<RequestReadDTO> dtoList = result.getContent().stream()
-        .map(request -> RequestReadDTO.builder()
-            .ono(request.getOno())
-            .ocontent(request.getOcontent())
-            .playType(request.getPlayType())
-            .olocation(request.getOlocation())
-            .rentalDate(request.getRentalDate())
-            .oregdate(request.getOregdate())
-            .rentaltime(request.getRentalTime())
+        .map(req -> RequestReadDTO.builder()
+            .ono(req.getOno())
+            .ocontent(req.getOcontent())
+            .playType(req.getPlayType())
+            .olocation(req.getOlocation())
+            .rentalDate(req.getRentalDate())
+            .oregdate(req.getOregdate())
+            .rentaltime(req.getRentalTime())
             .build())
         .collect(Collectors.toList());
 
     return RequestPageResponseDTO.<RequestReadDTO>builder()
         .dtoList(dtoList)
         .totalCount(result.getTotalElements())
-        .RequestPageRequestDTO(requestPageRequestDTO)
+        .RequestPageRequestDTO(dto)
         .build();
 }
+
 
 
 

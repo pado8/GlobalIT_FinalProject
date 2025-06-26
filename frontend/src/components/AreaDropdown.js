@@ -38,10 +38,11 @@ const AreaDropdown = ({ onChange, city="", district=""}) => {
 
 
   const renderButtonText = () => {
-    if (selectedRegion.city === "지역") return "지역";
-    if (!selectedRegion.district) return selectedRegion.city;
-    return `${selectedRegion.city} ${selectedRegion.district}`;
-  };
+  if (selectedRegion.city === "지역") return "지역";
+  if (selectedRegion.city === "전국") return "전국";
+  if (!selectedRegion.district) return selectedRegion.city;
+  return `${selectedRegion.city} ${selectedRegion.district}`;
+};
 
   const handleSelectCity = (city) => {
     const districts = regionData[city];
@@ -90,27 +91,38 @@ const AreaDropdown = ({ onChange, city="", district=""}) => {
             <button className="area-dropdown-close" onClick={() => { setOpen(false); setStep(1); }}>×</button>
           </div>
 
-          <ul className="area-dropdown-list">
-            {step === 1
-              ? Object.keys(regionData).map(city => (
-                  <li key={city} onClick={() => handleSelectCity(city)}>
-                    {city} <FaChevronDown className="dropdown-inline-icon" />
-                  </li>
-                ))
-              : (
-                <>
-                  <li onClick={handleCityAll}>
-                    {selectedCity} 전체
-                  </li>
-                  {regionData[selectedCity].map(district => (
-                    <li key={district} onClick={() => handleSelectDistrict(district)}>
-                      {district}
-                    </li>
-                  ))}
-                </>
-              )
-            }
-          </ul>
+         <ul className="area-dropdown-list">
+          {step === 1 ? (
+            <>
+              <li onClick={() => {
+                const newRegion = { city: "전국", district: "" };
+                setSelectedRegion(newRegion);
+                onChange?.(newRegion);
+                setOpen(false);
+                setStep(1);
+              }}>
+                전국
+              </li>
+              {Object.keys(regionData).map(city => (
+                <li key={city} onClick={() => handleSelectCity(city)}>
+                  {city} <FaChevronDown className="dropdown-inline-icon" />
+                </li>
+              ))}
+            </>
+          ) : (
+            <>
+              <li onClick={handleCityAll}>
+                {selectedCity} 전체
+              </li>
+              {regionData[selectedCity].map(district => (
+                <li key={district} onClick={() => handleSelectDistrict(district)}>
+                  {district}
+                </li>
+              ))}
+            </>
+          )}
+        </ul>
+
         </div>
       )}
     </div>
