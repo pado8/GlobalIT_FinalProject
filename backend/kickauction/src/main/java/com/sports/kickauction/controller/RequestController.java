@@ -23,6 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageRequestDTO;
+import com.sports.kickauction.dto.RequestPageResponseDTO;
+import com.sports.kickauction.dto.RequestReadDTO;
+import com.sports.kickauction.dto.SellerPageRequestDTO;
+import com.sports.kickauction.dto.SellerPageResponseDTO;
+import com.sports.kickauction.dto.SellerReadDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.repository.RequestRepository;
@@ -47,7 +53,12 @@ public class RequestController {
         this.memberRepository = memberRepository;
         this.requestRepository = requestRepository;
     }
-    
+    //견적 리스트
+    @GetMapping("/list")
+    public ResponseEntity<RequestPageResponseDTO<RequestReadDTO>> getOrderList(RequestPageRequestDTO requestPageRequestDTO) {
+        RequestPageResponseDTO<RequestReadDTO> result = requestService.getOrderList(requestPageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
 
     // 견적 상세 조회 (GET /api/orders/{ono})
     @GetMapping("/{ono}") // PathVariable 이름 소문자 'ono'로 수정
