@@ -172,12 +172,14 @@ const ReadPage = () => {
                         <p>정말 이 글을 삭제하시겠습니까?</p>
                         <div className="confirm-buttons">
                             <button
+                                type="button"
                                 className="btn"
                                 onClick={confirmDelete}
                             >
                                 확인
                             </button>
                             <button
+                                type="button"
                                 className="btn"
                                 onClick={cancelDelete}
                             >
@@ -279,12 +281,14 @@ const ReadPage = () => {
                                 {user?.mno === c.mno && editingCno !== c.cno && (
                                     <span className="comment_actions">
                                         <button
+                                            type="button"
                                             className="tiny_btn btn"
                                             onClick={() => onEditStart(c)}
                                         >
                                             수정
                                         </button>
                                         <button
+                                            type="button"
                                             className="tiny_btn btn"
                                             onClick={() => onCommentDelete(c.cno)}
                                         >
@@ -304,12 +308,13 @@ const ReadPage = () => {
                                     <div className="comment_actions">
                                         {/* 저장/취소만 */}
                                         <button
+                                            type="button"
                                             className="tiny_btn btn"
                                             onClick={() => onEditSave(c.cno)}
                                         >
                                             저장
                                         </button>
-                                        <button className="tiny_btn btn" onClick={onEditCancel}>
+                                        <button type="button" className="tiny_btn btn" onClick={onEditCancel}>
                                             취소
                                         </button>
                                     </div>
@@ -328,6 +333,7 @@ const ReadPage = () => {
                         onChange={handleCommentChange}
                     />
                     <button
+                        type="button"
                         className="comment_submit"
                         onClick={handleCommentSubmit}
                     >
@@ -338,26 +344,28 @@ const ReadPage = () => {
             <div className="navigation">
                 {community.prevTitle ? (
                     <button
+                        type="button"
                         className="nav_btn"
                         onClick={() => navigate(`/community/read/${community.prevPno}`)}
                     >
                         ← 이전 글: {community.prevTitle}
                     </button>
                 ) : (
-                    <button className="nav_btn disabled" disabled>
+                    <button type="button" className="nav_btn disabled" disabled>
                         이전 글 없음
                     </button>
                 )}
 
                 {community.nextTitle ? (
                     <button
+                        type="button"
                         className="nav_btn"
                         onClick={() => navigate(`/community/read/${community.nextPno}`)}
                     >
                         다음 글: {community.nextTitle} →
                     </button>
                 ) : (
-                    <button className="nav_btn disabled" disabled>
+                    <button type="buton" className="nav_btn disabled" disabled>
                         다음 글 없음
                     </button>
                 )}
