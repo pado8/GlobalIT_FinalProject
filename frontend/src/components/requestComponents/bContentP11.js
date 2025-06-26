@@ -104,19 +104,19 @@ const BContentP11 = ({ quote, companies }) => {
             onClick={handleModifyClick}
             className="md-button"
           >
-            견적 요청 수정
+            수정
           </button>
           <button
             onClick={handleDeleteClick}
             className="md-button"
           >
-            견적 요청 삭제
+            삭제
           </button>
           <button
             onClick={handleConfirmClick}
             className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button"
           >
-            선택된 업체 확정
+            선택 업체 확정
           </button>
         </div>
       </div>
