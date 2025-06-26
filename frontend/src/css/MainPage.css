@@ -1,0 +1,227 @@
+/* src/css/MainPage.css */
+
+#mainPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* 배너 섹션 */
+.banner_section {
+  width: 100%;
+  aspect-ratio: 16 / 6;
+  overflow: hidden;
+}
+.banner_item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item {
+  cursor: pointer;
+}
+
+/* 최근 견적 요청 섹션 */
+.orderlist_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.orderlist_section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.order_item {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 10rem;
+}
+.order_item h3 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+.order_item p {
+  font-size: 1rem;
+  color: #555;
+  flex-grow: 1;
+}
+.order_item span {
+  font-size: 0.875rem;
+  color: #999;
+  text-align: right;
+}
+
+/* 커뮤니티 최신글 섹션 */
+.community_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.community_section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.community_list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+.community_item {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.community_item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.community_item a {
+  font-size: 1rem;
+  color: #333;
+  text-decoration: none;
+}
+.community_item span {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+/* 추천 업체 섹션 */
+.sellerlist_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sellerlist_section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.sellerlist_section .seller_item {
+  padding: 1rem;
+  text-align: center;
+}
+.sellerlist_section .seller_thumb {
+  width: 100%;
+  height: 8rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.sellerlist_section .seller_name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ────────────────────────────────────────────────
+   배너 슬라이더: 잘림 없이 전체 노출 + dots 보이기
+──────────────────────────────────────────────── */
+.banner_section {
+  position: relative;
+  width: 100%;
+  height: 66vh;        /* 화면 높이의 66% */
+  overflow: hidden;    /* 잘린 부분 숨김 */
+}
+
+.banner_section .banner_item img {
+  width: 100%;
+  height: 100%;        /* 부모 높이(66vh) 꽉 채움 */
+  object-fit: cover;   /* 영역에 맞춰 잘림 없이 커버 */
+  object-position: center;
+}
+
+/* dots 위치 재조정 (필요시) */
+.banner_section .slick-dots {
+  bottom: 1rem;
+}
+
+.slick-slider {
+  overflow: visible !important; /* slick 기본 숨김 해제 */
+}
+
+/* Slick 내부 컨테이너 높이를 부모(.banner_section) 높이에 맞추기 */
+.banner_section .slick-slider,
+.banner_section .slick-list,
+.banner_section .slick-track,
+.banner_section .slick-slide {
+  height: 100% !important;    /* 부모 높이(66vh)에 맞춤 */
+}
+
+/* 실제 배너 아이템도 100% 높이로 꽉 채우기 */
+.banner_section .banner_item {
+  height: 100%;
+}
+
+/* 이미지 중앙 크롭 채우기(이미지 넘칠 때 중앙 기준) */
+.banner_section .banner_item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+
+.banner_section .slick-dots {
+  position: absolute;
+  bottom: 1rem;          /* 배너 맨 아래에서 1rem 위 */
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  z-index: 10;
+}
+
+.banner_section .slick-dots li button:before {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.banner_section .slick-dots li.slick-active button:before {
+  color: white;
+}
+
+
+
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+   .banner_section {
+    height: 50vh;
+  }
+  .order_item,
+  .community_item,
+  .seller_item {
+    padding: 0.75rem;
+  }
+  .orderlist_section h2,
+  .community_section h2,
+  .sellerlist_section h2 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #mainPage {
+    padding: 1rem;
+    gap: 2rem;
+  }
+  .community_list {
+    grid-template-columns: 1fr;
+  }
+}
