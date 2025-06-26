@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../mypage/Updateinfo.module.css";
 import "../../css/Sharesheet.css";
+import { BsFolderSymlink } from "react-icons/bs";
 
 function Updateinfo() {
   const { user, setUser } = useAuth();
@@ -270,19 +271,21 @@ function Updateinfo() {
     <div className={styles.signup_container}>
       <div className={styles.signup_smallcontainer}>
         <h2 className={styles.signup_title}>회원정보 수정</h2>
+        <hr className={styles.title_divider} />
         <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 프로필사진 첨부 */}
           <div className={styles.img_input_container}>
             <img
               src={preview}
               alt="프로필 미리보기"
-              width="180"
+              width="200"
               onError={(e) => {
                 e.target.src = "/images/baseprofile.png";
               }}
             />
             <div className={styles.img_buttons}>
               <button type="button" onClick={() => fileInputRef.current.click()} style={{ marginRight: "0.5rem" }}>
+                <BsFolderSymlink className={styles.foldericon} />
                 사진 변경
               </button>
               <button type="button" className={styles.delete_button} onClick={handleDeletePhoto}>
@@ -293,11 +296,13 @@ function Updateinfo() {
           </div>
 
           {/* 이메일 */}
+          <label>이메일</label>
           <div className={styles.signup_input_container}>
             <input type="email" className={styles.input} value={email} readOnly />
           </div>
 
           {/* 닉네임 */}
+          <label>닉네임</label>
           <div className={styles.signup_input_container}>
             <input
               type="text"
@@ -320,6 +325,7 @@ function Updateinfo() {
           {nicknameStatus === "error" && <p className={styles.error}>중복확인 중 오류가 발생했습니다.</p>}
 
           {/* 전화번호 수정 */}
+          <label>전화번호</label>
           <div className={styles.signup_input_container}>
             <input
               type="tel"
@@ -369,6 +375,7 @@ function Updateinfo() {
           )}
 
           {/* 비밀번호 & 비밀번호 확인     */}
+          <label>비밀번호 재설정</label>
           <div className={styles.signup_input_container}>
             <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus]}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
           </div>
@@ -380,7 +387,7 @@ function Updateinfo() {
             <input
               type="password"
               className={`${styles.password_check_input} ${styles.input} ${confirmPw ? (confirmPw === password ? styles.valid : styles.invalid) : ""}`}
-              placeholder="비밀번호 재입력"
+              placeholder="비밀번호 확인.."
               value={confirmPw}
               onChange={handleConfirmPwChange}
               required

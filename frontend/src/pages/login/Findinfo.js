@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../login/Findinfo.module.css";
 import "../../css/Sharesheet.css";
+import { FiExternalLink } from "react-icons/fi";
 
 function Findinfo() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ function Findinfo() {
   const [pw2Error, setPw2Error] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
+  const [showNotice, setShowNotice] = useState(true);
 
   // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
   const noVerify = () => {
@@ -167,7 +169,26 @@ function Findinfo() {
 
   return (
     <div className={styles.findinfo_container}>
-      <h2>ID/PW 찾기</h2>
+      <h2>ID / 비밀번호 찾기</h2>
+      <hr className={styles.title_divider} />
+      {/* 주석: 사용자 알림 */}
+      {showNotice && (
+        <div className={styles.notice_box}>
+          <div className={styles.notice_top}>
+            <span className={styles.notice_label}>
+              <strong>공지사항</strong>
+            </span>
+            <button className={styles.notice_close} onClick={() => setShowNotice(false)}>
+              ×
+            </button>
+          </div>
+          <p className={styles.notice_message}>
+            <strong className={styles.notice_link}>킥옥션 계정 약관 개정</strong>
+            <FiExternalLink />
+            (6월 15일 시행)에 따라, 로그인 정보 찾기 기능은 <strong>휴대폰 인증을 완료한 계정</strong>에서만 제공됩니다.
+          </p>
+        </div>
+      )}
       <div className={styles.tab_menu}>
         <button className={activeTab === "findId" ? styles.active : ""} onClick={() => handleTabSwitch("findId")}>
           아이디 찾기

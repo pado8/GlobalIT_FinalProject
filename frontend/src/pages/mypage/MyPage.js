@@ -162,6 +162,8 @@ const MyPage = () => {
         </div>
       )}
 
+      <hr className={styles.title_divider} />
+
       {/* 회원 정보 */}
       <section className={styles.mypage_section}>
         <h3 className={styles.section_title}>내 정보</h3>
@@ -183,6 +185,7 @@ const MyPage = () => {
           </Link>
         </div>
       </section>
+      <hr className={styles.section_divider} />
 
       {/* 견적 정보 */}
       <section className={styles.mypage_section}>
@@ -201,6 +204,7 @@ const MyPage = () => {
           </div>
         </div>
       </section>
+      <hr className={styles.section_divider} />
 
       {/* 업체 정보 (SELLER 전용) */}
       {user?.role === "SELLER" && (
