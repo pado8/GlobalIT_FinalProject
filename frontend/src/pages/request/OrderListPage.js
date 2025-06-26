@@ -79,8 +79,7 @@ const handlePlayTypeChange = (type) => {
 
     <div className="order-title-overlay">
       <h2 className="order-title-overlay-main">견적 SELECT!</h2>
-      <h3 className="order-title-overlay-sub">견적 목록</h3>
-      <p className="order-title-overlay-desc">원하는 견적을 제안해보세요!</p>
+      <p className="order-title-overlay-desc">원하는 견적을 입찰해보세요!</p>
 
       <div className="order-box">
         <div className="order-box-header">

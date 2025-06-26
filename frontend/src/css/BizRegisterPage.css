@@ -1,0 +1,125 @@
+.biz-register-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;              /* 화면에 딱 맞게 */
+  overflow: hidden;           /* 스크롤 제거 */
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.biz-title-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.biz-title-bg::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* ← 흰색 + 투명도 */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.biz-title-overlay {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  color: #111;
+}
+
+
+.biz-title-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.biz-title-container h1 {
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.biz-title-container p {
+  color: #666;
+}
+
+.highlight {
+  color: #2196f3;
+  font-weight: bold;
+}
+
+.biz-content-wrapper {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.request-box {
+  flex: 1;
+  min-width: 300px;
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.biz-form-box {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.biz-form-box input,
+.biz-form-box textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: none;
+}
+
+.biz-form-box label {
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.submit-btn {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #1976d2;
+}
