@@ -88,6 +88,12 @@
   background-color: #1f2937; /* hover:bg-gray-800 */
 }
 
+.error-message {
+  color: #ef4444; /* Tailwind의 red-500에 해당하는 색상 */
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
 
 
 /* 9 Modify ------------------------------------------------------------------------------------------------------ */

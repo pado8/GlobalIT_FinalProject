@@ -144,108 +144,79 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
   }
 };
 
-const initialFields = {
-  playType: "",
-  rental: "",
-  rentalEquipment: "",
-  region: "",
-  rentalDate: null, // DatePicker는 Date 객체 또는 null/undefined 사용
-  rentalTime: "",
-  person: "",
-  ocontent: ""
-};
 
-
-const BContentP09 = () => {
+const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
   const navigate = useNavigate();
   const { ono } = useParams();
-  const [formData, setFormData] = useState(initialFields);
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
-  const [savedRentalEquipment, setSavedRentalEquipment] = useState('');
   const [sidoList, setSidoList] = useState([]);
   const [selectedSido, setSelectedSido] = useState("");
   const [sigunguList, setSigunguList] = useState([]);
 
   //처음 랜더 훅
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [sidoRes, orderRes] = await Promise.all([
-          fetch("/api/vworld/sido").then(res => res.json()),
-          axios.get(`/api/orders/${ono}`)
-        ]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const [sidoRes, orderRes] = await Promise.all([
+  //         fetch("/api/vworld/sido").then(res => res.json()),
+  //         axios.get(`/api/orders/${ono}`)
+  //       ]);
 
-        const fetchedData = orderRes.data;
+  //       const fetchedData = orderRes.data;
 
-        // 시도 리스트
-        const sidoListData = sidoRes.response.result.featureCollection.features.map(f => ({
-          code: f.properties.ctprvn_cd,
-          name: f.properties.ctp_kor_nm
-        }));
-        setSidoList(sidoListData);
+  //       // 시도 리스트
+  //       const sidoListData = sidoRes.response.result.featureCollection.features.map(f => ({
+  //         code: f.properties.ctprvn_cd,
+  //         name: f.properties.ctp_kor_nm
+  //       }));
+  //       setSidoList(sidoListData);
 
-        // rental 여부 판단
-        const defaultRental = (fetchedData.rentalEquipment && fetchedData.rentalEquipment.trim() !== "")
-          ? "필요해요" : "필요없어요";
+  //       // rental 여부 판단
+  //       const defaultRental = (fetchedData.rentalEquipment && fetchedData.rentalEquipment.trim() !== "")
+  //         ? "필요해요" : "필요없어요";
 
-        setSavedRentalEquipment(fetchedData.rentalEquipment || '');
+  //       setSavedRentalEquipment(fetchedData.rentalEquipment || '');
 
-        // 모든 필드에 대해 null/undefined 방지 및 기본값 설정
-        // (initialFields에 없더라도 여기에 추가하면 formData에 포함됨)
-        setFormData({
-          playType: fetchedData.playType || "",
-          rental: defaultRental,
-          rentalEquipment: fetchedData.rentalEquipment || "",
-          region: fetchedData.region || "",
-          rentalDate: fetchedData.rentalDate || null,
-          rentalTime: fetchedData.rentalTime || "",
-          person: fetchedData.person || "",
-          ocontent: fetchedData.ocontent || "",
-          ono: fetchedData.ono,
-          mno: fetchedData.mno,
-          oregdate: fetchedData.oregdate,
-          finished: fetchedData.finished,
-        });
+  //       // 모든 필드에 대해 null/undefined 방지 및 기본값 설정
+  //       // (initialFields에 없더라도 여기에 추가하면 formData에 포함됨)
+  //       setFormData({
+  //         playType: fetchedData.playType || "",
+  //         rental: defaultRental,
+  //         rentalEquipment: fetchedData.rentalEquipment || "",
+  //         region: fetchedData.region || "",
+  //         rentalDate: fetchedData.rentalDate || null,
+  //         rentalTime: fetchedData.rentalTime || "",
+  //         person: fetchedData.person || "",
+  //         ocontent: fetchedData.ocontent || "",
+  //         ono: fetchedData.ono,
+  //         mno: fetchedData.mno,
+  //         oregdate: fetchedData.oregdate,
+  //         finished: fetchedData.finished,
+  //       });
 
-        // 시도 선택값 추출
-        const regionParts = fetchedData.region?.split(" ");
-        if (regionParts?.length >= 1) {
-          setSelectedSido(regionParts[0]);
-        }
+  //       // 시도 선택값 추출
+  //       const regionParts = fetchedData.region?.split(" ");
+  //       if (regionParts?.length >= 1) {
+  //         setSelectedSido(regionParts[0]);
+  //       }
 
-      } catch (err) {
-        console.error("시도/견적 데이터 로딩 실패:", err);
-      }
-    };
+  //     } catch (err) {
+  //       console.error("시도/견적 데이터 로딩 실패:", err);
+  //     }
+  //   };
 
-    fetchData();
-  }, [ono]);
+  //   fetchData();
+  // }, [ono]);
 
 
   // 장비대여여부 전환 훅
   useEffect(() => {
-    if (formData.rental === "필요없어요") {
-      setSavedRentalEquipment(formData.rentalEquipment); 
-      setFormData((prev) => ({ ...prev, rentalEquipment: "" }));
+    if (formData.rental === '필요없어요') {
       setIsRentalEquipmentReadOnly(true);
-    } 
-
-    else if (formData.rental === "필요해요") {
-      setFormData((prev) => ({ ...prev, rentalEquipment: savedRentalEquipment }));
+    } else {
       setIsRentalEquipmentReadOnly(false);
     }
-  }, [formData.rental, savedRentalEquipment]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-
-    // 최신 값을 savedRentalEquipment에 반영
-    if (name === 'rentalEquipment' && formData.rental === "필요해요") {
-        setSavedRentalEquipment(value);
-        // console.log("rentalEquipment 직접 변경 감지 & savedRentalEquipment 업데이트:", value);
-    }
-  };
+  }, [formData.rental]);
 
   //지역 정보를 select 두개로 나눠서 표기하기 위한 훅
   useEffect(() => {
@@ -257,8 +228,10 @@ const BContentP09 = () => {
         // 예외: 세종시 같은 단일 행정구역
         setSelectedSido(parts[0]);
       }
+    } else { // formData.region이 비어있을 경우 selectedSido 초기화
+      setSelectedSido("");
     }
-  }, [formData.region],sidoList);
+  }, [formData.region, sidoList]);
   // 시/도 목록 로드
   useEffect(() => {
     fetch("/api/vworld/sido")
@@ -304,19 +277,19 @@ const BContentP09 = () => {
   }, [selectedSido]);
 
 
-  // 완료 버튼 동작
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.patch(`/api/orders/${ono}`, formData)
-      .then(() => {
-        alert("수정 완료");
-        navigate("/request");
-      })
-      .catch((err) => {
-        alert("수정 실패");
-        console.error(err);
-      });
-  };
+  // // 완료 버튼 동작
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   axios.patch(`/api/orders/${ono}`, formData)
+  //     .then(() => {
+  //       alert("수정 완료");
+  //       navigate("/request");
+  //     })
+  //     .catch((err) => {
+  //       alert("수정 실패");
+  //       console.error(err);
+  //     });
+  // };
 
   return (
     <div className='request-body bg-cover bg-center'>
@@ -331,6 +304,9 @@ const BContentP09 = () => {
                   renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
                   renderField(field, formData[field.name], handleChange)
               }
+              {formSubmitted && errors[field.name] && (
+                <p className="error-message">{errors[field.name]}</p>
+              )}
             </div>
           ))}
         </div>
@@ -352,7 +328,7 @@ const BContentP09 = () => {
                           handleChange({ target: { name: "region", value } });
                           setSigunguList([]);
                         } else {
-                          handleChange({ target: { name: "region", value: "" } });
+                          handleChange({ target: { name: "region", value: value } });
                         }
                       }}
                     >
@@ -371,7 +347,9 @@ const BContentP09 = () => {
                         }}
                         disabled={!sigunguList.length}
                       >
-                        <option value="">시/군/구</option>
+                        {/* 시/군/구 플레이스홀더 조건부 렌더링 */}
+                        {(!formData.region || formData.region.split(" ")[0] !== selectedSido || formData.region.split(" ")[1] === "") &&
+                          <option value="">시/군/구</option>}
                         {sigunguList.map(s => (
                           <option key={s.code} value={s.name}>{s.name}</option>
                         ))}
@@ -382,6 +360,9 @@ const BContentP09 = () => {
                   renderField(field, formData[field.name], handleChange)
                 )
               }
+              {formSubmitted && errors[field.name] && (
+                <p className="error-message">{errors[field.name]}</p>
+              )}
             </div>
           ))}
           <div className="rq-button-group">

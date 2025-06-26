@@ -61,7 +61,6 @@ const formFields = {
   ]
 };
 
-
 const renderField = (field ,value, handleChange, isReadOnly = false) => { 
   const currentPlaceholder = isReadOnly ? "" : field.placeholder;
 
@@ -146,21 +145,22 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
   }
 };
 
-const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
+const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [sidoList, setSidoList] = useState([]);
   const [selectedSido, setSelectedSido] = useState("");
   const [sigunguList, setSigunguList] = useState([]);
 
+
+  // 장비대여여부 전환 훅
   useEffect(() => {
-    if (formData.rental === '필요없어요') {
+    if (formData.rental === "필요없어요") {
       setIsRentalEquipmentReadOnly(true);
     } 
-    else {
+    else { // formData.rental === "필요해요"
       setIsRentalEquipmentReadOnly(false);
     }
-  }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
-  
+  }, [formData.rental]);
 
 
 
@@ -203,13 +203,8 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
         console.error("시군구 API 요청 실패:", err);
         setSigunguList([]);
       });
-  }, [selectedSido]);
 
-  // 지역 변경 핸들러
-  const handleRegionChange = (regionString) => {
-    handleChange({ target: { name: "region", value: regionString } });
-    console.log("지역이 변경되었습니다:", regionString);
-  };
+  }, [selectedSido]);
 
 
   // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  return   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -220,12 +215,15 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
         <div className="form-card">
           {formFields.left.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="">{field.label}</label>
+              <label>{field.label}</label>
               {
                 field.name === 'rentalEquipment' ?
                   renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
                   renderField(field, formData[field.name], handleChange)
               }
+              {formSubmitted && errors[field.name] && (
+                <p className="error-message">{errors[field.name]}</p>
+              )}
             </div>
           ))}
         </div>
@@ -233,7 +231,7 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
         <div className="form-card">
           {formFields.right.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="">{field.label}</label>
+              <label>{field.label}</label>
               {
                 field.name === 'region' ?
                 // 여기에 지역을 입력받을 새로운 필드 랜더링
@@ -245,10 +243,10 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
 
                       // 세종시인 경우 바로 지역 지정
                       if (value === "세종특별자치시") {
-                        handleRegionChange("세종특별자치시");
+                        handleChange({ target: { name: "region", value: "세종특별자치시" } });
                         setSigunguList([]); // 시군구 비움
                       } else {
-                        handleRegionChange(""); // 초기화
+                        handleChange({ target: { name: "region", value: value } }); 
                       }
                     }}>
                       <option value="">시/도</option>
@@ -257,25 +255,32 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
                       ))}
                     </select>
                     {selectedSido !== "세종특별자치시" && (
-                      <select
-                        value={formData.region?.split(" ")[1] || ""}
-                        onChange={e => {
-                          const region = `${selectedSido} ${e.target.value}`;
-                          handleRegionChange(region);
-                        }}
-                        disabled={!sigunguList.length}
-                      >
-                        <option value="">시/군/구</option>
-                        {sigunguList.map(s => (
-                          <option key={s.code} value={s.name}>{s.name}</option>
-                        ))}
-                      </select>
+                      <>
+                        <select
+                          value={formData.region?.split(" ")[1] || ""}
+                          onChange={e => {
+                            const region = `${selectedSido} ${e.target.value}`;
+                            handleChange({ target: { name: "region", value: region } });
+                          }}
+                          disabled={!sigunguList.length}
+                        >
+                          {/* 시/군/구 플레이스홀더 조건부 렌더링 */}
+                          {(!formData.region || formData.region.split(" ")[0] !== selectedSido || formData.region.split(" ")[1] === "") &&
+                            <option value="">시/군/구</option>}
+                          {sigunguList.map(s => (
+                            <option key={s.code} value={s.name}>{s.name}</option>
+                          ))}
+                        </select>
+                      </>
                     )}
                   </div>
                 )
                 // 일반 입력 필드 생성
                 : (renderField(field, formData[field.name], handleChange))
               }
+              {formSubmitted && errors[field.name] && (
+                <p className="error-message">{errors[field.name]}</p>
+              )}
             </div>
           ))}
           <button
