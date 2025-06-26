@@ -5,6 +5,7 @@ import axios from "axios";
 import styles from "../mypage/Updateinfo.module.css";
 import "../../css/Sharesheet.css";
 import { BsFolderSymlink } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa";
 
 function UpdateinfoSocial() {
   const { user, setUser } = useAuth();
@@ -17,6 +18,7 @@ function UpdateinfoSocial() {
   const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState(null);
+  const [resulterror, setResulterror] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [timer, setTimer] = useState(180);
@@ -160,7 +162,6 @@ function UpdateinfoSocial() {
       );
 
       if (res.status === 200) {
-        alert("인증에 성공했습니다.");
         clearInterval(timerRef.current);
         timerRef.current = null;
         setIsVerified(true);
@@ -196,8 +197,14 @@ function UpdateinfoSocial() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nickname !== user.nickname && nicknameStatus !== "valid") return alert("닉네임 중복확인을 해주세요.");
-    if (phone !== user.phone && !isVerified) return alert("전화번호 인증을 완료해주세요.");
+    if (nickname !== user.nickname && nicknameStatus !== "valid") {
+      setResulterror("닉네임 중복체크가 완료되지 않았어요.");
+      return;
+    }
+    if (phone !== user.phone && !isVerified) {
+      setResulterror("전화번호 인증을 완료해주세요.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("mno", user.mno);
@@ -237,7 +244,7 @@ function UpdateinfoSocial() {
             <img
               src={preview}
               alt="프로필 미리보기"
-              width="200"
+              width="220"
               onError={(e) => {
                 e.target.src = "/images/baseprofile.png";
               }}
@@ -248,6 +255,7 @@ function UpdateinfoSocial() {
                 사진 변경
               </button>
               <button type="button" className={styles.delete_button} onClick={handleDeletePhoto}>
+                <FaTrash className={styles.foldericon} />
                 사진 삭제
               </button>
             </div>
@@ -272,7 +280,6 @@ function UpdateinfoSocial() {
                 setNickname(e.target.value);
                 setNicknameStatus(null);
               }}
-              required
             />
             <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
@@ -293,7 +300,6 @@ function UpdateinfoSocial() {
               value={phone}
               onChange={handlePhoneChange}
               maxLength={13}
-              required
               onKeyDown={(e) => {
                 if (e.key === "F7" && e.shiftKey) {
                   e.preventDefault();
@@ -332,6 +338,11 @@ function UpdateinfoSocial() {
               </div>
             </div>
           )}
+
+          {/* 결과 오류 및 제출 */}
+          <p key={resulterror} className={`${styles.login_error} ${resulterror ? styles.show : ""}`}>
+            {resulterror || " "}
+          </p>
 
           <button type="submit" className={styles.login_button}>
             정보 수정하기

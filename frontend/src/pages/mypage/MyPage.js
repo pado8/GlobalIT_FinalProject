@@ -84,7 +84,7 @@ const MyPage = () => {
   // modal에서 업체 데이터 제출
   const handleSubmitSellerInfo = async () => {
     if (!newSname || !newSlocation) {
-      return alert("항목을 비울 수 없습니다.");
+      return alert("이 항목은 비울 수 없습니다.");
     }
 
     try {

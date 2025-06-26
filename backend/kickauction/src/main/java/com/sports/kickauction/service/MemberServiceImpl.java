@@ -95,11 +95,16 @@ public class MemberServiceImpl implements MemberService {
     // 주석: 회원정보 업데이트
     @Override
     public void updateMember(Member member) {
-
-        // 주석:: 비번암호화
-    String encodedPw = passwordEncoder.encode(member.getUserPw());
-    member.setUserPw(encodedPw);
-        // 주석:: 저장
+        if (!member.getUserPw().startsWith("$2a$")) {
+            String encodedPw = passwordEncoder.encode(member.getUserPw());
+            member.setUserPw(encodedPw);
+        }  else {
+            Member origin = memberRepository.findById(member.getMno()).orElse(null);
+            if (origin != null) {
+            member.setUserPw(origin.getUserPw());
+            }
+        }
+    // 주석:: 저장
     memberRepository.save(member); 
     }
 

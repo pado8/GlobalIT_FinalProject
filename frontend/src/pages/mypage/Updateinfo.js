@@ -5,6 +5,7 @@ import axios from "axios";
 import styles from "../mypage/Updateinfo.module.css";
 import "../../css/Sharesheet.css";
 import { BsFolderSymlink } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa";
 
 function Updateinfo() {
   const { user, setUser } = useAuth();
@@ -21,12 +22,13 @@ function Updateinfo() {
   const [nicknameStatus, setNicknameStatus] = useState(null);
   const [pwStatus, setPwStatus] = useState(null);
   const [pw2Error, setPw2Error] = useState("");
+  const [resulterror, setResulterror] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [timer, setTimer] = useState(180);
   const [isVerified, setIsVerified] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
-  const [removeRequested, setRemoveRequested] = useState(false); //프로필사진 삭제 요청
+  const [removeRequested, setRemoveRequested] = useState(false);
   const timerRef = useRef(null);
 
   // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
@@ -36,7 +38,7 @@ function Updateinfo() {
     setVerifyStatus("success");
   };
 
-  // 현재값 setting
+  // 주석: 현재값 setting
   useEffect(() => {
     if (user) {
       setEmail(user.user_id || "");
@@ -53,7 +55,7 @@ function Updateinfo() {
     }
   }, [user]);
 
-  // 사진 변경
+  // 주석: 사진 변경
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -62,7 +64,7 @@ function Updateinfo() {
     }
   };
 
-  // 기존 사진 삭제
+  // 주석: 기존 사진 삭제
   const handleDeletePhoto = () => {
     setFile(null);
     setPreview("/images/baseprofile.png");
@@ -197,7 +199,6 @@ function Updateinfo() {
       );
 
       if (res.status === 200) {
-        alert("인증에 성공했습니다.");
         clearInterval(timerRef.current);
         timerRef.current = null;
         setIsVerified(true);
@@ -211,7 +212,7 @@ function Updateinfo() {
     }
   };
 
-  //모달 닫기
+  //주석: 모달 닫기
   const handleCloseModal = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -220,7 +221,7 @@ function Updateinfo() {
     setIsModalOpen(false);
   };
 
-  // 핸드폰번호 입력 변화
+  // 주석: 핸드폰번호필드 입력 변화
   const handlePhoneChange = (e) => {
     const raw = e.target.value;
     const formatted = formatPhoneNumber(raw);
@@ -234,16 +235,32 @@ function Updateinfo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nickname !== user.nickname && nicknameStatus !== "valid") return alert("닉네임 중복확인을 해주세요.");
-    if (phone !== user.phone && !isVerified) return alert("전화번호 인증을 완료해주세요.");
-    if (password && !validatePassword(password)) return alert("비밀번호 형식이 올바르지 않습니다.");
-    if (password && password !== confirmPw) return alert("비밀번호가 일치하지 않습니다.");
+    if (nickname !== user.nickname && nicknameStatus !== "valid") {
+      setResulterror("닉네임 중복체크가 완료되지 않았어요.");
+      return;
+    }
+
+    if (phone !== user.phone && !isVerified) {
+      setResulterror("전화번호 인증을 완료해주세요.");
+      return;
+    }
+
+    if (password && !validatePassword(password)) {
+      setResulterror("비밀번호 형식이 유효하지 않아요.");
+      return;
+    }
+    if (password && password !== confirmPw) {
+      setResulterror("비밀번호가 일치하지 않아요.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("mno", user.mno);
     formData.append("userName", nickname);
-    formData.append("userPw", password);
     formData.append("phone", phone);
+    if (password && password.trim().length > 0) {
+      formData.append("userPw", password);
+    }
 
     if (file) {
       formData.append("profileimg", file);
@@ -278,7 +295,7 @@ function Updateinfo() {
             <img
               src={preview}
               alt="프로필 미리보기"
-              width="200"
+              width="220"
               onError={(e) => {
                 e.target.src = "/images/baseprofile.png";
               }}
@@ -289,6 +306,7 @@ function Updateinfo() {
                 사진 변경
               </button>
               <button type="button" className={styles.delete_button} onClick={handleDeletePhoto}>
+                <FaTrash className={styles.foldericon} />
                 사진 삭제
               </button>
             </div>
@@ -313,7 +331,6 @@ function Updateinfo() {
                 setNickname(e.target.value);
                 setNicknameStatus(null);
               }}
-              required
             />
             <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
@@ -334,7 +351,6 @@ function Updateinfo() {
               value={phone}
               onChange={handlePhoneChange}
               maxLength={13}
-              required
               onKeyDown={(e) => {
                 if (e.key === "F7" && e.shiftKey) {
                   e.preventDefault();
@@ -377,7 +393,7 @@ function Updateinfo() {
           {/* 비밀번호 & 비밀번호 확인     */}
           <label>비밀번호 재설정</label>
           <div className={styles.signup_input_container}>
-            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus]}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
+            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus]}`} placeholder="새 비밀번호" value={password} onChange={handlePasswordChange} />
           </div>
 
           {pwStatus === "invalid" && <p className={styles.error}>❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
@@ -390,11 +406,15 @@ function Updateinfo() {
               placeholder="비밀번호 확인.."
               value={confirmPw}
               onChange={handleConfirmPwChange}
-              required
             />
           </div>
 
           {pw2Error && <p className={`${styles.password_check_message} ${confirmPw === password ? `${styles.error} ${styles.pw2_ok}` : styles.error}`}>{pw2Error}</p>}
+
+          {/* 결과 오류 및 제출 */}
+          <p key={resulterror} className={`${styles.login_error} ${resulterror ? styles.show : ""}`}>
+            {resulterror || " "}
+          </p>
 
           <button type="submit" className={styles.login_button}>
             정보 수정하기

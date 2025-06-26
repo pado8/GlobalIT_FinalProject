@@ -167,7 +167,9 @@ public class MemberController {
             existing.setUserName(userName);
             existing.setPhone(phone);
             if (userPw != null && !userPw.isBlank()) {
-            existing.setUserPw(userPw);
+                existing.setUserPw(userPw); 
+            } else {
+                // 비밀번호변경의도x
             }
 
             // 파일 업로드 경로

@@ -72,6 +72,20 @@ function Findinfo() {
     const phoneOnly = phone.replace(/-/g, "");
     if (!/^010-\d{4}-\d{4}$/.test(phone)) return alert("올바른 전화번호를 입력하세요.");
 
+    // 주석: 전화번호 DB존재 여부 확인
+    if (activeTab === "findId") {
+      try {
+        const res = await axios.get(`/api/members/phone_check?phone=${phoneOnly}`);
+        if (!res.data.exists) {
+          alert("해당 전화번호로 가입된 계정이 없습니다.");
+          return;
+        }
+      } catch (err) {
+        alert("전화번호 확인 중 오류가 발생했습니다.");
+        return;
+      }
+    }
+
     // 주석: 이메일+전화번호 매칭 확인
     if (activeTab === "findPw") {
       try {
@@ -159,11 +173,11 @@ function Findinfo() {
         newPw,
         phone: phone.replace(/-/g, ""),
       });
-      alert("비밀번호가 변경되었습니다.");
+      alert("비밀번호가 변경되었어요.");
       setIsModalOpen(false);
       navigate("/login");
     } catch {
-      alert("비밀번호 변경 실패");
+      alert("비밀번호 변경 실패..");
     }
   };
 
