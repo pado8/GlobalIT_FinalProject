@@ -1,44 +1,46 @@
-// package com.sports.kickauction.entity;
+package com.sports.kickauction.entity;
 
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.GeneratedValue;
-// import jakarta.persistence.GenerationType;
-// import jakarta.persistence.Id;
-// import jakarta.persistence.JoinColumn;
-// import jakarta.persistence.Table;
-// import lombok.AllArgsConstructor;
-// import lombok.Builder;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
-// import lombok.Setter;
-// import lombok.ToString;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
 
-// @Entity
-// @Table(name = "biz")
-// @Getter
-// @Setter
-// @ToString(exclude = {"member", "order"}) // 순환참조 방지
-// @Builder
-// @AllArgsConstructor
-// @NoArgsConstructor 
-// public class Biz extends BaseEntity {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-//   @Id
-//   @GeneratedValue(strategy = GenerationType.IDENTITY)
-//   private Long bno;
+@Entity
+@Table(name = "biz")
+@Getter
+@Setter
+@ToString(exclude = {"member", "order"}) // 순환참조 방지
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor 
+public class Biz extends BaseEntity {
 
-//   @ManyToOne
-//   @JoinColumn(name = "mno", nullable = false)
-//   private  seller;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long bno;
 
-//   @ManyToOne
-//   @JoinColumn(name = "ono", nullable = false)
-//   private Order order;
+  @ManyToOne
+  @JoinColumn(name = "mno", nullable = false)
+  private  Seller seller;
 
-//   private int price;
+  @ManyToOne
+  @JoinColumn(name = "ono", nullable = false)
+  private Request order;
 
-//   private String bcontent;
+  private int price;
 
-//   private String banswer;
-// }
+  private String bcontent;
+
+  private String banswer;
+}
 
