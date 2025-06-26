@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,11 +31,11 @@ public class Biz extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "mno", nullable = false)
-  private Seller seller;
+  private  Seller seller;
 
   @ManyToOne
   @JoinColumn(name = "ono", nullable = false)
-  private Order order;
+  private Request order;
 
   private int price;
 
