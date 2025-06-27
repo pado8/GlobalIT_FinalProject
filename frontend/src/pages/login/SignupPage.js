@@ -176,7 +176,6 @@ function SignupPage() {
       );
 
       if (res.status === 200) {
-        alert("인증에 성공했습니다.");
         clearInterval(timerRef.current);
         timerRef.current = null;
         setIsVerified(true);
@@ -214,21 +213,21 @@ function SignupPage() {
     setResulterror("");
 
     if (nicknameStatus !== "valid") {
-      alert("닉네임 중복확인을 해주세요.");
+      setResulterror("닉네임 중복체크가 완료되지 않았어요.");
       return;
     }
 
     if (pwStatus !== "valid") {
-      alert("비밀번호 형식이 올바르지 않습니다.");
+      setResulterror("비밀번호 형식이 올바르지 않아요.");
       return;
     }
     if (confirmPw !== password) {
-      alert("비밀번호가 일치하지 않습니다.");
+      setResulterror("비밀번호가 일치하지 않아요.");
       return;
     }
 
     if (!isVerified) {
-      alert("전화번호 인증을 완료해주세요.");
+      setResulterror("전화번호 인증을 완료해주세요.");
       return;
     }
 
@@ -279,7 +278,6 @@ function SignupPage() {
                 setEmail(e.target.value);
                 validateEmail(e.target.value);
               }}
-              required
             />
           </div>
 
@@ -296,7 +294,6 @@ function SignupPage() {
                 setNickname(e.target.value);
                 setNicknameStatus(null);
               }}
-              required
             />
             <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
@@ -309,7 +306,7 @@ function SignupPage() {
 
           {/* 비밀번호 & 비밀번호 확인     */}
           <div className={styles.signup_input_container}>
-            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus] || ""}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
+            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus] || ""}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} />
           </div>
 
           {pwStatus === "invalid" && <p className={styles.error}>❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
@@ -322,7 +319,6 @@ function SignupPage() {
               placeholder="비밀번호 재입력"
               value={confirmPw}
               onChange={handleConfirmPwChange}
-              required
             />
           </div>
 
@@ -337,7 +333,6 @@ function SignupPage() {
               value={phone}
               onChange={handlePhoneChange}
               maxLength={13}
-              required
               onKeyDown={(e) => {
                 if (e.key === "F7" && e.shiftKey) {
                   e.preventDefault();
@@ -378,7 +373,9 @@ function SignupPage() {
           )}
 
           {/* 결과 오류 및 제출 */}
-          <p className={`${styles.error} ${styles.login_error}`}>{resulterror || " "}</p>
+          <p key={resulterror} className={`${styles.login_error} ${resulterror ? styles.show : ""}`}>
+            {resulterror || " "}
+          </p>
 
           <button type="submit" className={styles.login_button}>
             가입하기

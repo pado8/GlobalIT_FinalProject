@@ -13,10 +13,12 @@ const MyPage = () => {
   const [company, setCompany] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [showinputModal, setShowinputModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [newSname, setNewSname] = useState("");
   const [newSlocation, setNewSlocation] = useState("");
   const [prevAddress, setPrevAddress] = useState("");
   const [hasTempAddress, setHasTempAddress] = useState(false);
+  const [agree, setAgree] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,7 +86,7 @@ const MyPage = () => {
   // modal에서 업체 데이터 제출
   const handleSubmitSellerInfo = async () => {
     if (!newSname || !newSlocation) {
-      return alert("항목을 비울 수 없습니다.");
+      return alert("이 항목은 비울 수 없습니다.");
     }
 
     try {
@@ -117,6 +119,19 @@ const MyPage = () => {
   const handleCancelAddress = () => {
     setNewSlocation(prevAddress);
     setHasTempAddress(false);
+  };
+
+  // 주석: 회원탈퇴 모달
+  const handleSubmitWithdraw = async () => {
+    try {
+      const res = await axios.delete(`/api/members/${user.mno}`);
+      if (res.status === 200) {
+        alert("회원탈퇴가 완료되었습니다.");
+        navigate("/");
+      }
+    } catch (err) {
+      alert("탈퇴 중 알 수 없는 오류..");
+    }
   };
 
   return (
@@ -162,6 +177,8 @@ const MyPage = () => {
         </div>
       )}
 
+      <hr className={styles.title_divider} />
+
       {/* 회원 정보 */}
       <section className={styles.mypage_section}>
         <h3 className={styles.section_title}>내 정보</h3>
@@ -183,6 +200,7 @@ const MyPage = () => {
           </Link>
         </div>
       </section>
+      <hr className={styles.section_divider} />
 
       {/* 견적 정보 */}
       <section className={styles.mypage_section}>
@@ -201,6 +219,7 @@ const MyPage = () => {
           </div>
         </div>
       </section>
+      <hr className={styles.section_divider} />
 
       {/* 업체 정보 (SELLER 전용) */}
       {user?.role === "SELLER" && (
@@ -230,6 +249,34 @@ const MyPage = () => {
             </div>
           </div>
         </section>
+      )}
+      {/* 회원정보 찾기 / 회원가입 */}
+      <div className={styles.mypage_help}>
+        <Link to="/help">고객센터</Link>
+        <span>|</span>
+        <button type="button" className={styles.withdraw_link} onClick={() => setShowWithdrawModal(true)}>
+          회원탈퇴
+        </button>
+      </div>
+
+      {/* 회원탈퇴 정보 MODAL */}
+      {showWithdrawModal && (
+        <div className={styles.modal_overlay}>
+          <div className={styles.modal_container}>
+            <h3 className={styles.withdraw_title}>회원탈퇴</h3>
+            <p className={styles.withdraw_p}>탈퇴 시 계정 및 관련 데이터가 모두 삭제되며 복구할 수 없습니다.</p>
+            <p className={styles.withdraw_p}>
+              아래 입력란에 <strong>확인했습니다</strong> 를 정확히 입력해주세요.
+            </p>
+            <input type="text" placeholder="확인했습니다" value={agree} onChange={(e) => setAgree(e.target.value)} />
+            <div className={styles.modal_buttons}>
+              <button onClick={handleSubmitWithdraw} disabled={agree !== "확인했습니다"} className={agree === "확인했습니다" ? styles.active_btn : styles.disabled_btn}>
+                탈퇴
+              </button>
+              <button onClick={() => setShowWithdrawModal(false)}>취소</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

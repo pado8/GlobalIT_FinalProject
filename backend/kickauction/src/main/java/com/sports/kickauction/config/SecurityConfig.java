@@ -101,7 +101,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .userInfoEndpoint(user -> user.userService(oAuth2UserService))
                         .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("http://localhost:3000/");
+                            response.sendRedirect("http://localhost:3000/socialgowhere");
                         }));
         return http.build();
     }
