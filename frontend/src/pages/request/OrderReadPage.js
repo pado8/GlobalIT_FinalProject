@@ -70,6 +70,7 @@ const OrderReadPage = () => {
         finished: currentFinishedStatus, // 업데이트된 마감 상태
       });
 
+      // 📍📍실제로 백엔드에서 받아오는 로직 구현 필요📍📍👀
       setCompanies(data.companies || []); 
 
     } catch (err) {
