@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../login/Findinfo.module.css";
 import "../../css/Sharesheet.css";
+import { FiExternalLink } from "react-icons/fi";
 
 function Findinfo() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ function Findinfo() {
   const [pw2Error, setPw2Error] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
+  const [showNotice, setShowNotice] = useState(true);
 
   // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
   const noVerify = () => {
@@ -69,6 +71,20 @@ function Findinfo() {
   const handleSendSMS = async () => {
     const phoneOnly = phone.replace(/-/g, "");
     if (!/^010-\d{4}-\d{4}$/.test(phone)) return alert("올바른 전화번호를 입력하세요.");
+
+    // 주석: 전화번호 DB존재 여부 확인
+    if (activeTab === "findId") {
+      try {
+        const res = await axios.get(`/api/members/phone_check?phone=${phoneOnly}`);
+        if (!res.data.exists) {
+          alert("해당 전화번호로 가입된 계정이 없습니다.");
+          return;
+        }
+      } catch (err) {
+        alert("전화번호 확인 중 오류가 발생했습니다.");
+        return;
+      }
+    }
 
     // 주석: 이메일+전화번호 매칭 확인
     if (activeTab === "findPw") {
@@ -157,17 +173,36 @@ function Findinfo() {
         newPw,
         phone: phone.replace(/-/g, ""),
       });
-      alert("비밀번호가 변경되었습니다.");
+      alert("비밀번호가 변경되었어요.");
       setIsModalOpen(false);
       navigate("/login");
     } catch {
-      alert("비밀번호 변경 실패");
+      alert("비밀번호 변경 실패..");
     }
   };
 
   return (
     <div className={styles.findinfo_container}>
-      <h2>ID/PW 찾기</h2>
+      <h2>ID / 비밀번호 찾기</h2>
+      <hr className={styles.title_divider} />
+      {/* 주석: 사용자 알림 */}
+      {showNotice && (
+        <div className={styles.notice_box}>
+          <div className={styles.notice_top}>
+            <span className={styles.notice_label}>
+              <strong>공지사항</strong>
+            </span>
+            <button className={styles.notice_close} onClick={() => setShowNotice(false)}>
+              ×
+            </button>
+          </div>
+          <p className={styles.notice_message}>
+            <strong className={styles.notice_link}>킥옥션 계정 약관 개정</strong>
+            <FiExternalLink />
+            (6월 15일 시행)에 따라, 로그인 정보 찾기 기능은 <strong>휴대폰 인증을 완료한 계정</strong>에서만 제공됩니다.
+          </p>
+        </div>
+      )}
       <div className={styles.tab_menu}>
         <button className={activeTab === "findId" ? styles.active : ""} onClick={() => handleTabSwitch("findId")}>
           아이디 찾기
