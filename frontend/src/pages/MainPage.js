@@ -1,13 +1,14 @@
 // src/pages/MainPage.js
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
-// import { getOrderList } from "../api/orderApi";
+import { getOrderList } from "../api/RequestApi";
 import { getList as getCommunityList } from "../api/communityApi";
 import { getSellerList } from "../api/SellerApi";
 import { getImageUrl } from "../api/UploadImageApi";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../css/MainPage.css";
+import { FaRunning, FaMapMarkerAlt, FaRegCalendarAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 // public/images 폴더에 배너 이미지를 넣고 경로를 적어주세요
@@ -27,7 +28,7 @@ const MainPage = () => {
   const [sellers, setSellers] = useState([]);
 
   useEffect(() => {
-    // getOrderList({ page: 1, size: 10 }).then(res => setOrders(res.dtoList)).catch(console.error);
+    getOrderList(1, 5).then(res => setOrders(res.dtoList)).catch(console.error);
     getCommunityList({ page: 1, size: 5 })
       .then(res => setCommunity(res.dtoList))
       .catch(console.error);
@@ -40,8 +41,8 @@ const MainPage = () => {
   const bannerSettings = {
     dots: true,
     infinite: true,
-    // autoplay: true,
-    // autoplaySpeed: 5000,
+    autoplay: true,
+    autoplaySpeed: 5000,
     arrows: false,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -50,8 +51,8 @@ const MainPage = () => {
   const multiSlideSettings = {
     dots: false,
     infinite: true,
-    autoplay: true,
-    autoplaySpeed: 5000,
+    // autoplay: true,
+    // autoplaySpeed: 5000,
     arrows: true,
     slidesToShow: 5,
     slidesToScroll: 1,
@@ -85,10 +86,13 @@ const MainPage = () => {
         <h2>최근 견적 요청</h2>
         <Slider {...multiSlideSettings}>
           {orders.map(order => (
-            <div key={order.id} className="order_item item" onClick={() => navigate(`/order/detail/${order.id}`)}>
-              <h3>{order.title}</h3>
-              <p>{order.summary}</p>
-              <span>{order.date}</span>
+            <div key={order.ono} className="order_item item" onClick={() => navigate(`/order/detail/${order.ono}`)}>
+              <h3>{order.ocontent}</h3>
+              <div>
+                <p><FaRunning /> {order.playType}</p>
+                <p><FaMapMarkerAlt /> {order.olocation}</p>
+                <p><FaRegCalendarAlt /> {order.rentalDate?.slice(0, 10)}</p>
+              </div>
             </div>
           ))}
         </Slider>
@@ -100,9 +104,11 @@ const MainPage = () => {
         <ul className="community_list">
           {community.map(post => (
             <li key={post.pno} className="community_item item" onClick={() => navigate(`/community/read/${post.pno}`)}>
-              <a href={`/community/read/${post.pno}`}>{post.ptitle}</a>
-              <span>{post.writerName}</span>
-              <span>{new Date(post.pregdate).toLocaleDateString()}</span>
+              <div className="community_title">{post.ptitle}</div>
+              <div className="community_info">
+                <span>{post.writerName}</span>
+                <span>{new Date(post.pregdate).toLocaleDateString()}</span>
+              </div>
             </li>
           ))}
         </ul>
