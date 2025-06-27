@@ -11,7 +11,10 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import com.sports.kickauction.dto.SellerModifyDTO;
 import com.sports.kickauction.dto.SellerModifyReadDTO;
@@ -23,6 +26,7 @@ import com.sports.kickauction.dto.SellerRegisterReadDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
+import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.repository.SellerRepository;
 
@@ -34,6 +38,7 @@ public class SellerServiceImpl implements SellerService {
 
     private final SellerRepository sellerRepository;
     private final SellerIntroRepository sellerIntroRepository;
+    private final MemberRepository memberRepository;
 
     private static final String DEFAULT_IMAGE_PATH = "default/default.png";
 
@@ -42,7 +47,24 @@ public class SellerServiceImpl implements SellerService {
     public boolean existsSeller(Long mno) {
         return sellerRepository.existsById(mno);
     }
+    
+    @Override
+    public Optional<Member> getLoggedInMember() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+    if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+        return Optional.empty();
+    }
+
+    String userId;
+    if (auth.getPrincipal() instanceof OAuth2User oauthUser) {
+        userId = (String) oauthUser.getAttributes().get("user_id");
+    } else {
+        userId = auth.getName();
+    }
+
+    return memberRepository.findByUserId(userId);
+}
 
     private String buildSimageString(List<String> simageList) {
     return (simageList == null || simageList.isEmpty())
@@ -164,6 +186,9 @@ public class SellerServiceImpl implements SellerService {
     SellerIntro intro = sellerIntroRepository.findById(mno)
         .orElseThrow(() -> new NoSuchElementException("소개 정보 없음"));
 
+    Member member = memberRepository.findById(mno)
+        .orElseThrow(() -> new NoSuchElementException("정보 없음"));
+
     List<String> simageList = parseSimageString(intro.getSimage());
 
     return SellerModifyReadDTO.builder()
@@ -171,7 +196,7 @@ public class SellerServiceImpl implements SellerService {
         .slocation(seller.getSlocation())
         .introContent(intro.getIntroContent())
         .info(intro.getInfo())
-        .phone(seller.getMember().getPhone())
+        .phone(member.getPhone())
         .simage(simageList)
         .build();
 }

@@ -34,7 +34,8 @@ const SellerModifyPage = () => {
     phone: "",
     slocation: ""
   });
-
+  
+  const isFormValid = basicInfo.sname.trim() && formData.info.trim() && formData.introContent.trim();
   
   
   useEffect(() => {
@@ -364,7 +365,11 @@ const SellerModifyPage = () => {
         value={formData.introContent}
         onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
       />
-      <button className={styles["register_button"]} onClick={handleSubmit} disabled={submitting}>
+      <button
+        className={`${styles["register_button"]} ${!isFormValid ? styles["disabled_button"] : ""}`}
+        onClick={handleSubmit}
+        disabled={!isFormValid || submitting}
+      >
         {submitting ? "수정 중..." : "수정 완료"}
       </button>
 
