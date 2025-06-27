@@ -181,11 +181,6 @@ const OrderMyPage = () => {
     <>
         <Hero {...myPageHero} />
         <List title="진행 견적" quotes={activeLists} type="active"/>
-        {/* {activeLists && activeLists.length > 0 ? (
-            <List title="진행 견적" quotes={activeLists} type="active"/>
-        ) : (
-            <div className="mt-6 text-gray-500">현재 진행 중인 견적이 없습니다.</div>
-        )} */}
         <List title="마감 견적" quotes={closedOrders} type="closed" />
         <List title="취소 견적" quotes={cancelledOrders} type="cancelled" />
     </>

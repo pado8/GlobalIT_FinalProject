@@ -24,15 +24,13 @@ import com.sports.kickauction.dto.RequestDTO;
 import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
 import com.sports.kickauction.dto.RequestReadDTO;
-import com.sports.kickauction.dto.SellerPageRequestDTO;
-import com.sports.kickauction.dto.SellerPageResponseDTO;
-import com.sports.kickauction.dto.SellerReadDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.service.RequestService;
 
 import lombok.extern.log4j.Log4j2;
+
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @Log4j2
@@ -67,6 +65,7 @@ public class RequestController {
             Map<String, Object> responseMap = new HashMap<>();
             responseMap.put("ono", order.getOno());
             responseMap.put("mno", order.getMno());
+            responseMap.put("otitle", order.getOtitle());
             responseMap.put("playType", order.getPlayType());
             responseMap.put("region", order.getOlocation()); // "olocation"을 "region"으로 매핑
 
@@ -146,8 +145,6 @@ public class RequestController {
             throw new RuntimeException("알 수 없는 사용자 인증 방식입니다: " + principal.getClass());
         }
         
-
-
         // 3. MemberRepository를 통해 Member 조회
         Member member = memberRepository.findByUserId(loginUserId)
                         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
@@ -209,9 +206,7 @@ public class RequestController {
             throw new RuntimeException("알 수 없는 사용자 인증 방식입니다: " + principal.getClass());
         }
             
-
-        
-        
+   
         Member member = memberRepository.findByUserId(loginUserId)
         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginUserId));
 
