@@ -376,6 +376,66 @@ body {
   opacity: 0.9;
 }
 
+/* 주석: 계정 추가 도움 */
+.mypage_help {
+  margin-top: 3.25rem;
+  font-size: 0.92rem;
+  color: #666;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.mypage_help a {
+  text-decoration: none;
+  color: inherit;
+  transition: 0.3s ease-in;
+}
+
+.mypage_help .withdraw_link {
+  text-decoration: none;
+  color: #ff0000d7;
+  transition: 0.3s ease-in;
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.mypage_help a:hover {
+  text-decoration: underline;
+  color: #3d3636;
+}
+
+.mypage_help .withdraw_link:hover {
+  text-decoration: underline;
+  color: #ff0000;
+}
+
+.modal_container .withdraw_title {
+  font-size: 2rem;
+  font-family: "PaperlogyMD";
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.modal_container .withdraw_p {
+  font-size: 1rem;
+  font-family: "NotoSansRG";
+  margin-bottom: 0.2rem;
+}
+.modal_container .withdraw_p strong {
+  color: rgb(253, 39, 11);
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.modal_container .disabled_btn {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .mypage_container {
