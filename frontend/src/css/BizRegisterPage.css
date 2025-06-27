@@ -1,0 +1,170 @@
+/* 전체 페이지 컨테이너 */
+.biz-register-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+
+/* 배경 이미지 + 흐림 처리 */
+.biz-title-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  filter: blur(2px);
+  opacity: 0.4;
+}
+
+/* 내용 레이어 */
+.biz-title-overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  padding-top: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+  color: #111;
+  text-align: center;
+}
+
+/* 타이틀 영역 */
+.biz-title-container {
+  max-width: 800px;
+  margin-bottom: 40px;
+}
+
+.biz-title-container h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #90caf9; /* 연한 하늘색 강조 */
+  margin-bottom: 10px;
+}
+
+.biz-title-container h1 {
+  font-size: 40px;
+  font-weight: 800;
+  color: #3B82F6;
+  margin-bottom: 16px;
+}
+
+.biz-title-container p {
+  font-size: 18px;
+  font-weight: 1000;
+  line-height: 1.6;
+  color: #666666;
+}
+
+.highlight {
+  color: #42a5f5;
+  font-weight: 700;
+}
+
+/* 박스 레이아웃 */
+.biz-content-wrapper {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 960px;
+}
+
+/* 요청 정보 카드 */
+.request-box {
+  flex: 1;
+  min-width: 280px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 견적 제안 폼 */
+.biz-form-box {
+  flex: 1;
+  min-width: 280px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+/* 라벨 + 입력 */
+.biz-form-box label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.biz-form-box input,
+.biz-form-box textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.biz-form-box input:focus,
+.biz-form-box textarea:focus {
+  border-color: #1976d2;
+}
+
+.price-input-wrapper {
+  position: relative;
+}
+
+.price-input-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* 오른쪽에 '원' 들어갈 공간 확보 */
+  box-sizing: border-box;
+}
+
+.price-unit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 14px;
+}
+
+/* 버튼 */
+.submit-btn {
+  align-self: flex-end;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+

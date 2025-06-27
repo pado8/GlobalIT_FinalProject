@@ -39,6 +39,7 @@ const SellerRegisterPage = () => {
     slocation: "",
   });
 
+const isFormValid = formData.info.trim() && formData.introContent.trim();
   
   
   useEffect(() => {
@@ -356,9 +357,14 @@ const SellerRegisterPage = () => {
         onChange={(e) => setFormData((prev) => ({ ...prev, introContent: e.target.value }))}
       />
 
-      <button className={styles["register_button"]} onClick={handleSubmit} disabled={submitting}>
-        {submitting ? "등록 중..." : "등록"}
+      <button
+          className={`${styles["register_button"]} ${!isFormValid ? styles["disabled_button"] : ""}`}
+          onClick={handleSubmit}
+          disabled={!isFormValid || submitting}
+        >
+          {submitting ? "등록 중..." : "등록"}
         </button>
+
 
       {enlargedImage && (
         <div className={styles["image_modal"]} onClick={() => setEnlargedImage(null)}>
