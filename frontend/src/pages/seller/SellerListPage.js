@@ -60,6 +60,11 @@ const SellerListPage = () => {
     setSearchParams({ page });
   }, [page]);
 
+  useEffect(() => {
+  const page_from_url = parseInt(search_params.get("page") || "1", 10);
+  setPage(page_from_url);
+}, [search_params]);
+
   const open_modal = async (mno) => {
     try {
       const detail = await getSellerDetail(mno);
@@ -119,6 +124,7 @@ const SellerListPage = () => {
       )}
 
       <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/orderlist")}>🛠 테스트용 견적목록</button>
+      <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/bizregister")}>🛠 테스트용 입찰등록</button>
 
       <Pagination
         className={styles["fixed_pagination"]}
