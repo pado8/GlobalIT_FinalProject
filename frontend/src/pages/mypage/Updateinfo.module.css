@@ -9,8 +9,8 @@
 .signup_smallcontainer {
   display: flex;
   flex-direction: column;
-  width: 550px;
-  padding: 2rem;
+  width: 600px;
+  padding: 2rem 5rem;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -19,9 +19,15 @@
 
 .signup_title {
   font-family: "PaperlogyMD";
-  margin-bottom: 0.75rem;
   font-size: 2.25rem;
   font-weight: 700;
+}
+
+.title_divider {
+  border: none;
+  border-bottom: 4.5px solid #45b0b8b7;
+  width: 100%;
+  margin: 0.5rem 0 2rem;
 }
 
 .signup_form {
@@ -41,7 +47,7 @@
 .img_buttons {
   display: flex;
   justify-content: space-evenly;
-  width: 180px;
+  width: 220px;
   margin-top: 0.75rem;
 }
 .img_buttons button {
@@ -49,18 +55,23 @@
   border: 1px solid #ccc;
   border-radius: 70px;
   color: black;
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.4rem;
   cursor: pointer;
   font-family: "NotoSansRG";
+  align-items: center;
 }
 .img_buttons .delete_button {
+  color: rgb(255, 238, 238);
   background-color: rgba(255, 0, 0, 0.596);
 }
 
+.foldericon {
+  margin-right: 0.25rem;
+}
 /* 전체 input field */
 .signup_input_container {
   position: relative;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.2rem;
 }
 
 .input {
@@ -72,6 +83,13 @@
   box-sizing: border-box;
   padding-right: 100px;
   font-family: "NotoSansRG";
+}
+
+label {
+  display: block;
+  font-family: "NotoSansRG";
+  font-size: 1.05rem;
+  color: #507570;
 }
 
 /* 주석:: 중복확인  */
@@ -112,9 +130,8 @@
   border-radius: 6px;
   padding: 0.9rem;
   font-size: 1rem;
-  margin-top: 1rem;
   cursor: pointer;
-  margin: 1rem auto;
+  margin: 0.35rem auto;
   font-family: "NotoSansRG";
 }
 
@@ -139,6 +156,39 @@
 }
 .sms_ok {
   color: green;
+}
+
+.login_error {
+  color: transparent;
+  background-color: transparent;
+  border-radius: 7px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.95rem;
+  margin: 0 auto;
+  font-family: "NotoSansRG";
+  font-weight: 400;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.login_error.show {
+  color: azure;
+  background-color: rgb(255, 54, 148);
+  min-height: 1.35rem;
+  animation: fadeSlideIn 0.4s ease forwards;
+  opacity: 1;
+}
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 주석: 문자인증 모달 디자인 */

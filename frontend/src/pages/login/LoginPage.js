@@ -13,6 +13,7 @@ import socialk from "../../assets/img/social_k.png";
 function LoginPage() {
   const location = useLocation();
   const redirectPath = location.state?.from || "/";
+  const from = location.state?.from || "/";
   const searchParams = new URLSearchParams(location.search);
   const loginError = searchParams.get("error");
   const [userid, setUserid] = useState("");
@@ -74,11 +75,14 @@ function LoginPage() {
 
   // 주석: 구글 로그인
   const handleGoogleSignup = () => {
+    localStorage.setItem("redirectAfterLogin", from);
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   // 주석: 카카오 로그인
   const handleKakaoSignup = () => {
+    // 현재 위치 저장
+    localStorage.setItem("redirectAfterLogin", from);
     window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
 
