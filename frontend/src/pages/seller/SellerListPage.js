@@ -60,6 +60,11 @@ const SellerListPage = () => {
     setSearchParams({ page });
   }, [page]);
 
+  useEffect(() => {
+  const page_from_url = parseInt(search_params.get("page") || "1", 10);
+  setPage(page_from_url);
+}, [search_params]);
+
   const open_modal = async (mno) => {
     try {
       const detail = await getSellerDetail(mno);

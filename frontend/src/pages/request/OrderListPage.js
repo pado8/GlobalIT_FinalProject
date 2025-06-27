@@ -25,13 +25,26 @@ function OrderListPage() {
 });
 
 useEffect(() => {
-  setSearchParams({
-    page: currentPage,
-    city: selectedCity || "",       // 선택된 시/도
-    district: selectedDistrict || "", // 선택된 구/군
-    playType: filter.playType || ""
-  });
-}, [currentPage,filter]);  
+  const currentParams = Object.fromEntries(searchParams.entries());
+
+  const shouldUpdate =
+    currentParams.page !== String(currentPage) ||
+    currentParams.city !== (selectedCity || "") ||
+    currentParams.district !== (selectedDistrict || "") ||
+    currentParams.playType !== (filter.playType || "");
+
+  if (shouldUpdate) {
+    setSearchParams(
+      {
+        page: currentPage,
+        city: selectedCity || "",
+        district: selectedDistrict || "",
+        playType: filter.playType || "",
+      }
+    );
+  }
+}, [currentPage, filter]);
+ 
 
 useEffect(() => {
   const pageFromUrl = parseInt(searchParams.get("page")) || 1;

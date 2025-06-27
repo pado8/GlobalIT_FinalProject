@@ -212,7 +212,7 @@ public class RequestServiceImpl implements RequestService {
 
     //견적 리스트
     @Override
-public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO dto) {
+    public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO dto) {
     Pageable pageable = dto.getPageable(Sort.by("oregdate").descending());
 
     String city = dto.getCity();
