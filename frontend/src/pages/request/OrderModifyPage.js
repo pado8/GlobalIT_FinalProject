@@ -16,6 +16,7 @@ const OrderModifyPage = () => {
   const { ono } = useParams(); // URL에서 ono 값 가져오기
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
   const [formData, setFormData] = useState({ // 폼 데이터를 위한 상태
+    otitle: '',
     playType: '',
     rental: '', // 장비 대여 여부 (radio)
     rentalEquipment: '', // 장비 대여 물품
@@ -41,6 +42,7 @@ const OrderModifyPage = () => {
         // 백엔드에서 받은 데이터를 폼 데이터에 매핑
         // OrderController의 getOrder 메서드가 반환하는 필드명에 맞게 매핑
         setFormData({
+          otitle: data.otitle || '',
           playType: data.playType || '',
           rental: data.rentalEquipment || data.detail ? '필요해요' : '필요없어요', // 장비 정보가 있으면 '필요해요'로 설정
           rentalEquipment: data.rentalEquipment || '',
@@ -63,11 +65,13 @@ const OrderModifyPage = () => {
       fetchOrderData();
     }
   }, [ono]);
-
-
+  
+  
   
   const validate = (data) => {
     const newErrors = {};
+    
+    if (!data.otitle) newErrors.otitle = '제목을 입력해주세요.';
     if (!data.playType) newErrors.playType = '종목을 선택해주세요.';
     if (data.rental === '필요해요' && !data.rentalEquipment.trim()) {
       newErrors.rentalEquipment = '대여할 장비 목록을 입력해주세요.';

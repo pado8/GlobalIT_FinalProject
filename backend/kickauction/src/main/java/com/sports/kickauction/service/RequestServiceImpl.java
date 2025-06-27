@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +41,7 @@ public class RequestServiceImpl implements RequestService {
             RequestDTO dto = RequestDTO.builder()
                 .ono(order.getOno())
                 .mno(order.getMno())
+                .otitle(order.getOtitle())
                 .playType(order.getPlayType())
                 .olocation(order.getOlocation())
                 .rentalDate(order.getRentalDate())
@@ -66,6 +64,7 @@ public class RequestServiceImpl implements RequestService {
         if (existingOrderOptional.isPresent()) {
             Request existingOrder = existingOrderOptional.get();  
 
+            if (requestDTO.getOtitle() != null) existingOrder.setOtitle(requestDTO.getOtitle());
             if (requestDTO.getPlayType() != null) existingOrder.setPlayType(requestDTO.getPlayType());
             if (requestDTO.getOlocation() != null) existingOrder.setOlocation(requestDTO.getOlocation());
             if (requestDTO.getRentalDate() != null) existingOrder.setRentalDate(requestDTO.getRentalDate());
@@ -88,6 +87,7 @@ public class RequestServiceImpl implements RequestService {
     public boolean createOrder(RequestDTO requestDTO) {
         Request newOrder = Request.builder()  
             .mno(requestDTO.getMno())
+            .otitle(requestDTO.getOtitle())
             .playType(requestDTO.getPlayType())
             .olocation(requestDTO.getOlocation())
             .rentalDate(requestDTO.getRentalDate())
@@ -114,8 +114,19 @@ public class RequestServiceImpl implements RequestService {
     public Map<String, Object> getMyOrdersByMemberNo(int memberNo) {
         // RequestRepository에 findByMno 메서드를 사용하여 실제 데이터를 가져옵니다.
         List<Request> allOrdersForMember = requestRepository.findByMno(memberNo); 
-
         Map<String, Object> myOrdersData = new HashMap<>();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // 취소 후 만료된 주문은 삭제
+        List<Request> expiredCancelledOrders = allOrdersForMember.stream()
+            .filter(order -> order.getFinished() == 2 && order.getOregdate().isBefore(now))
+            .collect(Collectors.toList());
+
+        if (!expiredCancelledOrders.isEmpty()) {
+            requestRepository.deleteAll(expiredCancelledOrders); // 영구 삭제
+            allOrdersForMember.removeAll(expiredCancelledOrders); // 로컬 리스트에서도 제거
+        }
 
         // 활성 주문 (finished = 0)
         List<RequestDTO> activeOrders = allOrdersForMember.stream()
@@ -148,6 +159,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestDTO.builder()
             .ono(request.getOno())
             .mno(request.getMno())
+            .otitle(request.getOtitle())
             .playType(request.getPlayType())
             .olocation(request.getOlocation())
             .rentalDate(request.getRentalDate())
@@ -169,9 +181,14 @@ public class RequestServiceImpl implements RequestService {
 
         if (existingOrderOptional.isPresent()) {
             Request existingOrder = existingOrderOptional.get(); 
+            final long delDaySet = 3;
+            final LocalDateTime setDateTime = LocalDateTime.now().plusDays(delDaySet);
+            
+
 
             // 논리적 삭제 (Soft Delete): finished 필드를 '취소' 상태(2)로 변경
             existingOrder.setFinished(2);
+            existingOrder.setOregdate(setDateTime); //물리삭제 시간 지정
             requestRepository.save(existingOrder); // 변경된 상태 저장
 
             return true; // 논리적 삭제 성공

@@ -36,6 +36,9 @@ public class Request {
     @Column(name = "mno", nullable = false)
     private int mno;
 
+    @Column(name = "otitle", length = 200)
+    private String otitle;
+
     @Column(name = "play_type", length = 50, nullable = false)
     private String playType;
 
@@ -57,7 +60,7 @@ public class Request {
     @Column(name = "ocontent", columnDefinition = "TEXT")
     private String ocontent;
 
-    @Column(name = "oregdate", columnDefinition = "DATETIME", nullable = false, updatable = false)
+    @Column(name = "oregdate", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime oregdate;
 
     @Column(name = "finished", nullable = false)
