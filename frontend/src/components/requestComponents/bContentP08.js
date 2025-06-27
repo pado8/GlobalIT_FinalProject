@@ -10,6 +10,12 @@ import "./requestDebugStyle.css";
 const formFields = {
   left: [
     {
+      type: "text",
+      label: "제목",
+      name: "otitle",
+      placeholder: "제목을 입력해주세요"
+    },
+    {
       type: "select",
       label: "종목",
       options: ["축구", "풋살"],
@@ -193,7 +199,7 @@ const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
           }));
           setSigunguList(list);
         } else {
-          if(!selectedSido=="세종특별자치시"){
+          if(!selectedSido==="세종특별자치시"){
             console.warn("시군구 데이터 없음 또는 응답 실패", json);
           }
           setSigunguList([]);

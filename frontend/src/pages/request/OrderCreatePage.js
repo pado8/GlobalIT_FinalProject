@@ -19,19 +19,21 @@ const OrderCreatePage = () => {
   const [errors, setErrors] = useState({});
   const [savedRentalEquipment, setSavedRentalEquipment] = useState('');
   const [formData, setFormData] = useState({
+    otitle: '',
     region: '',
     playType: '축구',
     rental: '필요해요', // 기본값 설정
     rentalDate: null,
     rentalTime: "",
     person: '',
-    rentalEquipment: '',
+    rentalEquipment: {},
     ocontent: '',
   });
 
 
   const validate = (data) => {
     const newErrors = {};
+    if (!data.otitle) newErrors.otitle = '제목을 입력해주세요.';
     if (!data.playType) newErrors.playType = '종목을 선택해주세요.';
     if (data.rental === '필요해요' && !data.rentalEquipment.trim()) {
       newErrors.rentalEquipment = '대여할 장비 목록을 입력해주세요.';

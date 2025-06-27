@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 // 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
 import DatePicker from "react-datepicker"; 
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +8,12 @@ import "./requestDebugStyle.css";
 
 const formFields = {
   left: [
+    {
+      type: "text",
+      label: "제목",
+      name: "otitle",
+      placeholder: "제목을 입력해주세요"
+    },
     {
       type: "select",
       label: "종목",
@@ -147,7 +153,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
 
 const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
   const navigate = useNavigate();
-  const { ono } = useParams();
+  // const { ono } = useParams();
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [sidoList, setSidoList] = useState([]);
   const [selectedSido, setSelectedSido] = useState("");
