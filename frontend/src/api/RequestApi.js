@@ -21,3 +21,8 @@ export const getOrderList = async (page = 1, size = 5, city = null, district = n
   const res = await axios.get(`${prefix}/list`, { params });
   return res.data;
 };
+
+export const getOrderDetail = async (ono) => {
+  const res = await axios.get(`${prefix}/${ono}`);
+  return res.data;
+};
