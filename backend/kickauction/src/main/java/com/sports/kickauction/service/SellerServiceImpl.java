@@ -27,6 +27,7 @@ import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.repository.ReviewRepository;
 import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.repository.SellerRepository;
 
@@ -36,191 +37,197 @@ import jakarta.transaction.Transactional;
 @RequiredArgsConstructor
 public class SellerServiceImpl implements SellerService {
 
-    private final SellerRepository sellerRepository;
-    private final SellerIntroRepository sellerIntroRepository;
-    private final MemberRepository memberRepository;
+        private final SellerRepository sellerRepository;
+        private final SellerIntroRepository sellerIntroRepository;
+        private final MemberRepository memberRepository;
+        private final ReviewRepository reviewRepository;
 
-    private static final String DEFAULT_IMAGE_PATH = "default/default.png";
+        private static final String DEFAULT_IMAGE_PATH = "default/default.png";
 
-    // 주석: ROLE 전환으로, SELLER로 변경된 회원의 mno로 seller테이블을 조회해 새로운 seller데이터를 추가할지 넘어갈지 정하기 위해 추가..
-    @Override
-    public boolean existsSeller(Long mno) {
-        return sellerRepository.existsById(mno);
-    }
-    
-    @Override
-    public Optional<Member> getLoggedInMember() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // 주석: ROLE 전환으로, SELLER로 변경된 회원의 mno로 seller테이블을 조회해 새로운 seller데이터를 추가할지 넘어갈지
+        // 정하기 위해 추가..
+        @Override
+        public boolean existsSeller(Long mno) {
+                return sellerRepository.existsById(mno);
+        }
 
-    if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
-        return Optional.empty();
-    }
+        @Override
+        public Optional<Member> getLoggedInMember() {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    String userId;
-    if (auth.getPrincipal() instanceof OAuth2User oauthUser) {
-        userId = (String) oauthUser.getAttributes().get("user_id");
-    } else {
-        userId = auth.getName();
-    }
+                if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+                        return Optional.empty();
+                }
 
-    return memberRepository.findByUserId(userId);
-}
+                String userId;
+                if (auth.getPrincipal() instanceof OAuth2User oauthUser) {
+                        userId = (String) oauthUser.getAttributes().get("user_id");
+                } else {
+                        userId = auth.getName();
+                }
 
-    private String buildSimageString(List<String> simageList) {
-    return (simageList == null || simageList.isEmpty())
-            ? DEFAULT_IMAGE_PATH
-            : String.join(",", simageList);
-}
+                return memberRepository.findByUserId(userId);
+        }
 
-    private List<String> parseSimageString(String simage) {
-    return (simage != null && !simage.isBlank())
-            ? Arrays.stream(simage.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList())
-            : List.of(DEFAULT_IMAGE_PATH);
-}
-    @Override
-    public SellerReadDTO getSellerByMno(Long mno) {
-        SellerIntro intro = sellerIntroRepository.findById(mno)
-                .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
+        private String buildSimageString(List<String> simageList) {
+                return (simageList == null || simageList.isEmpty())
+                                ? DEFAULT_IMAGE_PATH
+                                : String.join(",", simageList);
+        }
 
-        Seller seller = intro.getSeller();
+        private List<String> parseSimageString(String simage) {
+                return (simage != null && !simage.isBlank())
+                                ? Arrays.stream(simage.split(","))
+                                                .map(String::trim)
+                                                .filter(s -> !s.isEmpty())
+                                                .collect(Collectors.toList())
+                                : List.of(DEFAULT_IMAGE_PATH);
+        }
 
-        List<String> simageList = parseSimageString(intro.getSimage());
+        @Override
+        public SellerReadDTO getSellerByMno(Long mno) {
+                SellerIntro intro = sellerIntroRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
 
-        return SellerReadDTO.builder()
-                .mno(seller.getMno())
-                .sname(seller.getSname())
-                .slocation(seller.getSlocation())
-                .introContent(intro.getIntroContent())
-                .simage(simageList.toArray(new String[0]))
-                .hiredCount(intro.getHiredCount())
-                .info(intro.getInfo())
-                .phone(Optional.ofNullable(seller.getMember())
-                .map(Member::getPhone)
-                .orElse("정보 없음"))
-                .build();
-    }
+                Seller seller = intro.getSeller();
 
-    @Transactional
-    @Override
-    public void registerSeller(Long mno, SellerRegisterDTO dto) {
-        Seller seller = sellerRepository.findById(mno)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
+                List<String> simageList = parseSimageString(intro.getSimage());
 
-        if (sellerIntroRepository.existsBySeller(seller)) {
-        throw new IllegalStateException("이미 업체를 등록하셨습니다.");
-    }
+                return SellerReadDTO.builder()
+                                .mno(seller.getMno())
+                                .sname(seller.getSname())
+                                .slocation(seller.getSlocation())
+                                .introContent(intro.getIntroContent())
+                                .simage(simageList.toArray(new String[0]))
+                                .hiredCount(intro.getHiredCount())
+                                .info(intro.getInfo())
+                                .phone(Optional.ofNullable(seller.getMember())
+                                                .map(Member::getPhone)
+                                                .orElse("정보 없음"))
+                                .avgRating(reviewRepository.findAvgRatingByMno(mno))
+                                .reviewCount(reviewRepository.countByMno(mno))
 
-        String simageCombined = buildSimageString(dto.getSimage());
+                                .build();
+        }
 
-        SellerIntro sellerIntro = SellerIntro.builder()
-                .seller(seller)
-                .introContent(dto.getIntroContent())
-                .info(dto.getInfo())
-                .simage(simageCombined)
-                .hiredCount(0)
-                .build();
+        @Transactional
+        @Override
+        public void registerSeller(Long mno, SellerRegisterDTO dto) {
+                Seller seller = sellerRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("해당 회원 없음"));
 
-        sellerIntroRepository.save(sellerIntro);
-    }
+                if (sellerIntroRepository.existsBySeller(seller)) {
+                        throw new IllegalStateException("이미 업체를 등록하셨습니다.");
+                }
 
-    @Override
-    public boolean isAlreadyRegistered(Long mno) {
-        Seller seller = sellerRepository.findById(mno)
-            .orElseThrow(() -> new IllegalArgumentException("해당 회원의 업체 정보가 존재하지 않습니다."));
-        return sellerIntroRepository.existsBySeller(seller);
-    }
+                String simageCombined = buildSimageString(dto.getSimage());
 
-    @Override
-    @Transactional
-    public SellerPageResponseDTO<SellerReadDTO> getSellerList(SellerPageRequestDTO sellerPageRequestDTO) {
-        Pageable pageable = sellerPageRequestDTO.getPageable(Sort.by("regDate").descending());
+                SellerIntro sellerIntro = SellerIntro.builder()
+                                .seller(seller)
+                                .introContent(dto.getIntroContent())
+                                .info(dto.getInfo())
+                                .simage(simageCombined)
+                                .hiredCount(0)
+                                .build();
 
-        Page<SellerIntro> result = sellerIntroRepository.findAll(pageable);
+                sellerIntroRepository.save(sellerIntro);
+        }
 
-        List<SellerReadDTO> dtoList = result.stream().map(intro -> {
-            Seller seller = intro.getSeller();
+        @Override
+        public boolean isAlreadyRegistered(Long mno) {
+                Seller seller = sellerRepository.findById(mno)
+                                .orElseThrow(() -> new IllegalArgumentException("해당 회원의 업체 정보가 존재하지 않습니다."));
+                return sellerIntroRepository.existsBySeller(seller);
+        }
 
-            String[] simageArr = parseSimageString(intro.getSimage()).toArray(new String[0]);
+        @Override
+        @Transactional
+        public SellerPageResponseDTO<SellerReadDTO> getSellerList(SellerPageRequestDTO sellerPageRequestDTO) {
+                Pageable pageable = sellerPageRequestDTO.getPageable(Sort.by("regDate").descending());
 
-            return SellerReadDTO.builder()
-                    .mno(seller.getMno())
-                    .sname(seller.getSname())
-                    .slocation(seller.getSlocation())
-                    .phone(seller.getMember().getPhone())
-                    .introContent(intro.getIntroContent())
-                    .info(intro.getInfo())
-                    .simage(simageArr)
-                    .hiredCount(intro.getHiredCount())
-                    .build();
-        }).collect(Collectors.toList());
+                Page<SellerIntro> result = sellerIntroRepository.findAll(pageable);
 
-        return SellerPageResponseDTO.<SellerReadDTO>builder()
-                .dtoList(dtoList)
-                .sellerPageRequestDTO(sellerPageRequestDTO)
-                .totalCount(result.getTotalElements())
-                .build();
-    }
+                List<SellerReadDTO> dtoList = result.stream().map(intro -> {
+                        Seller seller = intro.getSeller();
 
-    @Override
-    public SellerRegisterReadDTO getSellerRegisterInfo(Long mno) {
-        Seller seller = sellerRepository.findById(mno)
-                .orElseThrow(() -> new IllegalArgumentException("해당 판매자를 찾을 수 없습니다. mno=" + mno));
+                        String[] simageArr = parseSimageString(intro.getSimage()).toArray(new String[0]);
 
-       
+                        return SellerReadDTO.builder()
+                                        .mno(seller.getMno())
+                                        .sname(seller.getSname())
+                                        .slocation(seller.getSlocation())
+                                        .phone(seller.getMember().getPhone())
+                                        .introContent(intro.getIntroContent())
+                                        .info(intro.getInfo())
+                                        .simage(simageArr)
+                                        .hiredCount(intro.getHiredCount())
+                                        .avgRating(reviewRepository.findAvgRatingByMno(seller.getMno()))
+                                        .reviewCount(reviewRepository.countByMno(seller.getMno()))
+                                        .build();
+                }).collect(Collectors.toList());
 
-        return SellerRegisterReadDTO.builder()
-                .sname(seller.getSname())
-                .slocation(seller.getSlocation())
-                .phone(seller.getMember().getPhone())
-                .build();
-    }
+                return SellerPageResponseDTO.<SellerReadDTO>builder()
+                                .dtoList(dtoList)
+                                .sellerPageRequestDTO(sellerPageRequestDTO)
+                                .totalCount(result.getTotalElements())
+                                .build();
+        }
 
-    @Override
-    public SellerModifyReadDTO getSellerModifyInfo(Long mno) {
-    Seller seller = sellerRepository.findById(mno)
-        .orElseThrow(() -> new NoSuchElementException("판매자 정보 없음"));
+        @Override
+        public SellerRegisterReadDTO getSellerRegisterInfo(Long mno) {
+                Seller seller = sellerRepository.findById(mno)
+                                .orElseThrow(() -> new IllegalArgumentException("해당 판매자를 찾을 수 없습니다. mno=" + mno));
 
-    SellerIntro intro = sellerIntroRepository.findById(mno)
-        .orElseThrow(() -> new NoSuchElementException("소개 정보 없음"));
+                return SellerRegisterReadDTO.builder()
+                                .sname(seller.getSname())
+                                .slocation(seller.getSlocation())
+                                .phone(seller.getMember().getPhone())
+                                .build();
+        }
 
-    Member member = memberRepository.findById(mno)
-        .orElseThrow(() -> new NoSuchElementException("정보 없음"));
+        @Override
+        public SellerModifyReadDTO getSellerModifyInfo(Long mno) {
+                Seller seller = sellerRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("판매자 정보 없음"));
 
-    List<String> simageList = parseSimageString(intro.getSimage());
+                SellerIntro intro = sellerIntroRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("소개 정보 없음"));
 
-    return SellerModifyReadDTO.builder()
-        .sname(seller.getSname())
-        .slocation(seller.getSlocation())
-        .introContent(intro.getIntroContent())
-        .info(intro.getInfo())
-        .phone(member.getPhone())
-        .simage(simageList)
-        .build();
-}
-    
-    @Override
-    @Transactional
-    public void modifySeller(Long mno, SellerModifyDTO dto) {
-        Seller seller = sellerRepository.findById(mno)
-            .orElseThrow(() -> new NoSuchElementException("해당 판매자 정보 없음"));
+                Member member = memberRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("정보 없음"));
 
-        SellerIntro intro = sellerIntroRepository.findById(mno)
-            .orElseThrow(() -> new NoSuchElementException("해당 업체 소개 정보 없음"));
+                List<String> simageList = parseSimageString(intro.getSimage());
 
-        // 수정
-        seller.setSname(dto.getSname());
-        seller.setSlocation(dto.getSlocation());
+                return SellerModifyReadDTO.builder()
+                                .sname(seller.getSname())
+                                .slocation(seller.getSlocation())
+                                .introContent(intro.getIntroContent())
+                                .info(intro.getInfo())
+                                .phone(member.getPhone())
+                                .simage(simageList)
+                                .build();
+        }
 
-        intro.setSimage(buildSimageString(dto.getSimage()));
-        intro.setIntroContent(dto.getIntroContent());
-        intro.setInfo(dto.getInfo());
+        @Override
+        @Transactional
+        public void modifySeller(Long mno, SellerModifyDTO dto) {
+                Seller seller = sellerRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("해당 판매자 정보 없음"));
 
-        // 저장
-        sellerRepository.save(seller);         
-        sellerIntroRepository.save(intro);    
-    }
+                SellerIntro intro = sellerIntroRepository.findById(mno)
+                                .orElseThrow(() -> new NoSuchElementException("해당 업체 소개 정보 없음"));
+
+                // 수정
+                seller.setSname(dto.getSname());
+                seller.setSlocation(dto.getSlocation());
+
+                intro.setSimage(buildSimageString(dto.getSimage()));
+                intro.setIntroContent(dto.getIntroContent());
+                intro.setInfo(dto.getInfo());
+
+                // 저장
+                sellerRepository.save(seller);
+                sellerIntroRepository.save(intro);
+        }
 
 }

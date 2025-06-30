@@ -186,6 +186,12 @@ const SellerListPage = () => {
                   </div>
                 </div>
 
+                <div className="seller_inforeview">
+                  <div>선정 횟수 : {selected_seller.hiredCount || 0}</div>
+                  <div>리뷰 평점 : {selected_seller.avgRating || 0}</div>
+                  <div>리뷰 개수 : {selected_seller.reviewCount || 0}</div>
+                </div>
+
                 {Array.isArray(simage) && simage.length > 1 && simage.slice(1).some(img => img?.trim()) && (
                   <div className={styles["image_slider"]}>
                     {simage.length > 4 && slide_index > 0 && (

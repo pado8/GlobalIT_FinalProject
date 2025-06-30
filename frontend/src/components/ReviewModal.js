@@ -48,6 +48,8 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
     onClose();
   };
 
+  const isCommentValid = comment.trim().length >= 5;
+
   return (
     <div className="rm_overlay" onClick={onClose}>
       <div className="rm_content" onClick={e => e.stopPropagation()}>
@@ -65,13 +67,16 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
         </div>
         <textarea
           className="rm_textarea"
-          placeholder="리뷰를 작성해주세요..."
+          placeholder="리뷰를 작성해주세요. (최소 5글자)"
           value={comment}
           onChange={e => setComment(e.target.value)}
         />
+        {!isCommentValid && comment.length > 0 && (
+          <p className='rm_msg'>리뷰는 최소 5글자 이상 입력해야 합니다.</p>
+        )}
         <div className="rm_actions">
           <button className="rm_btn cancel" onClick={onClose}>취소</button>
-          <button className="rm_btn submit" onClick={handleSubmit} disabled={rating === 0}>
+          <button className="rm_btn submit" onClick={handleSubmit} disabled={rating === 0 || !isCommentValid}>
             제출
           </button>
         </div>

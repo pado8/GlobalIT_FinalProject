@@ -62,7 +62,7 @@ const Footer = () => {
 
         <div className={styles.footer_column}>
           <h4 className={styles.column_title}>고객지원</h4>
-          <p>이메일: support@kickauction.com</p>
+          <p>이메일: kickauction8@gmail.com</p>
           <p>전화: 02-1234-5678</p>
           <p>운영시간: 09:00–18:00 (월–금)</p>
         </div>
