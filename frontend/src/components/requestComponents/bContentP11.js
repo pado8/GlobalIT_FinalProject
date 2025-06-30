@@ -19,10 +19,20 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
   const displayTime = quote.rentalTime ? quote.rentalTime : '시간 null';
   const displayPerson = quote.person ? `${quote.person}명` : '인원 null';
   const displayRegion = quote.region ? `${quote.region}` : '지역 null';
-  const displayRentalEquipment = quote.rentalEquipment ? `${quote.rentalEquipment}` : '대여 장비 미신청';
+  let rentalEquipmentStr;
+  if(quote.rentalEquipment){
+    rentalEquipmentStr = quote.rentalEquipment.replaceAll("&", " ").replaceAll(",", ", ").replaceAll("기타","");
+  }
+  const displayRentalEquipment = rentalEquipmentStr ? rentalEquipmentStr : '대여 장비 미신청';
+  // const displayRentalEquipment = quote.rentalEquipment ? `${quote.rentalEquipment}` : '대여 장비 미신청';
+  
   const displayOcontent = quote.ocontent ? `${quote.ocontent}` : '요청사항이 없어요';
 
   const handleModifyClick = () => {
+    if (quote.isUrgent) {
+      alert("남은 시간이 12시간 이하인 견적 요청은 수정할 수 없습니다.");
+      return;
+    }
     navigate(`/request/modify/${ono}`);
   };
   const handleDeleteClick = () => {

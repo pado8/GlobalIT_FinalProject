@@ -55,7 +55,7 @@ const List = ({ title, quotes, type }) => {
                         {displayOtitle} (글번호: {quote.ono})
                       </span>
                       <div className="text-sm text-gray-600">
-                        {displayRegion} | {displayDate} {displayTime} | {displayPerson}
+                        {quote.playType} | {displayRegion} | {displayDate} {displayTime} | {displayPerson}
                       </div>
                       {type === 'active' && quote.isUrgent && (
                         <div className="text-red-600 text-sm mt-1">
@@ -69,7 +69,7 @@ const List = ({ title, quotes, type }) => {
                         {displayOtitle} (글번호: {quote.ono})
                       </span>
                       <div className="text-sm text-gray-600">
-                        {displayRegion} | {displayDate} {displayTime} | {displayPerson}
+                        {quote.playType} | {displayRegion} | {displayDate} {displayTime} | {displayPerson}
                       </div>
                     </div>
                   )}
