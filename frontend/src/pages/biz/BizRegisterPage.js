@@ -70,6 +70,7 @@ const BizRegisterPage = ({ ono }) => {
   runChecksAndFetch();
 }, [user, loading, navigate, location.pathname, ono]);
 
+if (loading || !isAllowed) return null; // 조건 만족 전엔 렌더링 안함
 
   // 쉼표 제거 → 숫자만 추출
   const formatToNumber = (value) => {

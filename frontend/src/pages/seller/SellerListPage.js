@@ -52,7 +52,6 @@ const SellerListPage = () => {
   }, [user]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     getSellerList(page, 12).then((data) => setSellerData(data));
   }, [page]);
 
@@ -133,7 +132,8 @@ const SellerListPage = () => {
         next={seller_data.next}
         prevPage={seller_data.prevPage}
         nextPage={seller_data.nextPage}
-        onPageChange={(pageNum) => setPage(pageNum)}
+        onPageChange={(pageNum) => {
+      window.location.href = `/sellerlist?page=${pageNum}`}}
       />
 
       {modal_open && selected_seller && (() => {
