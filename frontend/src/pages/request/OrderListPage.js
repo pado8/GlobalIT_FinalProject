@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams,Link } from "react-router-dom";
 import { getOrderList } from "../../api/RequestApi";
 import AreaDropdown from "../../components/AreaDropdown";
 import Pagination from "../../components/paging/Pagination";
@@ -93,7 +93,10 @@ function OrderListPage() {
               <li className="order-list-item empty">해당 지역의 견적이 없습니다.</li>
             ) : (
               orders.map((order) => (
-                <li key={order.ono} className="order-list-item">
+                <Link to={`/request/read/${order.ono}`}>
+                <li
+              className="order-list-item"
+            >
                   <div className="order-card">
                     <div className="order-card-left">
                       <h4 className="order-title">{order.ocontent}</h4>
@@ -107,6 +110,7 @@ function OrderListPage() {
                     </div>
                   </div>
                 </li>
+                </Link>
               ))
             )}
           </ul>

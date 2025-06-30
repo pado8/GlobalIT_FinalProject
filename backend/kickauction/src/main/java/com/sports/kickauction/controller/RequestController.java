@@ -55,7 +55,7 @@ public class RequestController {
         RequestPageResponseDTO<RequestReadDTO> result = requestService.getOrderList(requestPageRequestDTO);
         return ResponseEntity.ok(result);
     }
-
+    
     // 견적 상세 조회 (GET /api/orders/{ono})
     @GetMapping("/{ono}") // PathVariable 이름 소문자 'ono'로 수정
     public ResponseEntity<Map<String, Object>> getOrder(@PathVariable("ono") int ono) { // @PathVariable 이름 소문자 'ono'로 수정
