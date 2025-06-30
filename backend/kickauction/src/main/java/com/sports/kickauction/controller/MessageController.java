@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,7 @@ import com.sports.kickauction.dto.MessageDTO;
 import com.sports.kickauction.dto.MessageRoomDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Message;
+import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.MessageService;
@@ -35,6 +38,7 @@ public class MessageController {
 
     private final MessageService messageService;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     // 쪽지 보내기
     @PostMapping
@@ -120,37 +124,53 @@ public class MessageController {
 
     // 닉네임 검색 후 채팅시작
     @GetMapping("/find-user")
-    public ResponseEntity<?> findUserByNickname(@RequestParam String nickname) {
-        if (nickname == null || nickname.isBlank()) {
-            return ResponseEntity.badRequest().body("닉네임이 필요합니다.");
+    public ResponseEntity<?> findUserByNickname(@RequestParam String nickname, Authentication authentication) {
+        System.out.println("🔍 nickname 검색 요청: " + nickname);
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 
-        // 🔒 인증 정보에서 principal 꺼냄
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        Object principal = authentication.getPrincipal();
 
-        // ✅ 로그인 여부 확인
-        if (principal == null || principal.equals("anonymousUser")) {
-            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+            email = userDetails.getUsername();
+        } else if (principal instanceof OAuth2User oAuth2User) {
+            email = (String) oAuth2User.getAttribute("email");
+
+            if (email == null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
+                if (kakaoAccount != null) {
+                    email = (String) kakaoAccount.get("email");
+                }
+            }
         }
 
-        // 🧠 principal이 Member인지 확인 후 캐스팅
-        Member me;
-        try {
-            me = (Member) principal;
-        } catch (ClassCastException e) {
-            return ResponseEntity.status(500).body("인증 정보가 Member 형식이 아닙니다.");
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 정보 없음");
         }
 
-        Optional<Member> optional = memberService.findByUserName(nickname);
-        if (optional.isEmpty() || optional.get().getMno().equals(me.getMno())) {
-        return ResponseEntity.status(404).body("대상을 찾을 수 없습니다.");
+        Member me = memberRepository.findByUserId(email)
+            .orElse(null);
+
+        if (me == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증된 사용자 정보를 찾을 수 없습니다.");
         }
-        Member found = optional.get();
+
+        // 닉네임으로 대상 사용자 찾기
+        Optional<Member> foundOpt = memberRepository.findByUserName(nickname);
+        if (foundOpt.isEmpty() || foundOpt.get().getMno().equals(me.getMno())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("대상을 찾을 수 없습니다.");
+        }
+
+        Member target = foundOpt.get();
 
         return ResponseEntity.ok(Map.of(
-            "mno", found.getMno(),
-            "user_name", found.getUserName(),
-            "profileimg", found.getProfileimg()
+            "mno", target.getMno(),
+            "user_name", target.getUserName(),
+            "profileimg", target.getProfileimg()
         ));
     }
 }
