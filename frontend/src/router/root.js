@@ -22,6 +22,7 @@ const UpdateinfoSocial = lazy(() => import("../pages/mypage/UpdateinfoSocial"));
 const Findinfo = lazy(() => import("../pages/login/Findinfo"));
 const Help = lazy(() => import("../pages/help/HelpPage"));
 const OrderList = lazy ( () => import("../pages/request/OrderListPage"))
+const SellerModifyPage = lazy(() => import("../pages/seller/SellerModifyPage"));
 
 const Loading = <div>Loading...</div>;
 const root = createBrowserRouter([
@@ -104,6 +105,14 @@ const root = createBrowserRouter([
       {
         path: "sellerlist",
         children: sellerRouter(),
+      },
+      {
+        path: "sellermodify",
+        element: (
+          <Suspense fallback={Loading}>
+            <SellerModifyPage />
+          </Suspense>
+        ),
       },
       {
         path: "orderlist",
