@@ -105,6 +105,7 @@ const SellerListPage = () => {
                 <img src={getImageUrl(get_safe_image(seller.simage))} alt="대표" />
               </div>
               <div className={styles["count"]}>선정 횟수: {seller.hiredCount || 0}</div>
+              <div className={styles["count"]}>리뷰 평점: {seller.avgRating || 0}</div>
             </div>
             <div className={styles["info"]}>
               <div className={styles["name"]}>{seller.sname || "업체명 없음"}</div>
@@ -167,6 +168,12 @@ const SellerListPage = () => {
                     <br />
                     주소: {selected_seller.slocation || "정보 없음"}
                   </div>
+                </div>
+
+                <div className="seller_inforeview">
+                  <div>선정 횟수 : {selected_seller.hiredCount || 0}</div>
+                  <div>리뷰 평점 : {selected_seller.avgRating || 0}</div>
+                  <div>리뷰 개수 : {selected_seller.reviewCount || 0}</div>
                 </div>
 
                 {Array.isArray(simage) && simage.length > 1 && simage.slice(1).some(img => img?.trim()) && (
