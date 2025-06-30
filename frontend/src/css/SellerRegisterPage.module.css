@@ -122,6 +122,10 @@
 
 .basic_info_text p {
   margin: 0.5rem 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
 }
 
 /* 소개 이미지 */
@@ -237,6 +241,8 @@ textarea {
   max-height: 70vh;
   border-radius: 12px;
 }
+
+
 
 @media screen and (max-width: 480px) {
   .container {
