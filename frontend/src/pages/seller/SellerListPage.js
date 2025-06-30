@@ -123,7 +123,6 @@ const SellerListPage = () => {
         </div>
       )}
 
-      <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/orderlist")}>🛠 테스트용 견적목록</button>
       <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/bizregister")}>🛠 테스트용 입찰등록</button>
 
       <Pagination

@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0; /* ← 높이를 고정하지 않고 부모에 맞게 확장됨 */
+  bottom: 0; 
   background-size: cover;
   background-position: center;
   z-index: 0;
@@ -22,7 +22,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7); /* ← 흰색 + 투명도 */
+  background-color: rgba(255, 255, 255, 0.7);
   z-index: 1;
   pointer-events: none;
 }
@@ -91,6 +91,16 @@
   padding: 0;
   margin: 0;
 }
+
+.order-list-item a,
+.order-list a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+}
+
+
 
 .order-list-item.empty {
   text-align: center;

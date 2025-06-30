@@ -12,3 +12,4 @@ export const checkBizRegistered = async (ono) => {
   const res = await axios.get(`${prefix}/check/${ono}`);
   return res.data.registered; // true/false
 };
+
