@@ -1,6 +1,8 @@
 // 상세보기
 import React, { useEffect, useState, useRef } from 'react'; // useRef 추가
 import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import { useAuth } from "../../contexts/Authcontext";
+import { useMemo } from 'react';
 import axios from 'axios';
 
 import BContentP11 from "../../components/requestComponents/bContentP11";
@@ -18,7 +20,31 @@ const OrderReadPage = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
   const navigate = useNavigate(); // useNavigate 훅 사용
+
+  const isOwner = useMemo(() => {
+    let checkVal;
+    if (!quoteDetail || !user) return false;
+    if(user.role === "UESR" || user.role === "USER"){ //Auth에 USER가 아니라 UESR로 들어가 있음. 오타? ********
+      checkVal = true;
+    }
+    else if(user.role === "SELLER"){
+      checkVal = true;
+    }
+    else{
+      checkVal = false;
+    }
+    // console.log("작성자 체크 : ",checkVal&&Number(user.mno) === Number(quoteDetail.mno)?"true":"false");
+    return checkVal && Number(user.mno) === Number(quoteDetail.mno);
+  }, [user, quoteDetail]);
+
+  const isSeller = useMemo(() => {
+    // console.log("판매자 체크 : ",user?.role === "SELLER"?"true":"false");
+    return user?.role === "SELLER";
+  }, [user]);
+
+
 
   // 마감 처리 요청 중복 방지용 ref
   const isFinishingRef = useRef(false); 
@@ -70,9 +96,9 @@ const OrderReadPage = () => {
         finished: currentFinishedStatus, // 업데이트된 마감 상태
       });
 
-      // 📍📍실제로 백엔드에서 받아오는 로직 구현 필요📍📍👀
-      setCompanies(data.companies || []); 
 
+      setCompanies(data.companies || []); 
+      // console.log(companies); // 왜 백엔드만 log 찍힘?
     } catch (err) {
       setError("견적 정보를 불러오는 데 실패했습니다.");
       console.error("Error fetching order details:", err);
@@ -93,6 +119,7 @@ const OrderReadPage = () => {
   useEffect(() => {
     if (ono) {
       fetchOrderDetails();
+      console.log(companies);
     }
   }, [ono, navigate]); // navigate도 의존성 배열에 추가 (linter 경고 방지)
 
@@ -186,7 +213,7 @@ const OrderReadPage = () => {
   return (
     <>
       <Hero {...heroContent} />
-      <BContentP11 quote={quoteDetail} companies={companies} />
+      <BContentP11 quote={quoteDetail} companies={companies} isOwner={isOwner} isSeller={isSeller}/>
     </>
   );
 };

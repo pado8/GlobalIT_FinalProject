@@ -89,7 +89,7 @@ public class RequestController {
 
             // 업체 목록 (companies)은 getOrderDetails 응답에 포함되지 않으므로,
             // 별도의 API 호출이 필요하거나 OrderDTO/RequestDTO에 포함되어야 합니다.
-            responseMap.put("companies", new String[]{}); // 예시로 빈 배열
+            responseMap.put("companies", order.getAttributes().get("companies"));
 
             return ResponseEntity.ok(responseMap);
         } else {

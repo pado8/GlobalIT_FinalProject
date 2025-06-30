@@ -1,8 +1,8 @@
-package com.sports.kickauction.entity; // Recommended package for entities
+package com.sports.kickauction.entity;
 
-import java.time.LocalDateTime; // JPA annotations
+import java.time.LocalDateTime;
 
-import jakarta.persistence.Column; // Lombok annotations
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,14 +17,14 @@ import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
 
-@Entity // Specifies that this class is an entity
+@Entity
 @Table(name = "`ORDER`")
 @Setter
 @ToString
 @Getter
-@NoArgsConstructor // Lombok: Generates a no-argument constructor
-@AllArgsConstructor // Lombok: Generates an all-argument constructor
-@Builder // Lombok: Provides a builder pattern for object creation
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Request {
 
     @Id
