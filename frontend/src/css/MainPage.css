@@ -52,8 +52,18 @@
   border: 1px solid #F6F7F9;
 }
 
+.order_item .order_title {
+  max-height: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .order_item:hover {
   border: 1px solid #909090;
+}
+
+#mainPage > section.banner_section .slick-list {
+  border-radius: 15px;
 }
 
 /* MainPage.css 맨 아래에 추가 */
@@ -187,6 +197,12 @@
 .sellerlist_section .seller_name {
   font-size: 1rem;
   font-weight: 600;
+}
+
+.sellerlist_section .seller_item>* {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* ────────────────────────────────────────────────
