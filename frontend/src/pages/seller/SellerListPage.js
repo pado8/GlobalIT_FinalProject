@@ -22,6 +22,7 @@ const SellerListPage = () => {
   const [page, setPage] = useState(page_from_url);
   const [is_registered, setIsRegistered] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [seller_data, setSellerData] = useState({
     dtoList: [],
@@ -52,9 +53,15 @@ const SellerListPage = () => {
   }, [user]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    getSellerList(page, 12).then((data) => setSellerData(data));
-  }, [page]);
+  const fetchData = async () => {
+    setLoading(true);
+    const data = await getSellerList(page, 12);
+    setSellerData(data);
+    setLoading(false);
+  };
+
+  fetchData();
+}, [page]);
 
   useEffect(() => {
     setSearchParams({ page });
@@ -93,36 +100,44 @@ const SellerListPage = () => {
         )}
       </div>
 
-      <div className={styles["card_container"]}>
-        {seller_data.dtoList.map((seller, idx) => (
-          <div
-            className={styles["card"]}
-            key={idx}
-            onClick={() => open_modal(seller.mno)}
-          >
-            <div className={styles["card_header"]}>
-              <div className={styles["image"]}>
-                <img src={getImageUrl(get_safe_image(seller.simage))} alt="대표" />
-              </div>
-              <div className={styles["count"]}>선정 횟수: {seller.hiredCount || 0}</div>
-              <div className={styles["count"]}>리뷰 평점: {seller.avgRating || 0}</div>
-            </div>
-            <div className={styles["info"]}>
-              <div className={styles["name"]}>{seller.sname || "업체명 없음"}</div>
-              <div className={styles["address"]}>{seller.slocation || "주소 없음"}</div>
-            </div>
-            <button className={styles["detail_btn"]}>상세정보</button>
+      {loading ? (
+  <div className={styles["loading_wrapper"]}>
+    <div className={styles["spinner"]}></div>
+    <div>불러오는 중입니다...</div>
+  </div>
+) : (
+  <div className={styles["card_container"]}>
+    {seller_data.dtoList.map((seller, idx) => (
+      <div
+        className={styles["card"]}
+        key={idx}
+        onClick={() => open_modal(seller.mno)}
+      >
+        <div className={styles["card_header"]}>
+          <div className={styles["image"]}>
+            <img
+              src={getImageUrl(get_safe_image(seller.simage))}
+              alt="대표"
+            />
           </div>
-        ))}
-      </div>
-
-      {user?.role === "SELLER" && (
-        <div style={{ textAlign: "center", margin: "2rem 0" }}>
-          <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/modify")}>
-            🛠 테스트용 업체정보 수정하기
-          </button>
+          <div className={styles["count"]}>
+            선정 횟수: {seller.hiredCount || 0}
+          </div>
         </div>
-      )}
+        <div className={styles["info"]}>
+          <div className={styles["name"]}>
+            {seller.sname || "업체명 없음"}
+          </div>
+          <div className={styles["address"]}>
+            {seller.slocation || "주소 없음"}
+          </div>
+        </div>
+        <button className={styles["detail_btn"]}>상세정보</button>
+      </div>
+    ))}
+  </div>
+)}
+
 
       <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/bizregister")}>🛠 테스트용 입찰등록</button>
 
@@ -134,7 +149,8 @@ const SellerListPage = () => {
         next={seller_data.next}
         prevPage={seller_data.prevPage}
         nextPage={seller_data.nextPage}
-        onPageChange={(pageNum) => setPage(pageNum)}
+        onPageChange={(pageNum) => {
+      window.location.href = `/sellerlist?page=${pageNum}`}}
       />
 
       {modal_open && selected_seller && (() => {
