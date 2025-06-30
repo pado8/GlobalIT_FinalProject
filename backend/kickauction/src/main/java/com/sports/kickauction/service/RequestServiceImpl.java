@@ -178,16 +178,7 @@ public class RequestServiceImpl implements RequestService {
             .collect(Collectors.toList());
 
         if (!expiredCancelledOrders.isEmpty()) {
-            // 외래 키 제약 조건 위반을 피하기 위해, 관련된 Biz 데이터를 먼저 삭제합니다.
-            List<Biz> bizsToDelete = expiredCancelledOrders.stream()
-                .flatMap(order -> bizRepository.findByRequest_Ono(order.getOno()).stream())
-                .collect(Collectors.toList());
-
-            if (!bizsToDelete.isEmpty()) {
-                bizRepository.deleteAllInBatch(bizsToDelete);
-            }
-
-            requestRepository.deleteAllInBatch(expiredCancelledOrders); // 영구 삭제
+            requestRepository.deleteAll(expiredCancelledOrders); // deleteAll을 사용해야 Cascade가 정상 동작합니다.
             allOrdersForMember.removeAll(expiredCancelledOrders); // 로컬 리스트에서도 제거
         }
 
