@@ -116,7 +116,7 @@ const MainPage = () => {
               <div
                 key={o.ono}
                 className="order_item item"
-                onClick={() => navigate(`/order/detail/${o.ono}`)}
+                onClick={() => navigate(`/request/read/${o.ono}`)}
               >
                 <h3>{o.ocontent}</h3>
                 <div>
