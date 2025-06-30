@@ -10,6 +10,7 @@ import { getImageUrl } from "../../api/UploadImageApi";
 import Pagination from "../../components/paging/Pagination";
 import styles from "../../css/SellerListPage.module.css";
 
+
 const SellerListPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
