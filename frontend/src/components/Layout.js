@@ -1,6 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
+import Footer from "./Footer";
+
 
 const Layout = () => {
   return (
@@ -9,6 +11,7 @@ const Layout = () => {
       <div id="wrap">
         <Outlet />
       </div>
+      <Footer />
     </>
   );
 };
