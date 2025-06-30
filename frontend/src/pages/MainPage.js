@@ -50,8 +50,8 @@ const MainPage = () => {
   const bannerSettings = {
     dots: true,
     infinite: true,
-    autoplay: true,
-    autoplaySpeed: 5000,
+    // autoplay: true,
+    // autoplaySpeed: 5000,
     arrows: false,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -62,6 +62,7 @@ const MainPage = () => {
     arrows: true,
     slidesToShow: 5,
     slidesToScroll: 1,
+    variableWidth: false,
      responsive: [
     { breakpoint: 1200, settings: { slidesToShow: 4, slidesToScroll: 1 } },
     { breakpoint: 992,  settings: { slidesToShow: 3, slidesToScroll: 1 } },
@@ -118,7 +119,7 @@ const MainPage = () => {
                 className="order_item item"
                 onClick={() => navigate(`/request/read/${o.ono}`)}
               >
-                <h3>{o.ocontent}</h3>
+                <div className="order_title">{o.ocontent}</div>
                 <div>
                   <p><FaRunning /> {o.playType}</p>
                   <p><FaMapMarkerAlt /> {o.olocation}</p>
