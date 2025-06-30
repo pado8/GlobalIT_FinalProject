@@ -35,12 +35,10 @@ const OrderReadPage = () => {
     else{
       checkVal = false;
     }
-    // console.log("작성자 체크 : ",checkVal&&Number(user.mno) === Number(quoteDetail.mno)?"true":"false");
     return checkVal && Number(user.mno) === Number(quoteDetail.mno);
   }, [user, quoteDetail]);
 
   const isSeller = useMemo(() => {
-    // console.log("판매자 체크 : ",user?.role === "SELLER"?"true":"false");
     return user?.role === "SELLER";
   }, [user]);
 
@@ -98,7 +96,6 @@ const OrderReadPage = () => {
 
 
       setCompanies(data.companies || []); 
-      // console.log(companies); // 왜 백엔드만 log 찍힘?
     } catch (err) {
       setError("견적 정보를 불러오는 데 실패했습니다.");
       console.error("Error fetching order details:", err);
@@ -119,7 +116,6 @@ const OrderReadPage = () => {
   useEffect(() => {
     if (ono) {
       fetchOrderDetails();
-      console.log(companies);
     }
   }, [ono, navigate]); // navigate도 의존성 배열에 추가 (linter 경고 방지)
 
@@ -143,12 +139,10 @@ const OrderReadPage = () => {
       // 마감 처리 로직: 시간이 0 이하이고 아직 서버에 마감 요청을 보내지 않은 경우
       if (timeLeft <= 0 && !isFinishingRef.current) {
         isFinishingRef.current = true; // 요청 시작 플래그 설정
-        // console.log(`견적 ${ono} 마감! 서버에 PATCH 요청 보냄.`);
         
         try {
           // PATCH 요청은 withCredentials를 포함해야 CORS에러 안남.
           await axios.patch(`/api/orders/finish/${ono}`, {}, { withCredentials: true });
-          // console.log(`견적 ${ono} 마감 처리 성공.`);
           
           // 성공 시, 클라이언트 상태의 finished 속성 업데이트
           setQuoteDetail(prev => ({

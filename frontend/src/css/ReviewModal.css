@@ -77,3 +77,7 @@
     background: #28a745;
     color: white;
 }
+.rm_msg {
+    position: absolute;
+    font-size: 14px;
+}
