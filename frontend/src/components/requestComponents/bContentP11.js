@@ -135,7 +135,7 @@ const handleSellerDeleteClick = async () => {
               ))
             ) : (
               <div className="col-span-2 text-center text-gray-500">
-                아직 제시된 업체가 없습니다.
+                아직 제시한 업체가 없습니다.
               </div>
             )}
           </div>
