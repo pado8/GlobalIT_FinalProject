@@ -43,9 +43,10 @@ function OrderListPage() {
   };
 
   const handlePageChange = (newPage) => {
-    updateSearchParams({ page: newPage.toString() });
-  };
-
+  const params = new URLSearchParams(searchParams);
+  params.set("page", newPage.toString());
+  window.location.href = `/orderlist?${params.toString()}`; // 새로고침 방식
+};
   const handlePlayTypeChange = (type) => {
     updateSearchParams({ playType: type, page: "1" });
     setPlayTypeOpen(false);
@@ -62,30 +63,33 @@ function OrderListPage() {
         <h2 className="order-title-overlay-main">견적 SELECT!</h2>
         <p className="order-title-overlay-desc">원하는 견적을 입찰해보세요!</p>
         <div className="order-box">
-          <div className="order-box-header">
-            <span className="order-box-title">견적 목록</span>
+        <div className="order-box-header">
+        <span className="order-box-title">견적 목록</span>
 
-            {/* 종목 */}
-            <div className="playtype-dropdown-wrapper">
-              <button onClick={() => setPlayTypeOpen(prev => !prev)} className="playtype-dropdown-button">
-                {playType || "종목"} {playTypeOpen ? <FaChevronUp /> : <FaChevronDown />}
-              </button>
-              {playTypeOpen && (
-                <ul className="playtype-dropdown-list">
-                  <li onClick={() => handlePlayTypeChange("")}>전체</li>
-                  <li onClick={() => handlePlayTypeChange("축구")}>축구</li>
-                  <li onClick={() => handlePlayTypeChange("풋살")}>풋살</li>
-                </ul>
-              )}
-            </div>
+        <div className="order-filter-wrapper">
+          <div className="playtype-dropdown-wrapper">
+            <button onClick={() => setPlayTypeOpen(prev => !prev)} className="playtype-dropdown-button">
+              {playType || "종목"} {playTypeOpen ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+            {playTypeOpen && (
+              <ul className="playtype-dropdown-list">
+                <li onClick={() => handlePlayTypeChange("")}>전체</li>
+                <li onClick={() => handlePlayTypeChange("축구")}>축구</li>
+                <li onClick={() => handlePlayTypeChange("풋살")}>풋살</li>
+              </ul>
+            )}
+          </div>
 
-            {/* 지역 */}
+          <div className="area-dropdown-wrapper">
             <AreaDropdown
               city={city}
               district={district}
               onChange={handleAreaChange}
             />
           </div>
+        </div>
+      </div>
+
 
           {/* 목록 */}
           <ul className="order-list">
@@ -93,7 +97,7 @@ function OrderListPage() {
               <li className="order-list-item empty">해당 지역의 견적이 없습니다.</li>
             ) : (
               orders.map((order) => (
-                <Link to={`/request/read/${order.ono}`}>
+                <Link to={`/request/read/${order.ono}`} key={order.ono}>
                 <li
               className="order-list-item"
             >
