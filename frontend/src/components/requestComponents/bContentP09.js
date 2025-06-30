@@ -171,7 +171,12 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
                     type="text"
                     name={`${field.name}-${option}`}
                     value={value[option] || ''}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const regex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s]*$/;
+                      if (regex.test(e.target.value)) {
+                        handleChange(e);
+                      }
+                    }}
                     placeholder={currentPlaceholder}
                     readOnly={isReadOnly} // 전체 폼 readOnly일 때만
                     className="check-box-setting-grow"
