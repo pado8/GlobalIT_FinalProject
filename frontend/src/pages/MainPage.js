@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 const bannerImages = [
   "img/banner1.png",
   "img/banner2.png",
-  "img/banner3.png",
+  "img/banner3.jpg",
   "img/banner4.png",
   "img/banner5.png",
 ];
@@ -47,11 +47,34 @@ const MainPage = () => {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const handleBodyLock = () => {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (modalOpen || enlargedImage) {
+        document.body.style.overflow = "hidden";
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      } else {
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+      }
+    };
+
+    handleBodyLock();
+    window.addEventListener("resize", handleBodyLock);
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      window.removeEventListener("resize", handleBodyLock);
+    };
+  }, [modalOpen, enlargedImage]);
+
+
   const bannerSettings = {
     dots: true,
     infinite: true,
-    // autoplay: true,
-    // autoplaySpeed: 5000,
+    autoplay: true,
+    autoplaySpeed: 5000,
     arrows: false,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -63,12 +86,12 @@ const MainPage = () => {
     slidesToShow: 5,
     slidesToScroll: 1,
     variableWidth: false,
-     responsive: [
-    { breakpoint: 1200, settings: { slidesToShow: 4, slidesToScroll: 1 } },
-    { breakpoint: 992,  settings: { slidesToShow: 3, slidesToScroll: 1 } },
-    { breakpoint: 768,  settings: { slidesToShow: 2, slidesToScroll: 1 } },
-    { breakpoint: 576,  settings: { slidesToShow: 1, slidesToScroll: 1 } }
-  ]
+    responsive: [
+      { breakpoint: 1200, settings: { slidesToShow: 4, slidesToScroll: 1 } },
+      { breakpoint: 992, settings: { slidesToShow: 3, slidesToScroll: 1 } },
+      { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
+      { breakpoint: 576, settings: { slidesToShow: 1, slidesToScroll: 1 } }
+    ]
   };
 
   // 이미지 안전 처리 헬퍼
@@ -123,7 +146,7 @@ const MainPage = () => {
                 <div>
                   <p><FaRunning /> {o.playType}</p>
                   <p><FaMapMarkerAlt /> {o.olocation}</p>
-                  <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0,10)}</p>
+                  <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}</p>
                 </div>
               </div>
             ))}
@@ -211,14 +234,19 @@ const MainPage = () => {
                     <img src={getImageUrl(mainImg)} alt="대표 이미지" />
                   </div>
                   <div className="seller_info">
-                    <strong>{selectedSeller.sname}</strong><br/>
-                    연락처: {selectedSeller.phone || "정보 없음"}<br/>
+                    <strong>{selectedSeller.sname}</strong><br />
+                    연락처: {selectedSeller.phone || "정보 없음"}<br />
                     주소: {selectedSeller.slocation || "정보 없음"}
+                  </div>
+                  <div className="seller_inforeview">
+                    <div>선정 횟수 : {selectedSeller.hiredCount || 0}</div>
+                    <div>리뷰 평점 : {selectedSeller.avgRating || 0}</div>
+                    <div>리뷰 개수 : {selectedSeller.reviewCount || 0}</div>
                   </div>
                 </div>
                 <div className="seller_detail">
-                  <p><strong>업체정보</strong><br/>{selectedSeller.info || "정보 없음"}</p>
-                  <p><strong>업체소개</strong><br/>{selectedSeller.introContent || "소개 없음"}</p>
+                  <p><strong>업체정보</strong><br />{selectedSeller.info || "정보 없음"}</p>
+                  <p><strong>업체소개</strong><br />{selectedSeller.introContent || "소개 없음"}</p>
                 </div>
               </div>
             </div>
