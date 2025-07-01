@@ -43,7 +43,7 @@
   height: 52px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: left;
   padding: 0 24px;
   font-size: 1.1rem;
   font-weight: bold;
@@ -56,6 +56,7 @@
   color: #fff;
   font-size: 2rem;
   cursor: pointer;
+  margin-left: auto;
 }
 
 .messenger_body {
@@ -226,7 +227,7 @@
 }
 
 .newchat_btn {
-  margin-left: auto;
+  margin-left: 1.35rem;
   background: white;
   color: #ff5b9f;
   border: 1px solid #ff5b9f;
@@ -288,4 +289,12 @@
 
 .search_modal_btns button:last-child {
   background-color: #eee;
+}
+
+.message_bubble_me .message_time {
+  color: #ffd1eae0;
+}
+
+.message_bubble_you .message_time {
+  color: #9e8585;
 }
