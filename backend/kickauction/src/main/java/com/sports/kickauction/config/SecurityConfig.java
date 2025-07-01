@@ -50,8 +50,8 @@ public class SecurityConfig {
                 // .csrf(csrf -> csrf
                 // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 // .cors(withDefaults())
-                // .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // .cors(Customizer.withDefaults())
                 // api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
                 .authorizeHttpRequests(auth -> auth
                         // 1) 모든 옵션 요청 허용
