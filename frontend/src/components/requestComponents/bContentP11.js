@@ -67,8 +67,9 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
       navigate(`/request/list`);
     } catch (error) {
 
-      console.error("업체 확정 오류 (-미구현-):", error);
-      alert("업체 확정에 실패했습니다.");
+      console.error("업체 확정 오류 :", error);
+      const errorMessage = error.response?.data?.message || "업체 확정에 실패했습니다. 다시 시도해주세요.";
+      alert(errorMessage);
     }
   };
 
