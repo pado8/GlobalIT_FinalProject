@@ -75,7 +75,7 @@ const List = ({ title, quotes, type }) => {
                   )}
 
                   <div className="flex-shrink-0">
-                    {type === 'closed' && (
+                    {type === 'closed' && quote.finished === 11 && (
                       <button
                         onClick={() => openModal(quote)}
                         className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm"
