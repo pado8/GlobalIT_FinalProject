@@ -7,7 +7,7 @@ import "./requestDebugStyle.css";
 
 
 // 견적 상세보기
-const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
+const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => {
   const navigate = useNavigate();
   const { ono } = useParams(); // URL 파라미터 (견적 ID)
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -59,7 +59,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
       return;
   }
     
-    try { // 📍📍📍구현 필요
+    try {
       await axios.patch(`/api/orders/${ono}/select`, {
         companyId: selectedCompanyId,
       });
@@ -127,11 +127,11 @@ const handleSellerDeleteClick = async () => {
                   onClick={() => handleCompanyCardClick(company)}
                 >
                   <div className="text-sm font-semibold">
-                    {company.seller.sname} | {company.seller.slocation} | 리뷰 {company.seller.hiredCount?company.seller.hiredCount:'-'}건
+                    {company.seller.sname} | {company.seller.slocation} | 리뷰 {company.seller.hiredCount ?? '-'}건
                   </div>
                   <div className="text-sm mt-1 truncate">{company.biz.bcontent}</div>
                   <div className="text-sm mt-1 truncate">{company.biz.banswer}</div>
-                  <div className="font-semibold mt-2">제시가 {company.biz.price}원~</div> {/* DTO에서 price를 받으므로 price 사용 */}
+                  <div className="font-semibold mt-2">제시가 {(company.biz.price ?? 0).toLocaleString('ko-KR')}원~</div>
                 </div>
               ))
             ) : (
@@ -144,7 +144,7 @@ const handleSellerDeleteClick = async () => {
 
 
         {/* 하단 버튼 */}
-        {isOwner && (
+        {isOwner && !(quote.finished===11) &&(
           <div className="flex justify-between mt-6   rq-button-group">
             <button onClick={handleModifyClick} className="md-button">
               수정
