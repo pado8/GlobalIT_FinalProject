@@ -22,8 +22,8 @@ const Layout = () => {
       <div id="wrap">
         <Outlet context={{ openMessengerWithUser }} />
       </div>
-      <Chattingicon onClick={() => setChatOpen((prev) => !prev)} />
-      {user && chatOpen && <MessengerPanel onClose={() => setChatOpen(false)} />}
+      {user && !chatOpen && <Chattingicon onClick={() => setChatOpen(true)} />}
+      {chatOpen && <MessengerPanel onClose={() => setChatOpen(false)} />}
       <Footer />
     </>
   );

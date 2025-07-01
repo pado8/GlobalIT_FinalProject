@@ -3,14 +3,15 @@ import { getDialog, sendMessage } from "../api/messageApi";
 import styles from "./MessengerPanel.module.css";
 import { getProfileImgUrl } from "../api/imageUtil";
 import { useAuth } from "../contexts/Authcontext";
+import "../css/Sharesheet.css";
 
 const BOT_ROOM = {
   id: "bot",
   name: "킥옥션 챗봇 (Beta)",
   profile: "chatbot.png",
-  preview: "챗봇이 도와드릴 준비가 되어 있어요!",
+  preview: "안녕하세요! 이렇게 좋은 날, 축구 한 판 어때요?",
   unread: 0,
-  messages: [{ from: "bot", text: "안녕하세요! 무엇을 도와드릴까요?" }],
+  messages: [{ from: "bot", text: "안녕하세요! 이렇게 좋은 날, 축구 한 판 어때요?" }],
 };
 
 export default function MessengerPanel({ targetUser, onClose }) {
@@ -22,10 +23,9 @@ export default function MessengerPanel({ targetUser, onClose }) {
   const [searchNickname, setSearchNickname] = useState("");
   const messagesEndRef = useRef(null);
 
-  // 선택된 방 객체 반환
   const selectedRoom = roomList.find((r) => r.id === selectedId);
 
-  // 1. 채팅방 목록 초기 로딩 (챗봇 포함)
+  // 주석: 1. 채팅방 목록 초기 로딩
   useEffect(() => {
     const fetchRoomList = async () => {
       try {
@@ -37,14 +37,13 @@ export default function MessengerPanel({ targetUser, onClose }) {
         const res = await fetch("/api/messages/rooms", { credentials: "include" });
         let data = await res.json();
         if (!Array.isArray(data)) data = [];
-        // 서버 반환 DTO를 id/name/profile 일관화
         const mappedRooms = data.map((room) => ({
-          id: room.partnerMno, // 반드시!
+          id: room.partnerMno,
           name: room.partnerName,
           profile: room.partnerProfileImg,
           preview: room.lastMessage || "",
           mno: room.partnerMno,
-          messages: [], // 최초엔 안 가져옴, 클릭 시 getDialog로
+          messages: [],
         }));
         setRoomList([BOT_ROOM, ...mappedRooms]);
       } catch (err) {
@@ -55,25 +54,21 @@ export default function MessengerPanel({ targetUser, onClose }) {
     fetchRoomList();
   }, []);
 
-  // 2. 닉네임으로 사용자 검색 → 채팅방 열기
+  // 주석: 2. 닉네임으로 사용자 검색
   const handleSearchUser = async () => {
     if (!searchNickname.trim()) return;
 
     try {
-      console.log("🔍 사용자 검색 시작:", searchNickname);
       const res = await fetch(`/api/messages/find-user?nickname=${encodeURIComponent(searchNickname.trim())}`, {
         method: "GET",
-        credentials: "include", // 로그인 세션 포함
+        credentials: "include",
       });
 
       if (!res.ok) {
         const text = await res.text();
-        console.error("❌ 사용자 검색 실패:", res.status, text);
         throw new Error(text || "해당 닉네임을 찾을 수 없습니다.");
       }
-
-      const userData = await res.json(); // { mno, user_name, profileimg }
-      console.log("✅ 사용자 정보 받음:", userData);
+      const userData = await res.json();
       const id = userData.mno;
 
       // 이미 존재하는 방인지 확인
@@ -102,16 +97,14 @@ export default function MessengerPanel({ targetUser, onClose }) {
       setSearchNickname("");
       setSearchModalOpen(false);
     } catch (err) {
-      console.error("❌ handleSearchUser 실패:", err);
       alert(err.message);
     }
   };
 
-  // 3. 채팅방 클릭 시 해당 방 메시지 내역 fetch
+  // 3. 채팅방 클릭 시 해당 방 대화내역 불러오기
   const handleRoomClick = (room) => {
     setSelectedId(room.id);
     if (room.id === "bot") return;
-    // 서버에서 해당 상대와의 대화 내역 가져오기
     getDialog(room.id).then((msgs) => {
       setRoomList((rooms) =>
         rooms.map((r) =>
@@ -131,11 +124,11 @@ export default function MessengerPanel({ targetUser, onClose }) {
     });
   };
 
-  // 4. 메시지 전송
+  // 메세지 전송
   const handleSend = async () => {
     if (!input.trim() || !selectedRoom) return;
     if (selectedRoom.id === "bot") {
-      // 챗봇
+      // 주석:챗봇의 경우
       const updatedBot = {
         ...selectedRoom,
         messages: [...selectedRoom.messages, { from: "me", text: input }],
@@ -176,7 +169,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
         );
       }
     } else {
-      // 유저 쪽지 전송
+      // 주석: 유저의 경우
       const msg = await sendMessage(selectedRoom.id, input);
       setRoomList((rooms) =>
         rooms.map((r) =>
@@ -193,20 +186,20 @@ export default function MessengerPanel({ targetUser, onClose }) {
     }
   };
 
-  // 5. 자동 스크롤
+  // 주석: 대화 자동 스크롤
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [selectedRoom?.messages]);
 
-  // 6. 방 클릭/추가 시 대화내역 없으면 기본 안내
+  // 주석: 방 클릭/추가 시 대화내역 없으면 기본 안내
   const showMessages = selectedRoom?.messages?.length > 0;
 
   return (
     <div className={styles.messenger_panel}>
       <div className={styles.messenger_header}>
-        <span>💬 MomoTalk</span>
+        <span>💬 KickTalk</span>
         <button className={styles.newchat_btn} onClick={() => setSearchModalOpen(true)}>
           + 새 채팅
         </button>
