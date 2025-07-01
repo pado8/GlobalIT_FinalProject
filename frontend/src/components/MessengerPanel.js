@@ -117,6 +117,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
                   sentAt: m.sentAt,
                 })),
                 preview: msgs.length > 0 ? msgs[msgs.length - 1].content : "",
+                unread: 0,
               }
             : r
         )

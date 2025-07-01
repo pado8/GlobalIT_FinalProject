@@ -3,8 +3,10 @@ package com.sports.kickauction.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Message;
@@ -56,4 +58,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     ORDER BY m.sent_at DESC
     """, nativeQuery = true)
     List<Object[]> findAllRoomsByMemberNative(@Param("myMno") Long myMno);
+
+    // 상대방이 보낸 메세지 중 읽지 않은 메세지를 읽음 처리함
+    @Transactional
+    @Modifying
+    @Query("UPDATE Message m SET m.isRead = true WHERE m.receiver = :me AND m.sender = :target AND m.isRead = false")
+    int markMessagesAsRead(@Param("me") Member me, @Param("target") Member target);
 }
