@@ -298,3 +298,10 @@
 .message_bubble_you .message_time {
   color: #9e8585;
 }
+
+/* 반응형 */
+@media (max-width: 750px) {
+  .chatting_icon {
+    display: none;
+  }
+}
