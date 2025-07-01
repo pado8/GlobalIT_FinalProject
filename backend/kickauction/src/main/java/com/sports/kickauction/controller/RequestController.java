@@ -186,8 +186,6 @@ public class RequestController {
             DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
             // System.out.println("OAuth2 attributes: " + oauthUser.getAttributes()); //data check
 
-            
-            
             Map<String, Object> attributes = oauthUser.getAttributes();
 
             String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); // "google", "kakao" 등
@@ -220,6 +218,38 @@ public class RequestController {
             return ResponseEntity.noContent().build(); // 내용 없음 (204 No Content)
         }
     }
+
+    /**
+     * 견적에 대한 업체를 확정합니다.
+     * @param ono 견적 ID
+     * @param payload 요청 본문, "companyId" 키로 선택된 업체의 mno를 포함
+     * @return 처리 결과 메시지
+     */
+    @PatchMapping("/{ono}/select")
+    public ResponseEntity<Map<String, String>> selectCompany(
+            @PathVariable("ono") int ono,
+            @RequestBody Map<String, Long> payload) {
+        
+        Long sellerMno = payload.get("companyId");
+        if (sellerMno == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "companyId가 필요합니다."));
+        }
+        // int sellerMnoInt = sellerMno.intValue();
+
+        try {
+            requestService.confirmCompanyAndFinalizeOrder(ono, sellerMno);
+            return ResponseEntity.ok(Map.of("message", "업체가 성공적으로 확정되었습니다."));
+        } catch (Exception e) {
+            // 실제 프로덕션 코드에서는 로깅 프레임워크를 사용해 에러를 기록하는 것이 좋습니다.
+            System.err.println("업체 확정 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(Map.of("message", "처리 중 오류가 발생했습니다."));
+        }
+    }
+
+
+
+
+
 
     // 견적 마감상태 변경 PATCH
     @PatchMapping("/finish/{ono}")
