@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .mno(review.getMno())
                 .rating(review.getRating())
                 .rcontent(review.getRcontent())
-                .rregdate(review.getRregdate())
+                .regdate(review.getRegDate())
                 .build();
     }
 }

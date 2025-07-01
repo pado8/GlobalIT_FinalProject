@@ -29,7 +29,7 @@ public class ReviewController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("rregdate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("regdate").descending());
         return ResponseEntity.ok(service.getReviewsBySeller(mno, pageable));
     }
 
