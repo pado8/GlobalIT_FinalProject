@@ -11,12 +11,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.sports.kickauction.dto.BizRegisterDTO;
+import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.RequestDTO;
 import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
@@ -31,7 +33,9 @@ import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.BizRepository;
 import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.repository.SellerIntroRepository;
+import com.sports.kickauction.dto.PageResponseDTO;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -192,7 +196,7 @@ public class RequestServiceImpl implements RequestService {
 
         // 마감된 주문 (finished = 1)
         List<RequestDTO> closedOrders = allOrdersForMember.stream()
-                                            .filter(order -> order.getFinished() == 1)
+                                            .filter(order -> order.getFinished() == 1 || order.getFinished() == 11)
                                             .map(this::convertToDto)
                                             .collect(Collectors.toList());
         myOrdersData.put("closedOrders", closedOrders);
@@ -207,6 +211,72 @@ public class RequestServiceImpl implements RequestService {
 
         return myOrdersData;
     }
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// --- getMyOrdersByStatusPaginated ---
+    // @Override
+    // @Transactional(readOnly = true)
+    // public RequestPageResponseDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, String status, Pageable pageable) {
+    //     int finished;
+    //     switch (status) {
+    //         case "active":
+    //             finished = 0;
+    //             break;
+    //         case "closed":
+    //             finished = 1;
+    //             break;
+    //         case "cancelled":
+    //             finished = 2;
+    //             break;
+    //         default:
+    //             throw new IllegalArgumentException("Invalid status provided: " + status);
+    //     }
+
+    //     Page<Request> result = requestRepository.findByMnoAndFinished(memberNo, finished, pageable);
+
+    //     List<RequestDTO> dtoList = result.getContent().stream()
+    //             .map(this::convertToRequestDTO) // 메서드명 변경: Request -> RequestDTO 변환
+    //             .collect(Collectors.toList());
+
+    //     // RequestPageRequestDTO를 생성하여 RequestPageResponseDTO 빌더에 전달
+    //     // Pageable의 pageNumber는 0-based이므로 1을 더해 1-based로 변환
+    //     RequestPageRequestDTO requestPageRequestForResponse = RequestPageRequestDTO.builder()
+    //             .page(pageable.getPageNumber() + 1)
+    //             .size(pageable.getPageSize())
+    //             .build();
+
+    //     return RequestPageResponseDTO.<RequestDTO>builder() // 빌더 이름도 변경 (withAll -> builder)
+    //             .dtoList(dtoList)
+    //             .RequestPageRequestDTO(requestPageRequestForResponse) // 요청 DTO 전달
+    //             .totalCount(result.getTotalElements())
+    //             .build();
+    // }
+
+    // // --- getOrderMyList ---
+    // @Override
+    // @Transactional(readOnly = true)
+    // public RequestPageResponseDTO<RequestReadDTO> getOrderMyList(RequestPageRequestDTO dto) {
+    //     Pageable pageable = dto.getPageable(Sort.by("ono").descending());
+
+    //     Integer finishedParam = dto.getFinished();
+
+    //     Page<Request> result = requestRepository.findByFinishedFilter(finishedParam, pageable);
+
+    //     List<RequestReadDTO> dtoList = result.getContent().stream()
+    //         .map(this::convertToRequestReadDTO) // 메서드명 변경: Request -> RequestReadDTO 변환
+    //         .collect(Collectors.toList());
+
+    //     return RequestPageResponseDTO.<RequestReadDTO>builder() // 빌더 이름 변경 (withAll -> builder)
+    //         .dtoList(dtoList)
+    //         .RequestPageRequestDTO(dto) // 요청 DTO 전달
+    //         .totalCount(result.getTotalElements())
+    //         .build();
+    // }
+    
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
 
     // 엔티티를 DTO로 변환하는 헬퍼 메서드
     private RequestDTO convertToDto(Request request) {  
@@ -226,9 +296,37 @@ public class RequestServiceImpl implements RequestService {
             .build();
     }
 
+    @Transactional
+    public void confirmCompanyAndFinalizeOrder(int ono, Long selectedSellerMno) {
+        // 1. 해당 ono의 Order(견적) 정보가 존재하는지 확인합니다.
+        Request order = requestRepository.findById(ono)
+                .orElseThrow(() -> new EntityNotFoundException("견적 정보를 찾을 수 없습니다. ID: " + ono));
+
+        // 2. 해당 견적에 제안된 모든 Biz(입찰) 목록을 가져옵니다.
+        List<Biz> allBids = bizRepository.findByRequest_Ono(ono);
+        if (allBids.isEmpty()) {
+            throw new IllegalStateException("해당 견적에 대한 입찰 정보가 없습니다. ID: " + ono);
+        }
+
+        // 3. 선택되지 않은 나머지 입찰들을 필터링하여 삭제 목록을 만듭니다.
+        // (Biz 엔티티에 Seller(Member) 정보가 연관관계로 맺어져 있다고 가정)
+        List<Biz> bidsToDelete = allBids.stream()
+                .filter(biz -> !biz.getSeller().getMno().equals(selectedSellerMno))
+                .collect(Collectors.toList());
+
+        // 4. 선택되지 않은 입찰들을 삭제합니다.
+        if (!bidsToDelete.isEmpty()) {
+            bizRepository.deleteAll(bidsToDelete);
+        }
+
+        // 5. Order의 상태를 '업체 선정 완료' (finished = 11)로 업데이트합니다.
+        order.setFinished(11); 
+        requestRepository.save(order);
+    }
+
     /*
-     * 견적 요청을 삭제(취소) / 논리적 삭제(finished 상태 변경)
-     */
+    * 견적 요청을 삭제(취소) / 논리적 삭제(finished 상태 변경)
+    */
     @Override
     public boolean deleteOrder(RequestDTO requestDTO) {
         Optional<Request> existingOrderOptional = requestRepository.findById(requestDTO.getOno());  
@@ -249,7 +347,8 @@ public class RequestServiceImpl implements RequestService {
         }
         return false; // 해당 ono의 견적을 찾을 수 없음
     }
-
+    
+    
     // finished 상태 변경
     @Override
     public boolean updateFinished (RequestDTO requestDTO) {
@@ -280,6 +379,7 @@ public class RequestServiceImpl implements RequestService {
         }
         return false;
     }
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     //견적 리스트
     @Override

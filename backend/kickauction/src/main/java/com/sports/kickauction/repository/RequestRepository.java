@@ -1,6 +1,7 @@
 package com.sports.kickauction.repository;
 
-import com.sports.kickauction.entity.Request;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,9 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDateTime;
 
-import java.util.List;
+import com.sports.kickauction.entity.Request;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Integer> {
@@ -26,7 +26,14 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
                                    Pageable pageable);
 
 
- List<Request> findByMno(int mno); // getMyOrdersByMemberNo에서 사용 메서드
-    List<Request> findByFinishedAndOregdateBefore(int finished, LocalDateTime before); //삭제 기한 지난 견적 조회
+   List<Request> findByOno(int ono); // findByOno
+   List<Request> findByMno(int mno); // getMyOrdersByMemberNo에서 사용 메서드
+   List<Request> findByFinishedAndOregdateBefore(int finished, LocalDateTime before); //삭제 기한 지난 견적 조회
+   Page<Request> findByMnoAndFinished(int mno, int finished, Pageable pageable);
+
+   // finished가 null이면 모든 상태를 가져오고, 아니면 해당 finished 값으로 필터링
+    @Query("SELECT r FROM Request r WHERE " +
+           "(:finishedParam IS NULL OR r.finished = :finishedParam)")
+    Page<Request> findByFinishedFilter(@Param("finishedParam") Integer finished, Pageable pageable);
 
 }
