@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useCallback,useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { useAuth } from "../../contexts/Authcontext";
 import {
   getSellerList,
@@ -7,6 +8,7 @@ import {
   getSellerRegistered,
 } from "../../api/SellerApi";
 import { getImageUrl } from "../../api/UploadImageApi";
+import {getReviewsBySeller} from "../../api/reviewApi"
 import Pagination from "../../components/paging/Pagination";
 import styles from "../../css/SellerListPage.module.css";
 
@@ -24,6 +26,11 @@ const SellerListPage = () => {
   const [is_registered, setIsRegistered] = useState(false);
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showReviews, setShowReviews] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [reviewPage, setReviewPage] = useState(0);
+  const [hasMoreReviews, setHasMoreReviews] = useState(true);
+  const observer = useRef();
 
   const [seller_data, setSellerData] = useState({
     dtoList: [],
@@ -74,15 +81,40 @@ const SellerListPage = () => {
   }, [search_params]);
 
   const open_modal = async (mno) => {
-    try {
-      const detail = await getSellerDetail(mno);
-      setSelectedSeller(detail);
-      setSlideIndex(0);
-      setModalOpen(true);
-    } catch (err) {
-      console.error("상세 불러오기 실패", err);
-    }
-  };
+  try {
+    const detail = await getSellerDetail(mno);
+    setSelectedSeller(detail);
+    setSlideIndex(0);
+    const fetchedReviews = await getReviewsBySeller(mno);
+    setReviews(fetchedReviews);
+    setModalOpen(true);
+  } catch (err) {
+    console.error("상세 불러오기 실패", err);
+  }
+};
+
+const lastReviewElementRef = useCallback(
+  node => {
+    if (!showReviews || !hasMoreReviews) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(async entries => {
+      if (entries[0].isIntersecting) {
+        try {
+          const data = await getReviewsBySeller(selected_seller.mno, reviewPage);
+          setReviews(prev => [...prev, ...data.content]);
+          setReviewPage(prev => prev + 1);
+          setHasMoreReviews(!data.last);
+        } catch (e) {
+          console.error("리뷰 로딩 실패", e);
+        }
+      }
+    });
+
+    if (node) observer.current.observe(node);
+  },
+  [reviewPage, hasMoreReviews, showReviews, selected_seller]
+);
 
   const close_modal = () => setModalOpen(false);
   const go_to_register = () => navigate("/sellerlist/register");
@@ -185,9 +217,9 @@ const SellerListPage = () => {
                   <div className={styles["seller_info"]}>
                     <strong>{selected_seller.sname || "업체명 없음"}</strong>
                     <br />
-                    연락처: {selected_seller.phone || "정보 없음"}
+                    <FaPhoneAlt/> {selected_seller.phone || "정보 없음"}
                     <br />
-                    주소: {selected_seller.slocation || "정보 없음"}
+                    <FaMapMarkerAlt/> {selected_seller.slocation || "정보 없음"}
                   </div>
                 </div>
 
@@ -216,17 +248,67 @@ const SellerListPage = () => {
                 )}
 
                 <div className={styles["seller_detail"]}>
-                  <p>
-                    <strong>업체정보</strong>
-                    <br />
-                    {selected_seller.info || "정보 없음"}
-                  </p>
-                  <p>
-                    <strong>업체소개</strong>
-                    <br />
-                    {selected_seller.introContent || "소개 없음"}
-                  </p>
+                    <p>
+                      <strong>업체정보</strong>
+                      <br />
+                      {selected_seller.info || "정보 없음"}
+                    </p>
+                    <p>
+                      <strong>업체소개</strong>
+                      <br />
+                      {selected_seller.introContent || "소개 없음"}
+                    </p>
+                  </div>
+
+                  <hr />
+
+                  <div className={styles["review_section"]}>
+  <button
+    className={styles["toggle_review_btn"]}
+    onClick={async () => {
+      if (!showReviews) {
+        const data = await getReviewsBySeller(selected_seller.mno, 0);
+        setReviews(data.content);
+        setReviewPage(1);
+        setHasMoreReviews(!data.last);
+      }
+      setShowReviews(prev => !prev);
+    }}
+  >
+    {showReviews ? "리뷰 닫기" : "리뷰 보기"}
+  </button>
+
+  {showReviews && (
+    <div className={styles["review_scroll_container"]}>
+      {reviews.length === 0 ? (
+        <p>아직 리뷰가 없습니다.</p>
+      ) : (
+        <ul className={styles["review_list"]}>
+          {reviews.map((rev, idx) => {
+            const isLast = idx === reviews.length - 1;
+            return (
+              <li
+                key={idx}
+                className={styles["review_item"]}
+                ref={isLast ? lastReviewElementRef : null}
+              >
+                <div className={styles["review_rating"]}>
+                  별점: {(rev.rating / 2).toFixed(1)} / 5
                 </div>
+                <div className={styles["review_content"]}>{rev.rcontent}</div>
+                <div className={styles["review_date"]}>
+                  {new Date(rev.rregdate).toLocaleDateString()}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  )}
+</div>
+
+
               </div>
             </div>
           </div>
