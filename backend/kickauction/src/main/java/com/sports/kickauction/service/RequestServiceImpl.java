@@ -20,6 +20,8 @@ import org.springframework.data.domain.Sort;
 import com.sports.kickauction.dto.BizRegisterDTO;
 import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageCustomReqDTO;
+import com.sports.kickauction.dto.RequestPageCustomResDTO;
 import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
 import com.sports.kickauction.dto.RequestReadDTO;
@@ -214,69 +216,60 @@ public class RequestServiceImpl implements RequestService {
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // --- getMyOrdersByStatusPaginated ---
-    // @Override
-    // @Transactional(readOnly = true)
-    // public RequestPageResponseDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, String status, Pageable pageable) {
-    //     int finished;
-    //     switch (status) {
-    //         case "active":
-    //             finished = 0;
-    //             break;
-    //         case "closed":
-    //             finished = 1;
-    //             break;
-    //         case "cancelled":
-    //             finished = 2;
-    //             break;
-    //         default:
-    //             throw new IllegalArgumentException("Invalid status provided: " + status);
-    //     }
+    @Override
+    @Transactional(readOnly = true)
+    public RequestPageCustomResDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, RequestPageCustomReqDTO dto) {
+        String status = dto.getStatus();
+        Pageable pageable = dto.getPageable(Sort.by("ono").descending());
 
-    //     Page<Request> result = requestRepository.findByMnoAndFinished(memberNo, finished, pageable);
+        int finished;
+        switch (status) {
+            case "active":
+                finished = 0;
+                break;
+            case "closed":
+                finished = 1;
+                break;
+            case "cancelled":
+                finished = 2;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid status provided: " + status);
+        }
 
-    //     List<RequestDTO> dtoList = result.getContent().stream()
-    //             .map(this::convertToRequestDTO) // 메서드명 변경: Request -> RequestDTO 변환
-    //             .collect(Collectors.toList());
+        Page<Request> result;
+        if (status.equals("closed")) {
+            // '마감' 상태는 finished 값이 1 또는 11인 경우를 모두 포함
+            result = requestRepository.findByMnoAndFinishedIn(memberNo, List.of(1, 11), pageable);
+        } else {
+            result = requestRepository.findByMnoAndFinished(memberNo, finished, pageable);
+        }
+        
+        List<RequestDTO> dtoList = result.getContent().stream()
+                .map(this::convertToRequestDTO) // 메서드명 변경: Request -> RequestDTO 변환
+                .collect(Collectors.toList());
 
-    //     // RequestPageRequestDTO를 생성하여 RequestPageResponseDTO 빌더에 전달
-    //     // Pageable의 pageNumber는 0-based이므로 1을 더해 1-based로 변환
-    //     RequestPageRequestDTO requestPageRequestForResponse = RequestPageRequestDTO.builder()
-    //             .page(pageable.getPageNumber() + 1)
-    //             .size(pageable.getPageSize())
-    //             .build();
+        return new RequestPageCustomResDTO<>(dtoList, dto, result.getTotalElements());
+    }
 
-    //     return RequestPageResponseDTO.<RequestDTO>builder() // 빌더 이름도 변경 (withAll -> builder)
-    //             .dtoList(dtoList)
-    //             .RequestPageRequestDTO(requestPageRequestForResponse) // 요청 DTO 전달
-    //             .totalCount(result.getTotalElements())
-    //             .build();
-    // }
+    // --- getOrderMyList ---
+    @Override
+    @Transactional(readOnly = true)
+    public RequestPageCustomResDTO<RequestReadDTO> getOrderMyList(RequestPageCustomReqDTO dto) {
+        Pageable pageable = dto.getPageable(Sort.by("ono").descending());
 
-    // // --- getOrderMyList ---
-    // @Override
-    // @Transactional(readOnly = true)
-    // public RequestPageResponseDTO<RequestReadDTO> getOrderMyList(RequestPageRequestDTO dto) {
-    //     Pageable pageable = dto.getPageable(Sort.by("ono").descending());
+        Integer finishedParam = dto.getFinished();
 
-    //     Integer finishedParam = dto.getFinished();
+        Page<Request> result = requestRepository.findByFinishedFilter(finishedParam, pageable);
 
-    //     Page<Request> result = requestRepository.findByFinishedFilter(finishedParam, pageable);
+        List<RequestReadDTO> dtoList = result.getContent().stream()
+            .map(this::convertToRequestReadDTO) // 메서드명 변경: Request -> RequestReadDTO 변환
+            .collect(Collectors.toList());
 
-    //     List<RequestReadDTO> dtoList = result.getContent().stream()
-    //         .map(this::convertToRequestReadDTO) // 메서드명 변경: Request -> RequestReadDTO 변환
-    //         .collect(Collectors.toList());
-
-    //     return RequestPageResponseDTO.<RequestReadDTO>builder() // 빌더 이름 변경 (withAll -> builder)
-    //         .dtoList(dtoList)
-    //         .RequestPageRequestDTO(dto) // 요청 DTO 전달
-    //         .totalCount(result.getTotalElements())
-    //         .build();
-    // }
+        return new RequestPageCustomResDTO<>(dtoList, dto, result.getTotalElements());
+    }
     
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
 
     // 엔티티를 DTO로 변환하는 헬퍼 메서드
     private RequestDTO convertToDto(Request request) {  
@@ -293,6 +286,37 @@ public class RequestServiceImpl implements RequestService {
             .ocontent(request.getOcontent())
             .oregdate(request.getOregdate())
             .finished(request.getFinished())
+            .build();
+    }
+
+    // Request 엔티티를 RequestDTO로 변환하는 헬퍼 메서드
+    private RequestDTO convertToRequestDTO(Request request) {
+        return RequestDTO.builder()
+            .ono(request.getOno())
+            .mno(request.getMno())
+            .otitle(request.getOtitle())
+            .playType(request.getPlayType())
+            .olocation(request.getOlocation())
+            .rentalDate(request.getRentalDate())
+            .rentalTime(request.getRentalTime())
+            .person(request.getPerson())
+            .rentalEquipment(request.getRentalEquipment())
+            .ocontent(request.getOcontent())
+            .oregdate(request.getOregdate())
+            .finished(request.getFinished())
+            .build();
+    }
+
+    // Request 엔티티를 RequestReadDTO로 변환하는 헬퍼 메서드
+    private RequestReadDTO convertToRequestReadDTO(Request request) {
+        return RequestReadDTO.builder()
+            .ono(request.getOno())
+            .playType(request.getPlayType())
+            .olocation(request.getOlocation())
+            .rentalDate(request.getRentalDate())
+            .oregdate(request.getOregdate())
+            .rentaltime(request.getRentalTime())
+            .ocontent(request.getOcontent())
             .build();
     }
 

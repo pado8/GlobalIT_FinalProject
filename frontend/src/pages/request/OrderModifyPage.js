@@ -115,9 +115,13 @@ const OrderModifyPage = () => {
         newErrors.rentalEquipment = '대여할 장비를 1개 이상 선택하고 수량을 입력해주세요.';
       }
     }
-    const regionParts = data.region.split(" ");
-    if (!data.region || (regionParts.length < 2 && regionParts[0] !== "세종특별자치시")) {
-      newErrors.region = '시/도와 시/군/구를 모두 선택해주세요.';
+    // 지역 유효성 검사 강화: 시/군/구 미선택 시 오류 발생
+    const regionParts = data.region.trim().split(/\s+/);
+    if (!data.region.trim()) {
+      newErrors.region = '시/도를 선택해주세요.';
+    } else if (regionParts.length < 2 && regionParts[0] !== "세종특별자치시") {
+      // '세종특별자치시'가 아니면서 시/군/구가 없는 경우
+      newErrors.region = '시/군/구를 선택해주세요.';
     }
     if (!data.rentalDate) newErrors.rentalDate = '날짜를 선택해주세요.';
 
@@ -232,7 +236,7 @@ const OrderModifyPage = () => {
 
       await axios.patch(`/api/orders/${ono}`, dataToSend); // PATCH 요청
       alert("견적 정보가 성공적으로 수정되었습니다.");
-      navigate(`/request/read/${ono}`); // 수정 후 상세 페이지로 이동
+      navigate(`/request/read/${ono}`, { replace: true }); // 수정 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {
       alert("견적 수정에 실패했습니다.");
       console.error("Error updating order:", err);
