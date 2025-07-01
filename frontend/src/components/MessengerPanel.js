@@ -125,6 +125,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
   };
 
   // 메세지 전송
+
   const handleSend = async () => {
     if (!input.trim() || !selectedRoom) return;
     if (selectedRoom.id === "bot") {
@@ -138,10 +139,13 @@ export default function MessengerPanel({ targetUser, onClose }) {
       setInput("");
       // 챗봇 응답
       try {
+        const userPrompt = input.trim();
+
+        console.log("프론트로부터 받은 prompt: " + userPrompt);
         const res = await fetch("/api/chatbot", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: input }),
+          body: JSON.stringify({ prompt: userPrompt }),
         });
         const data = await res.json();
         setRoomList((rooms) =>

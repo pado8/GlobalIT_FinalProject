@@ -18,6 +18,7 @@ public class DefaultImageInitializer {
 
     private final String DEFAULT_IMAGE_NAME = "default.png";
     private final String BASE_PROFILE_IMAGE_NAME = "baseprofile.png";
+    private final String BASE_CHATBOT_IMAGE_NAME = "chatbot.png";
 
     @PostConstruct
     public void init() throws IOException {
@@ -34,6 +35,7 @@ public class DefaultImageInitializer {
         copyIfNotExists(DEFAULT_IMAGE_NAME, defaultDir);
 
         copyIfNotExists(BASE_PROFILE_IMAGE_NAME, pfDir);
+        copyIfNotExists(BASE_CHATBOT_IMAGE_NAME, pfDir);
         
     }
 
