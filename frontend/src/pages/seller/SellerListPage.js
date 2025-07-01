@@ -85,8 +85,8 @@ const SellerListPage = () => {
     const detail = await getSellerDetail(mno);
     setSelectedSeller(detail);
     setSlideIndex(0);
-    const fetchedReviews = await getReviewsBySeller(mno);
-    setReviews(fetchedReviews);
+    // const fetchedReviews = await getReviewsBySeller(mno);
+    // setReviews(fetchedReviews);
     setModalOpen(true);
   } catch (err) {
     console.error("상세 불러오기 실패", err);
@@ -262,7 +262,7 @@ const lastReviewElementRef = useCallback(
 
                   <hr />
 
-                  <div className={styles["review_section"]}>
+                  {/* <div className={styles["review_section"]}>
   <button
     className={styles["toggle_review_btn"]}
     onClick={async () => {
@@ -306,7 +306,7 @@ const lastReviewElementRef = useCallback(
       )}
     </div>
   )}
-</div>
+</div> */}
 
 
               </div>
