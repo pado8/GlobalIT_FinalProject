@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -151,4 +152,20 @@ public class MessageController {
             "profileimg", target.getProfileimg()
         ));
     }
+
+    //
+    @PutMapping("/mark-read")
+    public ResponseEntity<?> markMessagesAsRead(
+        Principal principal,
+        @RequestParam Long partnerId
+    ) {
+        Member me = memberService.findByUserId(principal.getName());
+        Member partner = memberService.findById(partnerId);
+        if (partner == null) return ResponseEntity.badRequest().body("상대방 없음");
+
+        messageService.markMessagesAsRead(me, partner);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
