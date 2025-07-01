@@ -165,7 +165,7 @@ const OrderCreatePage = () => {
       const newOno = response.data.ono; // 백엔드에서 생성된 ono를 map으로 받아옴
 
       alert("견적 생성 성공");
-      navigate(`/request/read/${newOno}`); // 생성 후 상세 페이지로 이동
+      navigate(`/request/read/${newOno}`, { replace: true }); // 생성 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {
       alert("견적 생성 실패");
       console.error("Error creating order:", err);

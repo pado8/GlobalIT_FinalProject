@@ -236,7 +236,7 @@ const OrderModifyPage = () => {
 
       await axios.patch(`/api/orders/${ono}`, dataToSend); // PATCH 요청
       alert("견적 정보가 성공적으로 수정되었습니다.");
-      navigate(`/request/read/${ono}`); // 수정 후 상세 페이지로 이동
+      navigate(`/request/read/${ono}`, { replace: true }); // 수정 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {
       alert("견적 수정에 실패했습니다.");
       console.error("Error updating order:", err);
