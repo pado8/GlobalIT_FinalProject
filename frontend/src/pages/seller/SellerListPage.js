@@ -175,8 +175,6 @@ const lastReviewElementRef = useCallback(
       )}
 
 
-      <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/bizregister")}>🛠 테스트용 입찰등록</button>
-
       <Pagination
         className={styles["fixed_pagination"]}
         current={seller_data.currentPage}

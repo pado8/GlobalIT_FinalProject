@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
 
 import "./requestDebugStyle.css";
@@ -157,18 +157,22 @@ const handleSellerDeleteClick = async () => {
             </button>
           </div>
         )}
-        {!isOwner && isSeller  && (
-          <div className="flex justify-between mt-6   rq-button-group">
-            <button onClick={handleSellerCreateClick} className="md-button">
-              입찰
-            </button>
-            <button onClick={handleSellerModifyClick} className="md-button">
-              수정
-            </button>
-            <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button">
-              포기
-            </button>
+        {!isOwner && isSeller && !(quote.finished===11) && (
+          hasSellerBid ? (
+            <div className="flex justify-between mt-6 rq-button-group">
+              <button onClick={handleSellerModifyClick} className="md-button">수정</button>
+              <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
+            </div>
+          ) : (
+            <div className="mt-6">
+            <Link
+              to={`/request/${ono}/bizregister`}
+              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+            >
+              입찰하기
+            </Link>
           </div>
+          )
         )}
       </div>
     </div>
