@@ -319,6 +319,14 @@ public class RequestServiceImpl implements RequestService {
             bizRepository.deleteAll(bidsToDelete);
         }
 
+        // 4-1. 선택된 업체의 hiredCount를 1 증가시킵니다.
+        SellerIntro sellerIntro = sellerIntroRepository.findById(selectedSellerMno)
+                .orElseThrow(() -> new EntityNotFoundException("선택된 업체 정보를 찾을 수 없습니다. ID: " + selectedSellerMno));
+
+        sellerIntro.setHiredCount(sellerIntro.getHiredCount() + 1);
+        // @Transactional에 의해 변경 감지(Dirty Checking)가 되므로 save()는 선택사항이지만 명시적으로 추가합니다.
+        sellerIntroRepository.save(sellerIntro);
+
         // 5. Order의 상태를 '업체 선정 완료' (finished = 11)로 업데이트합니다.
         order.setFinished(11); 
         requestRepository.save(order);
