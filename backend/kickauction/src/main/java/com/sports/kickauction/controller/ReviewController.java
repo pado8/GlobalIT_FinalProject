@@ -6,31 +6,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lombok.RequiredArgsConstructor;
 import com.sports.kickauction.dto.ReviewDTO;
-import com.sports.kickauction.service.BizService;
+import com.sports.kickauction.dto.SellerReviewReadDTO;
 import com.sports.kickauction.service.ReviewService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
-     private final BizService bizService;
-    private final ReviewService reviewService;
+    private final ReviewService service;
 
     @PostMapping
-    public ResponseEntity<Void> createReview(@RequestBody ReviewDTO dto) {
-        // ① BizService를 통해 mno 조회
-        Long sellerMno = bizService.getSellerMnoByOrderOno(dto.getOno());
-
-        // ② 조회된 mno로 리뷰 저장
-        reviewService.registerReview(
-            dto.getOno(),
-            sellerMno,
-            dto.getRating(),
-            dto.getRcontent()
-        );
-
+    public ResponseEntity<Void> create(@RequestBody ReviewDTO dto) {
+        service.register(dto);
         return ResponseEntity.ok().build();
     }
 
