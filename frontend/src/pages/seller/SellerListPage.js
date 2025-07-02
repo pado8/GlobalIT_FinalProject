@@ -85,8 +85,6 @@ const SellerListPage = () => {
     const detail = await getSellerDetail(mno);
     setSelectedSeller(detail);
     setSlideIndex(0);
-    // const fetchedReviews = await getReviewsBySeller(mno);
-    // setReviews(fetchedReviews);
     setModalOpen(true);
   } catch (err) {
     console.error("상세 불러오기 실패", err);
@@ -120,6 +118,7 @@ const lastReviewElementRef = useCallback(
   const go_to_register = () => navigate("/sellerlist/register");
 
   return (
+    <div className={styles["page_wrapper"]}>
     <div className={styles["wrap_container"]}>
       <div className={styles["header"]}>
         <h2 className={styles["page_title"]}>업체 정보 한눈에 보기</h2>
@@ -133,47 +132,48 @@ const lastReviewElementRef = useCallback(
         )}
       </div>
 
-      {loading ? (
-        <div className={styles["loading_wrapper"]}>
-          <div className={styles["spinner"]}></div>
-          <div>불러오는 중입니다...</div>
+     {loading ? (
+  <div className={styles["loading_wrapper"]}>
+    <div className={styles["spinner"]}></div>
+    <div>불러오는 중입니다...</div>
+  </div>
+) : seller_data.dtoList.length === 0 ? (
+  <div className={styles["no_data"]}>등록된 업체가 없습니다.</div>
+) : (
+  <div className={styles["card_container"]}>
+    {seller_data.dtoList.map((seller, idx) => (
+      <div
+        className={styles["card"]}
+        key={idx}
+        onClick={() => open_modal(seller.mno)}
+      >
+        <div className={styles["card_header"]}>
+          <div className={styles["image"]}>
+            <img
+              src={getImageUrl(get_safe_image(seller.simage))}
+              alt="대표"
+            />
+          </div>
+          <div className={styles["count"]}>
+            선정 횟수: {seller.hiredCount || 0}
+          </div>
+          <div className={styles["count"]}>
+            리뷰 평점: {seller.avgRating || 0}
+          </div>
         </div>
-      ) : (
-        <div className={styles["card_container"]}>
-          {seller_data.dtoList.map((seller, idx) => (
-            <div
-              className={styles["card"]}
-              key={idx}
-              onClick={() => open_modal(seller.mno)}
-            >
-              <div className={styles["card_header"]}>
-                <div className={styles["image"]}>
-                  <img
-                    src={getImageUrl(get_safe_image(seller.simage))}
-                    alt="대표"
-                  />
-                </div>
-                <div className={styles["count"]}>
-                  선정 횟수: {seller.hiredCount || 0}
-                </div>
-                <div className={styles["count"]}>
-                  리뷰 평점: {seller.avgRating || 0}
-                  </div>
-              </div>
-              <div className={styles["info"]}>
-                <div className={styles["name"]}>
-                  {seller.sname || "업체명 없음"}
-                </div>
-                <div className={styles["address"]}>
-                  {seller.slocation || "주소 없음"}
-                </div>
-              </div>
-              <button className={styles["detail_btn"]}>상세정보</button>
-            </div>
-          ))}
+        <div className={styles["info"]}>
+          <div className={styles["name"]}>
+            {seller.sname || "업체명 없음"}
+          </div>
+          <div className={styles["address"]}>
+            {seller.slocation || "주소 없음"}
+          </div>
         </div>
-      )}
-
+        <button className={styles["detail_btn"]}>상세정보</button>
+      </div>
+    ))}
+  </div>
+)}
 
       <Pagination
         className={styles["fixed_pagination"]}
@@ -187,6 +187,7 @@ const lastReviewElementRef = useCallback(
           window.location.href = `/sellerlist?page=${pageNum}`
         }}
       />
+
 
       {modal_open && selected_seller && (() => {
         const simage = selected_seller.simage;
@@ -260,7 +261,7 @@ const lastReviewElementRef = useCallback(
 
                   <hr />
 
-                  {/* <div className={styles["review_section"]}>
+                 <div className={styles["review_section"]}>
   <button
     className={styles["toggle_review_btn"]}
     onClick={async () => {
@@ -277,34 +278,38 @@ const lastReviewElementRef = useCallback(
   </button>
 
   {showReviews && (
-    <div className={styles["review_scroll_container"]}>
-      {reviews.length === 0 ? (
-        <p>아직 리뷰가 없습니다.</p>
-      ) : (
-        <ul className={styles["review_list"]}>
-          {reviews.map((rev, idx) => {
-            const isLast = idx === reviews.length - 1;
-            return (
-              <li
-                key={idx}
-                className={styles["review_item"]}
-                ref={isLast ? lastReviewElementRef : null}
-              >
-                <div className={styles["review_rating"]}>
-                  별점: {(rev.rating / 2).toFixed(1)} / 5
-                </div>
-                <div className={styles["review_content"]}>{rev.rcontent}</div>
-                <div className={styles["review_date"]}>
-                  {new Date(rev.rregdate).toLocaleDateString()}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  )}
-</div> */}
+          <div className={styles["review_scroll_container"]}>
+            {reviews.length === 0 ? (
+              <p>아직 리뷰가 없습니다.</p>
+            ) : (
+              <ul className={styles["review_list"]}>
+                {reviews.map((rev, idx) => {
+                  const isLast = idx === reviews.length - 1;
+                  return (
+                    <li
+                      key={idx}
+                      className={styles["review_item"]}
+                      ref={isLast ? lastReviewElementRef : null}
+                    >
+                      <div className={styles["review_rating"]}>
+                        별점: {(rev.rating / 2).toFixed(1)} / 5
+                      </div>
+                      <div className={styles["review_author"]}>
+                        작성자: {rev.userName || "익명"}
+                      </div>
+                      <div className={styles["review_content"]}>{rev.rcontent}</div>
+                      <div className={styles["review_date"]}>
+                        {new Date(rev.rregdate).toLocaleDateString()}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
+      </div>
+
 
 
               </div>
@@ -336,6 +341,7 @@ const lastReviewElementRef = useCallback(
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

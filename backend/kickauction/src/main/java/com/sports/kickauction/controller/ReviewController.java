@@ -23,7 +23,7 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
-     @GetMapping("/{mno}")
+    @GetMapping("/{mno}")
     public ResponseEntity<Page<SellerReviewReadDTO>> getReviewsBySeller(
         @PathVariable Long mno,
         @RequestParam(defaultValue = "0") int page,

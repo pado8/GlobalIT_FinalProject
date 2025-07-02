@@ -1,5 +1,6 @@
 package com.sports.kickauction.repository;
 
+import com.sports.kickauction.dto.SellerReviewReadDTO;
 import com.sports.kickauction.entity.Review;
 
 import org.springframework.data.domain.Page;
@@ -21,5 +22,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByMno(Long mno);
 
     //리뷰 가져오기
-    Page<Review> findByMno(Long mno, Pageable pageable);
+  @Query("""
+  SELECT new com.sports.kickauction.dto.SellerReviewReadDTO(
+    r.mno, m.nickname, r.rating, r.rcontent, r.regDate)
+  FROM Review r
+  JOIN Member m ON r.mno = m.mno
+  JOIN Request o ON r.ono = o.ono
+  JOIN Biz b ON b.request = o
+  WHERE b.seller.mno = :sellerMno
+""")
+Page<SellerReviewReadDTO> findReviewsBySellerMno(@Param("sellerMno") Long sellerMno, Pageable pageable);
+
+
+
 }

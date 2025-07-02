@@ -27,18 +27,9 @@ public class ReviewServiceImpl implements ReviewService {
         repo.save(review);
     }
 
-     @Override
-    public Page<SellerReviewReadDTO> getReviewsBySeller(Long mno, Pageable pageable) {
-        return repo.findByMno(mno, pageable)
-                .map(this::toDTO);
-    }
+    @Override
+public Page<SellerReviewReadDTO> getReviewsBySeller(Long sellerMno, Pageable pageable) {
+    return repo.findReviewsBySellerMno(sellerMno, pageable);
+}
 
-    private SellerReviewReadDTO toDTO(Review review) {
-        return SellerReviewReadDTO.builder()
-                .mno(review.getMno())
-                .rating(review.getRating())
-                .rcontent(review.getRcontent())
-                .regdate(review.getRegDate())
-                .build();
-    }
 }
