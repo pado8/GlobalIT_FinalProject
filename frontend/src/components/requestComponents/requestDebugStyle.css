@@ -95,6 +95,11 @@
   background-color: #1f2937; /* hover:bg-gray-800 */
 }
 
+.request-body .full-submit-button:disabled {
+  background-color: #6b7280; /* gray-500 */
+  cursor: not-allowed;
+}
+
 .request-body .error-message {
   color: #ef4444; /* Tailwind의 red-500에 해당하는 색상 */
   font-size: 0.875rem;
@@ -182,6 +187,11 @@
   border-radius: 0.375rem;
   font-size: 1rem;
   transition: background-color 0.2s ease-in-out;
+}
+
+.request-body .rq-button-group button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .request-body .rq-button-group .cancel-button {

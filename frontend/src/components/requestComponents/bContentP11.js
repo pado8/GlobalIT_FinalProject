@@ -166,17 +166,20 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
 
 
         {/* 하단 버튼 */}
-        {isOwner && !(quote.finished===11) &&(
-          <div className="flex justify-between mt-6   rq-button-group">
-            <button onClick={handleModifyClick} className="md-button">
-              수정
-            </button>
-            <button onClick={handleDeleteClick} className="md-button">
-              삭제
-            </button>
-            <button onClick={handleConfirmClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button">
-              선택 업체 확정
-            </button>
+        {isOwner && quote.finished !== 11 && (
+          <div className="flex justify-between mt-6 rq-button-group">
+            {/* 진행 중인 견적(finished가 0 또는 false)일 때만 수정 버튼 표시 */}
+            {!quote.finished && (
+              <button onClick={handleModifyClick} className="md-button">
+                수정
+              </button>
+            )}
+              <button onClick={handleDeleteClick} className="md-button">
+                삭제
+              </button>
+              <button onClick={handleConfirmClick} className="confirm-button">
+                선택 업체 확정
+              </button>
           </div>
         )}
         {!isOwner && isSeller && !(quote.finished===11) && (
