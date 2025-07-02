@@ -143,8 +143,12 @@ const handleSellerDeleteClick = async () => {
                   }`}
                   onClick={() => handleCompanyCardClick(company)}
                 >
-                  <div className="text-sm font-semibold">
-                    {company.seller.sname} | {company.seller.slocation} | 리뷰 {company.seller.hiredCount ?? '-'}건
+                  <div className="company-info text-sm font-semibold">
+                    <span className="company-name">{company.seller.sname}</span>
+                    <div className="company-details">
+                      <span className="company-location">{company.seller.slocation}</span>
+                      <span className="company-review">리뷰 {company.seller.hiredCount ?? '-'}건</span>
+                    </div>
                   </div>
                   <div className="text-sm mt-1 truncate">{company.biz.bcontent}</div>
                   <div className="text-sm mt-1 truncate">{company.biz.banswer}</div>

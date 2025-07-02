@@ -461,6 +461,37 @@
   background-color: #1F2937; /* hover:bg-gray-800 */
 }
 
+/* 업체 정보 반응형 스타일 */
+.company-info {
+  /* 기본적으로 이름과 상세 정보가 세로로 배치됩니다. */
+}
+
+.company-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px; /* 이름과 상세 정보 사이의 간격 */
+}
+
+/* 넓은 화면 (640px 이상)에 대한 미디어 쿼리 */
+@media (min-width: 750px) {
+  .company-info {
+    display: flex; /* 가로 정렬을 위해 flex 사용 */
+    align-items: center;
+  }
+
+  .company-details {
+    display: contents; /* wrapper를 없는 것처럼 처리하여 자식 요소들이 company-info의 flex item이 되도록 함 */
+  }
+
+  /* 구분자(|) 추가 */
+  .company-details .company-location::before,
+  .company-details .company-review::before {
+    content: "|";
+    margin: 0 0.5rem; /* 구분자 좌우 여백 */
+    color: #6b7280; /* 구분자 색상 */
+  }
+}
+
 /* Paging ------------------------------------------------------------------------------------------------------ */
 
 .rq-paging-container { 
