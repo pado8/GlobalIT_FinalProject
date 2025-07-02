@@ -44,4 +44,9 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
     // 진행 중인 order 중 가장 최신 1건
     Optional<Request> findTopByMnoAndFinishedOrderByOregdateDesc(Long mno, int finished);
 
+    // 진행/완료 order
+    int countByMnoAndFinished(Long mno, int finished); 
+    int countByMnoAndFinishedNot(Long mno, int finished); 
+    int countByMno(Long mno);
+
 }

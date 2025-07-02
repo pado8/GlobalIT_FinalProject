@@ -23,4 +23,7 @@ public interface BizRepository extends JpaRepository<Biz, Long> {
 
     // 주석: order에 달린 개수
     int countByRequest(Request request);
+
+    // 주석: 자신의 모든 biz 개수
+    int countBySeller_Mno(Long mno);
 }

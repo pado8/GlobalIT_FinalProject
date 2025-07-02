@@ -13,6 +13,7 @@ const Nav = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [latestRequestCount, setLatestRequestCount] = useState(null);
+  const [hasRequest, setHasRequest] = useState(true);
   const { user, setUser } = useAuth();
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
@@ -49,17 +50,22 @@ const Nav = () => {
           console.error("서버 오류:", res.status);
           return;
         }
-        const count = await res.json();
 
-        if (typeof count === "number") {
-          setLatestRequestCount(count);
+        const countData = await res.json();
+        console.log("[latestRequestCount 응답]", countData);
+
+        if (typeof countData.count === "number") {
+          setLatestRequestCount(countData.count);
+          setHasRequest(countData.hasRequest); // ✅ 상태 추가
         } else {
-          console.warn("예상치 못한 응답 형태:", count);
+          console.warn("예상치 못한 응답 형태:", countData);
           setLatestRequestCount(0);
+          setHasRequest(false);
         }
       } catch (err) {
         console.error("제안 수 불러오기 실패", err);
         setLatestRequestCount(0);
+        setHasRequest(false);
       }
     };
 
@@ -114,8 +120,14 @@ const Nav = () => {
                   <strong>{user.nickname}</strong> 님
                 </p>
                 <p className={styles.recentsuggest}>
-                  {/* 최근 견적 요청에 <strong>{제안개수}</strong>개의 제안 도착 */}
-                  최근 견적 요청에 <span className={styles.recentsuggest_count}>{latestRequestCount ?? 0}</span>개의 제안이 도착했어요.
+                  {!hasRequest ? (
+                    "진행 중인 견적 요청이 없어요."
+                  ) : (
+                    <>
+                      최근 견적 요청에 <span className={styles.recentsuggest_count}>{latestRequestCount ?? 0}</span>
+                      개의 제안이 도착했어요.
+                    </>
+                  )}
                 </p>
                 <div className={styles.sidebar_buttons}>
                   <Link to="/mypage" className={styles.dropdown_btn} onClick={() => setDropdownOpen(false)}>

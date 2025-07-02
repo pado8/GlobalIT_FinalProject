@@ -326,19 +326,38 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
     }
 
     // 매핑: 해당 mno의 회원의 활성화중인 order중 가장 최근꺼 숫자구하기
-    @GetMapping("/members/{mno}/latest-biz-count")
-    public ResponseEntity<Integer> getLatestBizCount(@PathVariable Long mno) {
+    @GetMapping("/{mno}/latest-biz-count")
+    public ResponseEntity<Map<String, Object>> getLatestBizCount(@PathVariable Long mno) {
         // 주석: (finished = 0 )
         Request latestOngoingOrder = requestRepository
         .findTopByMnoAndFinishedOrderByOregdateDesc(mno, 0)
         .orElse(null);
 
-    if (latestOngoingOrder == null) return ResponseEntity.ok(0);
+    int count = (latestOngoingOrder == null) ? 0 : bizRepository.countByRequest(latestOngoingOrder);
 
-    int count = bizRepository.countByRequest(latestOngoingOrder);
-
-    return ResponseEntity.ok(count);
+   return ResponseEntity.ok(
+    Map.of("hasRequest", latestOngoingOrder != null, "count", count)
+    );
     }
 
+    // 매핑: 진행중/완료 견적 수
+    @GetMapping("/{mno}/request-counts")
+    public ResponseEntity<?> getMyRequestCounts(@PathVariable Long mno) {
+        int ongoing = requestRepository.countByMnoAndFinished(mno, 0);
+        int completed = requestRepository.countByMnoAndFinishedNot(mno, 0);
+        int total = requestRepository.countByMno(mno);
 
+        return ResponseEntity.ok(Map.of(
+            "ongoing", ongoing,
+            "completed", completed,
+            "total", total
+        ));
+    }
+
+    // 매핑: 자신의 모든biz 수 
+    @GetMapping("/{mno}/biz-count")
+    public ResponseEntity<Map<String, Integer>> getTotalBizCount(@PathVariable Long mno) {
+        int count = bizRepository.countBySeller_Mno(mno);
+        return ResponseEntity.ok(Map.of("count", count));
+    }
 }
