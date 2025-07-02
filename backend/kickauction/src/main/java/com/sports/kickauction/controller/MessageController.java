@@ -153,7 +153,7 @@ public class MessageController {
         ));
     }
 
-    //
+    //주석: 읽음처리
     @PutMapping("/mark-read")
     public ResponseEntity<?> markMessagesAsRead(
         Principal principal,
@@ -167,5 +167,12 @@ public class MessageController {
         return ResponseEntity.ok().build();
     }
 
+    // 주석: 읽지 않은 메세지 총 개수
+    @GetMapping("/unread/total")
+    public ResponseEntity<Long> getTotalUnreadCount(Principal principal) {
+        Member me = memberService.findByUserId(principal.getName());
+        long count = messageRepository.countUnreadByReceiver(me);
+        return ResponseEntity.ok(count);
+    }
 
 }

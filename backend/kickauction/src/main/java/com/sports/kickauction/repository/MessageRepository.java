@@ -84,4 +84,8 @@ ORDER BY sub.last_sent_at DESC
     int markMessagesAsRead(@Param("me") Member me, @Param("target") Member target);
 
     List<Message> findBySenderAndReceiverAndIsReadFalse(Member sender, Member receiver);
+
+    // 읽지 않은 메세지 총 개수 카운팅
+    @Query("SELECT COUNT(m) FROM Message m WHERE m.receiver = :me AND m.isRead = false AND m.deletedByReceiver = false")
+    long countUnreadByReceiver(@Param("me") Member me);
 }

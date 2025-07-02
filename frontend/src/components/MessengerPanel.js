@@ -245,7 +245,16 @@ export default function MessengerPanel({ targetUser, onClose }) {
                       <span className={styles.speaker_name}>{selectedRoom.name}</span>
                     </div>
                   )}
-                  <span className={styles.message_text}>{msg.text}</span>
+                  <span className={styles.message_text}>
+                    {msg.text.startsWith("[킥옥션 자동발송]") ? (
+                      <>
+                        <span className={styles.pink}>[킥옥션 자동발송]</span>
+                        {msg.text.replace("[킥옥션 자동발송]", "")}
+                      </>
+                    ) : (
+                      msg.text
+                    )}
+                  </span>
                   {msg.sentAt && <div className={styles.message_time}>{new Date(msg.sentAt).toLocaleTimeString()}</div>}
                 </div>
               ))
