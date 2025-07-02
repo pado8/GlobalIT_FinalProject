@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -112,6 +113,7 @@ public class MemberController {
 
     // 매핑: 프로필사진 업로드
     @PostMapping("/upload_profile")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> uploadProfileImage(
         @RequestParam("file") MultipartFile file,
         @RequestParam("mno") Long mno) {
@@ -149,6 +151,7 @@ public class MemberController {
 
     // 매핑: 회원정보 업데이트
     @PutMapping("/update")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateMember(
         @RequestParam Long mno,
         @RequestParam String userName,
@@ -262,6 +265,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 마이페이지- ROLE변경(->seller)
     @PatchMapping("/changetoseller")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changetoseller(
            @RequestParam Long mno,
            @RequestParam(required = false) String sname,
@@ -280,6 +284,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 마이페이지- ROLE변경(->user)
     @PatchMapping("/changetouser")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changetouser(@RequestParam Long mno) {
           memberService.changeToUser(mno);
           return ResponseEntity.ok("변경 완료");
@@ -294,6 +299,8 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 회원탈퇴
     @DeleteMapping("/{mno}")
+    @PreAuthorize("isAuthenticated()")
+    
     public ResponseEntity<?> deleteMember(
     @PathVariable Long mno,
     HttpServletRequest request
