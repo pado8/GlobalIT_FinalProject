@@ -73,17 +73,6 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => 
       alert(errorMessage);
     }
   };
-
-const handleSellerCreateClick = async () => {
-  console.log("업체 : 견적 작성 클릭");
-}
-const handleSellerModifyClick = async () => {
-  console.log("업체 : 견적 수정 클릭");
-}
-const handleSellerDeleteClick = async () => {
-  console.log("업체 : 견적 삭제(포기,취소) 클릭");
-}
-
   
 
   return (
@@ -181,8 +170,8 @@ const handleSellerDeleteClick = async () => {
         {!isOwner && isSeller && !(quote.finished===11) && (
           hasSellerBid ? (
             <div className="flex justify-between mt-6 rq-button-group">
-              <button onClick={handleSellerModifyClick} className="md-button">수정</button>
-              <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
+              <button  className="md-button">수정</button>
+              <button  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
             </div>
           ) : (
             <div className="mt-6">

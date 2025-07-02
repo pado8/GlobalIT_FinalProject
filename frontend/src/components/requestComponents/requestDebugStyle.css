@@ -370,6 +370,7 @@
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #E5E7EB; /* border-b */
+  position: relative;
 }
 
 .request-body .bcontent-summary .mt-1 {
@@ -389,7 +390,7 @@
   cursor: pointer;
   transition: color 0.2s ease-in-out;
   position: absolute;
-  right: 1rem;
+  right: -0.7rem;
 }
 
 .request-body .rq-undo-btn:hover {
@@ -414,9 +415,8 @@
 }
 
 .request-body .company-card.selected {
-  border-color: #3B82F6; /* border-blue-500 */
-  border-width: 2px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* shadow-md */
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 1px #3B82F6, 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .request-body .company-card .truncate {
@@ -472,7 +472,15 @@
   margin-top: 4px; /* 이름과 상세 정보 사이의 간격 */
 }
 
-/* 넓은 화면 (640px 이상)에 대한 미디어 쿼리 */
+/* 업체 정보(이름, 위치, 리뷰)가 길어질 경우 ...으로 생략되도록 처리 */
+.company-info .company-name,
+.company-info .company-location,
+.company-info .company-review {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 넓은 화면에 대한 미디어 쿼리 */
 @media (min-width: 750px) {
   .company-info {
     display: flex; /* 가로 정렬을 위해 flex 사용 */
