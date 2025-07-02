@@ -421,14 +421,6 @@
   margin: 1rem 0;
 }
 
-/* 항목 크기 조정: 한 줄에 최대 3개 */
-.orderlist_simple .order_item,
-.sellerlist_simple .seller_item {
-  flex: 1 1 calc(100% / 3 - 1rem);
-  max-width: calc(100% / 3 - 1rem);
-  box-sizing: border-box;
-}
-
 /* 반응형 조정 */
 @media (max-width: 992px) {
   .slick-prev {
