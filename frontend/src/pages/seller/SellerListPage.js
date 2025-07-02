@@ -88,6 +88,19 @@ const SellerListPage = () => {
     setPage(page_from_url);
   }, [search_params]);
 
+  useEffect(() => {
+  if (modal_open) {
+    document.body.style.overflow = "hidden";  // 스크롤 잠금
+  } else {
+    document.body.style.overflow = "auto";    // 스크롤 복원
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";    // cleanup
+  };
+}, [modal_open]);
+
+
   const open_modal = async (mno) => {
   try {
     const detail = await getSellerDetail(mno);
@@ -137,7 +150,14 @@ const lastReviewElementRef = useCallback(
   [reviewPage, hasMoreReviews, showReviews, selected_seller]
 );
 
-  const close_modal = () => setModalOpen(false);
+    const close_modal = () => {
+    setModalOpen(false);
+    setSelectedSeller(null);
+    setReviews([]);
+    setReviewPage(0);
+    setHasMoreReviews(true);
+    setShowReviews(false);  
+  };
   const go_to_register = () => navigate("/sellerlist/register");
 
   return (
@@ -286,19 +306,22 @@ const lastReviewElementRef = useCallback(
 
                  <div className={styles["review_section"]}>
   <button
-    className={styles["toggle_review_btn"]}
-    onClick={async () => {
-      if (!showReviews) {
-        const data = await getReviewsBySeller(selected_seller.mno, 0);
-        setReviews(data.content);
-        setReviewPage(1);
-        setHasMoreReviews(!data.last);
-      }
-      setShowReviews(prev => !prev);
-    }}
-  >
-    {showReviews ? "리뷰 닫기" : "리뷰 보기"}
-  </button>
+  className={styles["toggle_review_btn"]}
+  onClick={async () => {
+    if (!showReviews) {
+      setReviews([]);           // 초기화 추가
+      setReviewPage(0);         // 초기화 추가
+      const data = await getReviewsBySeller(selected_seller.mno, 0);
+      setReviews(data.content);
+      setReviewPage(1);
+      setHasMoreReviews(!data.last);
+    }
+    setShowReviews(prev => !prev);
+  }}
+>
+  {showReviews ? "리뷰 닫기" : "리뷰 보기"}
+</button>
+
 
   {showReviews && (
           <div className={styles["review_scroll_container"]}>
@@ -315,7 +338,7 @@ const lastReviewElementRef = useCallback(
                       ref={isLast ? lastReviewElementRef : null}
                     >
                       <div className={styles["review_rating"]}>
-                        {renderStars(rev.rating)} <span>{(rev.rating / 2).toFixed(1)} / 5</span>
+                        {renderStars(rev.rating)} 
                       </div>
                       <div className={styles["review_author"]}>
                         작성자: {rev.username || "익명"}
