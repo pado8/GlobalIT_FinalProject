@@ -8,7 +8,7 @@ import "./requestDebugStyle.css";
 
 
 // 견적 상세보기
-const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => {
+const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onCompanyInfoClick }) => {
   const navigate = useNavigate();
   const { ono } = useParams(); // URL 파라미터 (견적 ID)
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -74,6 +74,11 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => 
     }
   };
   
+  const handleCompanyInfoClick = (e, company) => {
+    e.stopPropagation(); // 부모 요소의 클릭 이벤트(업체 선택) 전파를 막습니다.
+    onCompanyInfoClick(company); // 부모로부터 받은 모달 열기 함수를 호출합니다.
+  };
+  
 
   return (
     <div className='request-body bg-cover bg-center'>
@@ -132,7 +137,10 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => 
                   }`}
                   onClick={() => handleCompanyCardClick(company)}
                 >
-                  <div className="company-info text-sm font-semibold">
+                  <div
+                    className="company-info text-sm font-semibold"
+                    onClick={(e) => handleCompanyInfoClick(e, company)}
+                  >
                     <span className="company-name">{company.seller.sname}</span>
                     <div className="company-details">
                       <span className="company-location">{company.seller.slocation}</span>
@@ -141,7 +149,11 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => 
                   </div>
                   <div className="text-sm mt-1 truncate">{company.biz.bcontent}</div>
                   <div className="text-sm mt-1 truncate">{company.biz.banswer}</div>
-                  <div className="font-semibold mt-2">제시가 {(company.biz.price ?? 0).toLocaleString('ko-KR')}원~</div>
+                  <div className="font-semibold mt-2 truncate">
+                    {company.biz.price && company.biz.price > 0
+                      ? `제시가 ${company.biz.price.toLocaleString('ko-KR')}원~`
+                      : '가격 협의'}
+                  </div>
                 </div>
               ))
             ) : (
