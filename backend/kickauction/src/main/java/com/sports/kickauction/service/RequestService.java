@@ -5,6 +5,8 @@ import com.sports.kickauction.dto.PageResponseDTO;
 import com.sports.kickauction.dto.RequestDTO;
 import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
+import com.sports.kickauction.dto.RequestPageCustomReqDTO;
+import com.sports.kickauction.dto.RequestPageCustomResDTO;
 import com.sports.kickauction.dto.RequestReadDTO;
 
 import org.springframework.data.domain.Pageable;
@@ -41,11 +43,9 @@ public interface RequestService {
 
     // ---
     // 특정 회원의 견적을 상태별로 페이지네이션 반환 타입이 RequestPageResponseDTO<RequestDTO>로 변경
-    // PageResponseDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, String status, Pageable pageable);
+    RequestPageCustomResDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, RequestPageCustomReqDTO dto);
     // 전체 견적 리스트를 finished 상태로 필터링하여 페이지네이션
     // 반환 타입이 RequestPageResponseDTO<RequestReadDTO>로 변경
-    // RequestPageResponseDTO<RequestReadDTO> getOrderMyList(RequestPageRequestDTO dto);
-    // RequestPageResponseDTO 사용하여 페이징처리 
-    // PageResponseDTO<RequestReadDTO> getOrderMyList(RequestPageResponseDTO requestPageResponseDTO);
+    RequestPageCustomResDTO<RequestReadDTO> getOrderMyList(RequestPageCustomReqDTO dto);
 
 }

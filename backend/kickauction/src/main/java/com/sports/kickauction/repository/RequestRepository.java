@@ -31,6 +31,10 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
    List<Request> findByFinishedAndOregdateBefore(int finished, LocalDateTime before); //삭제 기한 지난 견적 조회
    Page<Request> findByMnoAndFinished(int mno, int finished, Pageable pageable);
 
+   // 여러 finished 상태를 한 번에 조회하기 위한 메서드
+   @Query("SELECT r FROM Request r WHERE r.mno = :mno AND r.finished IN :finishedStatusList")
+   Page<Request> findByMnoAndFinishedIn(@Param("mno") int mno, @Param("finishedStatusList") List<Integer> finishedStatusList, Pageable pageable);
+
    // finished가 null이면 모든 상태를 가져오고, 아니면 해당 finished 값으로 필터링
     @Query("SELECT r FROM Request r WHERE " +
            "(:finishedParam IS NULL OR r.finished = :finishedParam)")
