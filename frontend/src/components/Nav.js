@@ -40,6 +40,32 @@ const Nav = () => {
     closeSidebar();
   };
 
+  // 주석: 최근order에 달린 biz개수 가져오기
+  useEffect(() => {
+    const fetchLatestBizCount = async () => {
+      try {
+        const res = await fetch(`/api/members/${user.mno}/latest-biz-count`);
+        if (!res.ok) {
+          console.error("서버 오류:", res.status);
+          return;
+        }
+        const count = await res.json();
+
+        if (typeof count === "number") {
+          setLatestRequestCount(count);
+        } else {
+          console.warn("예상치 못한 응답 형태:", count);
+          setLatestRequestCount(0);
+        }
+      } catch (err) {
+        console.error("제안 수 불러오기 실패", err);
+        setLatestRequestCount(0);
+      }
+    };
+
+    if (user) fetchLatestBizCount();
+  }, [user]);
+
   return (
     <>
       <nav className={styles.nav} id="header">
@@ -88,8 +114,8 @@ const Nav = () => {
                   <strong>{user.nickname}</strong> 님
                 </p>
                 <p className={styles.recentsuggest}>
-                  {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
-                  최근 견적 요청에 <span className={styles.recentsuggest_count}>3 </span>개의 제안이 도착했어요.
+                  {/* 최근 견적 요청에 <strong>{제안개수}</strong>개의 제안 도착 */}
+                  최근 견적 요청에 <span className={styles.recentsuggest_count}>{latestRequestCount ?? 0}</span>개의 제안이 도착했어요.
                 </p>
                 <div className={styles.sidebar_buttons}>
                   <Link to="/mypage" className={styles.dropdown_btn} onClick={() => setDropdownOpen(false)}>

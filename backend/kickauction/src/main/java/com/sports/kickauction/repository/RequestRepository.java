@@ -2,6 +2,7 @@ package com.sports.kickauction.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,5 +40,8 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
     @Query("SELECT r FROM Request r WHERE " +
            "(:finishedParam IS NULL OR r.finished = :finishedParam)")
     Page<Request> findByFinishedFilter(@Param("finishedParam") Integer finished, Pageable pageable);
+
+    // 진행 중인 order 중 가장 최신 1건
+    Optional<Request> findTopByMnoAndFinishedOrderByOregdateDesc(Long mno, int finished);
 
 }

@@ -26,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.entity.Request;
+import com.sports.kickauction.repository.BizRepository;
+import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.SellerService;
@@ -40,6 +43,8 @@ public class MemberController {
   
   private final MemberService memberService;
   private final SellerService sellerService;
+  private final RequestRepository requestRepository;
+  private final BizRepository bizRepository;
 
     // 매핑:이메일 체크
     @GetMapping("/email_check")
@@ -318,6 +323,21 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("서버 오류: " + e.getMessage());
         }
+    }
+
+    // 매핑: 해당 mno의 회원의 활성화중인 order중 가장 최근꺼 숫자구하기
+    @GetMapping("/members/{mno}/latest-biz-count")
+    public ResponseEntity<Integer> getLatestBizCount(@PathVariable Long mno) {
+        // 주석: (finished = 0 )
+        Request latestOngoingOrder = requestRepository
+        .findTopByMnoAndFinishedOrderByOregdateDesc(mno, 0)
+        .orElse(null);
+
+    if (latestOngoingOrder == null) return ResponseEntity.ok(0);
+
+    int count = bizRepository.countByRequest(latestOngoingOrder);
+
+    return ResponseEntity.ok(count);
     }
 
 
