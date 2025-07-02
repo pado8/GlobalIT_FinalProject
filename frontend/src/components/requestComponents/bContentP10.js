@@ -23,12 +23,12 @@ const List = ({ title, quotes, type }) => {
   return (
     <div className='request-body omypMain'>
       <section className="mt-6">
-        <div className="flex justify-between items-center mb-2">
+        <div className="rq-flex-container-panel-title">
           <h2 className="font-bold text-lg">{title}</h2>
           {title === '진행 견적' && (
             <button
               onClick={() => navigate('/request/write')}
-              className="text-gray-600 hover:text-black"
+              className="rq-create-btn"
               aria-label="견적 작성"
             >
               <FaPencilAlt size={20} />
@@ -91,7 +91,7 @@ const List = ({ title, quotes, type }) => {
                     {type === 'closed' && quote.finished === 11 && (
                       <button
                         onClick={() => openModal(quote)}
-                        className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm"
+                        className="rq-review-default-btn"
                       >
                         리뷰 작성
                       </button>

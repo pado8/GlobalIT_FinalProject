@@ -4,9 +4,9 @@ const Pagination = ({ current, size, totalCount, onPageChange, prev, next }) => 
   const totalPages = Math.ceil(totalCount / size);
 
   return (
-    <div className="flex justify-center items-center gap-4 mt-4">
+    <div className="rq-paging-container">
       <button
-        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        className="rq-paging-btn"
         onClick={() => onPageChange(current - 1)}
         disabled={!prev}
       >
@@ -18,7 +18,7 @@ const Pagination = ({ current, size, totalCount, onPageChange, prev, next }) => 
       </div>
 
       <button
-        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        className="rq-paging-btn"
         onClick={() => onPageChange(current + 1)}
         disabled={!next}
       >
