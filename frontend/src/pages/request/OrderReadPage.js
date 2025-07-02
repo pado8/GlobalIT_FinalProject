@@ -8,6 +8,7 @@ import { getSellerDetail } from '../../api/SellerApi'; // 업체 상세 정보 A
 import { getImageUrl } from '../../api/UploadImageApi'; // 이미지 URL API
 
 import BContentP11 from "../../components/requestComponents/bContentP11";
+import useBodyScrollLock from '../../hooks/useBodyScrollLock'; // 스크롤 방지 훅 임포트
 import Hero from "../../components/requestComponents/bHero";
 
 const heroContent = {
@@ -29,6 +30,9 @@ const OrderReadPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSellerDetail, setSelectedSellerDetail] = useState(null);
   const [enlargedImage, setEnlargedImage] = useState(null);
+
+  // 모달 상태에 따라 스크롤 방지 훅 호출
+  useBodyScrollLock(isModalOpen || !!enlargedImage);
 
   const isOwner = useMemo(() => {
     let checkVal;
@@ -272,13 +276,13 @@ const OrderReadPage = () => {
       {isModalOpen && selectedSellerDetail && (() => {
         const mainImg = getSafeImage(selectedSellerDetail.simage);
         return (
-          <div className="modal_overlay" onClick={closeCompanyModal}>
-            <div className="modal_content" onClick={e => e.stopPropagation()}>
-              <div className="modal_header">
+          <div className="rq-modal-overlay" onClick={closeCompanyModal}>
+            <div className="rq-modal_content" onClick={e => e.stopPropagation()}>
+              <div className="rq-modal_header">
                 <h3>업체 상세 정보</h3>
                 <button onClick={closeCompanyModal}>✕</button>
               </div>
-              <div className="modal_body">
+              <div className="rq-modal_body">
                 <div className="seller_top">
                   <div
                     className={`seller_image ${mainImg === "default/default.png" ? "non_clickable" : "clickable"}`}
@@ -304,10 +308,10 @@ const OrderReadPage = () => {
                 <div className="seller_detail">
                   <p><strong>업체 정보</strong><br />{selectedSellerDetail.info || "정보 없음"}</p>
                   <p><strong>업체 소개</strong><br />{selectedSellerDetail.introContent || "소개 없음"}</p>
-                  <hr className="modal-divider" />
-                  <p><strong>이 견적에 대한 제안 내용</strong></p>
-                  <p><strong>한 줄 소개:</strong> {selectedSellerDetail.biz.bcontent}</p>
-                  <p><strong>상세 답변:</strong> {selectedSellerDetail.biz.banswer}</p>
+                  <hr className="rq-modal-divider" />
+                  <p><strong>제안 내용</strong></p>
+                  <p><strong>한 줄 소개 :</strong> {selectedSellerDetail.biz.bcontent}</p>
+                  <p><strong>질문 답변 :</strong><br /><span className="preserve-lines">{selectedSellerDetail.biz.banswer}</span></p>
                 </div>
               </div>
             </div>
@@ -317,14 +321,14 @@ const OrderReadPage = () => {
 
       {/* 이미지 확대 모달 */}
       {enlargedImage && (
-        <div className="modal_overlay" onClick={closeCompanyModal}>
-          <div className="modal_content enlarged_image_modal" onClick={e => e.stopPropagation()}>
-            <div className="modal_header">
+        <div className="rq-modal-overlay" onClick={closeCompanyModal}>
+          <div className="rq-modal_content enlarged_image_modal" onClick={e => e.stopPropagation()}>
+            <div className="rq-modal_header">
               <h3>이미지 확대 보기</h3>
               <button onClick={closeCompanyModal}>✕</button>
             </div>
-            <div className="modal_body" style={{ textAlign: "center" }}>
-              <img src={enlargedImage} alt="확대 이미지" className="enlarged_image_content" />
+            <div className="rq-modal_body" style={{ textAlign: "center" }}>
+              <img src={enlargedImage} alt="확대 이미지" className="rq-enlarged_image_content" />
             </div>
           </div>
         </div>

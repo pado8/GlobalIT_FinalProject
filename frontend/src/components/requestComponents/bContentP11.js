@@ -146,6 +146,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
                       <span className="company-location">{company.seller.slocation}</span>
                       <span className="company-review">리뷰 {company.seller.hiredCount ?? '-'}건</span>
                     </div>
+                    <hr/>
                   </div>
                   <div className="text-sm mt-1 truncate">{company.biz.bcontent}</div>
                   <div className="text-sm mt-1 truncate">{company.biz.banswer}</div>

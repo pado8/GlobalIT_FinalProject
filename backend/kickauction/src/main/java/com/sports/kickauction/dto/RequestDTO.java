@@ -32,6 +32,9 @@ public class RequestDTO {
     private LocalDateTime oregdate;
     private int finished;
 
+
+    private boolean hasReview; // 리뷰 여부(DB와 무관)
+
     @Builder.Default
     private Map<String, Object> extraAttributes = new HashMap<>();
 
