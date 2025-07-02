@@ -44,6 +44,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
           preview: room.lastMessage || "",
           mno: room.partnerMno,
           messages: [],
+          unread: room.unreadCount || 0,
         }));
         setRoomList([BOT_ROOM, ...mappedRooms]);
       } catch (err) {
@@ -102,26 +103,35 @@ export default function MessengerPanel({ targetUser, onClose }) {
   };
 
   // 3. 채팅방 클릭 시 해당 방 대화내역 불러오기
-  const handleRoomClick = (room) => {
+  const handleRoomClick = async (room) => {
     setSelectedId(room.id);
     if (room.id === "bot") return;
-    getDialog(room.id).then((msgs) => {
-      setRoomList((rooms) =>
-        rooms.map((r) =>
-          r.id === room.id
-            ? {
-                ...r,
-                messages: msgs.map((m) => ({
-                  from: (m.senderId || m.sender?.mno) === user.mno ? "me" : "user",
-                  text: m.content,
-                  sentAt: m.sentAt,
-                })),
-                preview: msgs.length > 0 ? msgs[msgs.length - 1].content : "",
-              }
-            : r
-        )
-      );
+
+    // 읽음 처리 요청
+    await fetch(`/api/messages/mark-read?partnerId=${room.id}`, {
+      method: "PUT",
+      credentials: "include",
     });
+
+    // 대화 불러오기
+    const msgs = await getDialog(room.id);
+
+    setRoomList((rooms) =>
+      rooms.map((r) =>
+        r.id === room.id
+          ? {
+              ...r,
+              messages: msgs.map((m) => ({
+                from: (m.senderId || m.sender?.mno) === user.mno ? "me" : "user",
+                text: m.content,
+                sentAt: m.sentAt,
+              })),
+              preview: msgs.length > 0 ? msgs[msgs.length - 1].content : "",
+              unread: 0,
+            }
+          : r
+      )
+    );
   };
 
   // 메세지 전송
@@ -235,7 +245,16 @@ export default function MessengerPanel({ targetUser, onClose }) {
                       <span className={styles.speaker_name}>{selectedRoom.name}</span>
                     </div>
                   )}
-                  <span className={styles.message_text}>{msg.text}</span>
+                  <span className={styles.message_text}>
+                    {msg.text.startsWith("[킥옥션 자동발송]") ? (
+                      <>
+                        <span className={styles.pink}>[킥옥션 자동발송]</span>
+                        {msg.text.replace("[킥옥션 자동발송]", "")}
+                      </>
+                    ) : (
+                      msg.text
+                    )}
+                  </span>
                   {msg.sentAt && <div className={styles.message_time}>{new Date(msg.sentAt).toLocaleTimeString()}</div>}
                 </div>
               ))

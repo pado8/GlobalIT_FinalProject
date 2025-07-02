@@ -24,14 +24,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     //리뷰 가져오기
   @Query("""
   SELECT new com.sports.kickauction.dto.SellerReviewReadDTO(
-    r.mno, m.nickname, r.rating, r.rcontent, r.regDate)
+    r.writer.mno, m.nickname, r.rating, r.rcontent, r.regDate)
   FROM Review r
-  JOIN Member m ON r.mno = m.mno
-  JOIN Request o ON r.ono = o.ono
-  JOIN Biz b ON b.request = o
-  WHERE b.seller.mno = :sellerMno
+  JOIN Member m ON r.writer.mno = m.mno
+  WHERE r.mno = :sellerMno
 """)
 Page<SellerReviewReadDTO> findReviewsBySellerMno(@Param("sellerMno") Long sellerMno, Pageable pageable);
+
 
 
 

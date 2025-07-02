@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import com.sports.kickauction.dto.MessageRoomDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Message;
 import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.repository.MessageRepository;
 import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.MessageService;
@@ -39,6 +41,8 @@ public class MessageController {
     private final MessageService messageService;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final MessageRepository messageRepository;
+
 
     // 쪽지 보내기
     @PostMapping
@@ -67,8 +71,12 @@ public class MessageController {
         if (targetUser == null) {
             return ResponseEntity.badRequest().body("상대방을 찾을 수 없습니다.");
         }
+
+         // 주석: 안 읽은 메시지 읽음 처리
+         messageRepository.markMessagesAsRead(me, targetUser);
+
         List<Message> dialog = messageService.getDialog(me, targetUser);
-        // 👇 여기서 엔티티 → DTO로 변환!
+        // 주석: entity->DTO Trans
         List<MessageDTO> dtoList = dialog.stream()
             .map(msg -> {
                 MessageDTO dto = new MessageDTO();
@@ -77,42 +85,13 @@ public class MessageController {
                 dto.setSentAt(msg.getSentAt());
                 dto.setSenderId(msg.getSender().getMno());
                 dto.setReceiverId(msg.getReceiver().getMno());
-                // 필요하면 추가 필드
+                dto.setIsRead(msg.getIsRead());
+                
                 return dto;
             })
             .collect(Collectors.toList());
         return ResponseEntity.ok(dtoList);
     }
-
-    // 받은 쪽지함
-    @GetMapping("/inbox")
-    public ResponseEntity<?> getInbox(Principal principal) {
-        Member me = memberService.findByUserId(principal.getName());
-        List<Message> inbox = messageService.getInbox(me);
-        return ResponseEntity.ok(inbox);
-    }
-
-    // 보낸 쪽지함
-    @GetMapping("/outbox")
-    public ResponseEntity<?> getOutbox(Principal principal) {
-        Member me = memberService.findByUserId(principal.getName());
-        List<Message> outbox = messageService.getOutbox(me);
-        return ResponseEntity.ok(outbox);
-    }
-
-    // 쪽지 삭제 (내가 보낸 쪽지/받은 쪽지 구분)
-    @DeleteMapping("/{msgId}")
-    public ResponseEntity<?> deleteMessage(
-            Principal principal,
-            @PathVariable Long msgId,
-            @RequestParam String type // sender | receiver
-    ) {
-        Member me = memberService.findByUserId(principal.getName());
-        boolean isSender = "sender".equals(type);
-        messageService.deleteMessage(msgId, me, isSender);
-        return ResponseEntity.ok("삭제되었습니다.");
-    }
-
 
     // 채팅방 열면 채팅기록 불러오기
     @GetMapping("/rooms")
@@ -173,4 +152,27 @@ public class MessageController {
             "profileimg", target.getProfileimg()
         ));
     }
+
+    //주석: 읽음처리
+    @PutMapping("/mark-read")
+    public ResponseEntity<?> markMessagesAsRead(
+        Principal principal,
+        @RequestParam Long partnerId
+    ) {
+        Member me = memberService.findByUserId(principal.getName());
+        Member partner = memberService.findById(partnerId);
+        if (partner == null) return ResponseEntity.badRequest().body("상대방 없음");
+
+        messageService.markMessagesAsRead(me, partner);
+        return ResponseEntity.ok().build();
+    }
+
+    // 주석: 읽지 않은 메세지 총 개수
+    @GetMapping("/unread/total")
+    public ResponseEntity<Long> getTotalUnreadCount(Principal principal) {
+        Member me = memberService.findByUserId(principal.getName());
+        long count = messageRepository.countUnreadByReceiver(me);
+        return ResponseEntity.ok(count);
+    }
+
 }

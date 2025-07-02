@@ -105,6 +105,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           className={`input-setting-p08 ${field.error ? "border-red-500" : ""}`}
           placeholder={currentPlaceholder}
           readOnly={isReadOnly}
+          maxLength={field.name === 'rentalTime' ? 5 : undefined}
         />
       );
     case "textarea":
@@ -314,7 +315,7 @@ const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
                     {selectedSido !== "세종특별자치시" && (
                       <>
                         <select
-                          value={formData.region?.split(" ")[1] || ""}
+                          value={(formData.region?.split(" ") || []).slice(1).join(" ")}
                           onChange={e => {
                             const region = `${selectedSido} ${e.target.value}`;
                             handleChange({ target: { name: "region", value: region } });
