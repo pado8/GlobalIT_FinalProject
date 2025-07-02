@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { FaArrowLeft } from 'react-icons/fa';
 
@@ -173,9 +173,14 @@ const handleSellerDeleteClick = async () => {
               <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
             </div>
           ) : (
-            <div className="mt-6 rq-button-group">
-              <button onClick={handleSellerCreateClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">입찰하기</button>
-            </div>
+            <div className="mt-6">
+            <Link
+              to={`/request/${ono}/bizregister`}
+              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+            >
+              입찰하기
+            </Link>
+          </div>
           )
         )}
       </div>
