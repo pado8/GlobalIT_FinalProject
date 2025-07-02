@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { getOrderList } from "../api/RequestApi";
 import { getList as getCommunityList } from "../api/communityApi";
-// ← 여기에 getSellerDetail 추가
 import { getSellerList, getSellerDetail } from "../api/SellerApi";
 import { getImageUrl } from "../api/UploadImageApi";
 import "slick-carousel/slick/slick.css";
@@ -33,6 +32,10 @@ const MainPage = () => {
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [enlargedImage, setEnlargedImage] = useState(null);
 
+  // 기준 이하일 때 Slider 대신 flex 레이아웃으로
+  const orderSlides = 1;
+  const sellerSlides = 5;
+
   useEffect(() => {
     getOrderList(1, 5)
       .then(res => setOrders(res.dtoList))
@@ -61,14 +64,12 @@ const MainPage = () => {
 
     handleBodyLock();
     window.addEventListener("resize", handleBodyLock);
-
     return () => {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
       window.removeEventListener("resize", handleBodyLock);
     };
   }, [modalOpen, enlargedImage]);
-
 
   const bannerSettings = {
     dots: true,
@@ -79,6 +80,7 @@ const MainPage = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
   const multiSlideSettings = {
     dots: false,
     infinite: true,
@@ -90,8 +92,8 @@ const MainPage = () => {
       { breakpoint: 1200, settings: { slidesToShow: 4, slidesToScroll: 1 } },
       { breakpoint: 992, settings: { slidesToShow: 3, slidesToScroll: 1 } },
       { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-      { breakpoint: 576, settings: { slidesToShow: 1, slidesToScroll: 1 } }
-    ]
+      { breakpoint: 576, settings: { slidesToShow: 1, slidesToScroll: 1 } },
+    ],
   };
 
   // 이미지 안전 처리 헬퍼
@@ -101,7 +103,7 @@ const MainPage = () => {
     return (first && first !== "undefined") ? first : "default/default.png";
   };
 
-  // --- 모달 열기/닫기 함수 추가 ---
+  // 모달 열기/닫기 함수
   const openModal = async mno => {
     try {
       const detail = await getSellerDetail(mno);
@@ -135,22 +137,41 @@ const MainPage = () => {
       <section className="orderlist_section">
         <h2>최근 견적 요청</h2>
         {orders.length > 0 ? (
-          <Slider {...multiSlideSettings}>
-            {orders.map(o => (
-              <div
-                key={o.ono}
-                className="order_item item"
-                onClick={() => navigate(`/request/read/${o.ono}`)}
-              >
-                <div className="order_title">{o.ocontent}</div>
-                <div>
-                  <p><FaRunning /> {o.playType}</p>
-                  <p><FaMapMarkerAlt /> {o.olocation}</p>
-                  <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}</p>
+          orders.length > orderSlides ? (
+            <Slider {...multiSlideSettings}>
+              {orders.map(o => (
+                <div
+                  key={o.ono}
+                  className="order_item item"
+                  onClick={() => navigate(`/request/read/${o.ono}`)}
+                >
+                  <div className="order_title">{o.ocontent}</div>
+                  <div>
+                    <p><FaRunning /> {o.playType}</p>
+                    <p><FaMapMarkerAlt /> {o.olocation}</p>
+                    <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </Slider>
+              ))}
+            </Slider>
+          ) : (
+            <div className="orderlist_simple">
+              {orders.map(o => (
+                <div
+                  key={o.ono}
+                  className="order_item item"
+                  onClick={() => navigate(`/request/read/${o.ono}`)}
+                >
+                  <div className="order_title">{o.ocontent}</div>
+                  <div>
+                    <p><FaRunning /> {o.playType}</p>
+                    <p><FaMapMarkerAlt /> {o.olocation}</p>
+                    <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
         ) : (
           <p className="empty-message">아직 견적 요청이 없습니다.</p>
         )}
@@ -184,28 +205,51 @@ const MainPage = () => {
       <section className="sellerlist_section">
         <h2>추천 업체</h2>
         {sellers.length > 0 ? (
-          <Slider {...multiSlideSettings}>
-            {sellers.map(seller => {
-              const thumb = getSafeImage(seller.simage);
-              return (
-                // ← onClick으로 모달 열기 연결
-                <div
-                  key={seller.mno}
-                  className="seller_item item"
-                  onClick={() => openModal(seller.mno)}
-                >
-                  <img
-                    src={getImageUrl(thumb)}
-                    alt={seller.sname}
-                    className="seller_thumb"
-                  />
-                  <h3 className="seller_name">{seller.sname}</h3>
-                  <div>선정 횟수: {seller.hiredCount}</div>
-                  <div>{seller.slocation || "주소 없음"}</div>
-                </div>
-              );
-            })}
-          </Slider>
+          sellers.length > sellerSlides ? (
+            <Slider {...multiSlideSettings}>
+              {sellers.map(seller => {
+                const thumb = getSafeImage(seller.simage);
+                return (
+                  <div
+                    key={seller.mno}
+                    className="seller_item item"
+                    onClick={() => openModal(seller.mno)}
+                  >
+                    <img
+                      src={getImageUrl(thumb)}
+                      alt={seller.sname}
+                      className="seller_thumb"
+                    />
+                    <h3 className="seller_name">{seller.sname}</h3>
+                    <div>선정 횟수: {seller.hiredCount}</div>
+                    <div>{seller.slocation || "주소 없음"}</div>
+                  </div>
+                );
+              })}
+            </Slider>
+          ) : (
+            <div className="sellerlist_simple">
+              {sellers.map(seller => {
+                const thumb = getSafeImage(seller.simage);
+                return (
+                  <div
+                    key={seller.mno}
+                    className="seller_item item"
+                    onClick={() => openModal(seller.mno)}
+                  >
+                    <img
+                      src={getImageUrl(thumb)}
+                      alt={seller.sname}
+                      className="seller_thumb"
+                    />
+                    <h3 className="seller_name">{seller.sname}</h3>
+                    <div>선정 횟수: {seller.hiredCount}</div>
+                    <div>{seller.slocation || "주소 없음"}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )
         ) : (
           <p className="empty-message">추천 업체가 없습니다.</p>
         )}
