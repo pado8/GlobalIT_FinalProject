@@ -333,9 +333,8 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
                         }}
                         disabled={!sigunguList.length}
                       >
-                        {/* 시/군/구 플레이스홀더 조건부 렌더링 */}
-                        {(!formData.region || formData.region.split(" ")[0] !== selectedSido || formData.region.split(" ")[1] === "") &&
-                          <option value="">시/군/구</option>}
+                        {/* 시/군/구 플레이스홀더 */}
+                        <option value="">시/군/구</option>
                         {sigunguList.map(s => (
                           <option key={s.code} value={s.name}>{s.name}</option>
                         ))}

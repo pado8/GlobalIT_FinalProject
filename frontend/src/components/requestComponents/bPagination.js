@@ -14,7 +14,7 @@ const Pagination = ({ current, size, totalCount, onPageChange, prev, next }) => 
       </button>
 
       <div className="font-semibold">
-        Page {current} / {totalPages}
+        {current} / {totalPages}
       </div>
 
       <button

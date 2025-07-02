@@ -1,11 +1,13 @@
 // src/pages/MyPage/OrderList.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReviewModal from '../../components/ReviewModal';
 import { postReview } from "../../api/reviewApi";
 import "./requestDebugStyle.css";
+import { FaPencilAlt } from 'react-icons/fa';
 
 const List = ({ title, quotes, type }) => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState(null);
 
@@ -21,7 +23,18 @@ const List = ({ title, quotes, type }) => {
   return (
     <div className='request-body omypMain'>
       <section className="mt-6">
-        <h2 className="font-bold text-lg mb-2">{title}</h2>
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="font-bold text-lg">{title}</h2>
+          {title === '진행 견적' && (
+            <button
+              onClick={() => navigate('/request/write')}
+              className="text-gray-600 hover:text-black"
+              aria-label="견적 작성"
+            >
+              <FaPencilAlt size={20} />
+            </button>
+          )}
+        </div>
         {type === 'cancelled' && (
           <span className="text-gray-500 text-sm">
             취소된 견적은 7일 후 삭제됩니다.

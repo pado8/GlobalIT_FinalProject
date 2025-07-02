@@ -247,9 +247,11 @@ const MyPage = () => {
                   <button className={styles.comp_info_button}>업체정보 수정</button>
                 </Link>
               ) : (
-                <button className={styles.comp_info_button2} disabled>
-                  수정 전 <br></br>업체소개 작성 필요
+                <Link to="/sellerList/register">
+                <button className={styles.comp_info_button}>
+                  업체정보 등록
                 </button>
+                </Link>
               )}
             </div>
           </div>

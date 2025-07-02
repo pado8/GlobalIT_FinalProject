@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
+import { FaArrowLeft } from 'react-icons/fa';
 
 import "./requestDebugStyle.css";
 
@@ -89,8 +90,16 @@ const handleSellerDeleteClick = async () => {
     <div className='request-body bg-cover bg-center'>
       <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto mt-6
          bcontent-container">
-        {/* 견적 제목 및 요약 */}
-        <div className="mb-4 border-b pb-4   bcontent-summary">
+        {/* 견적 제목 및 요약 (상대 위치 지정) */}
+        <div className="relative mb-4 border-b pb-4 bcontent-summary">
+          {/* 뒤로가기 버튼 (절대 위치 지정) */}
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-0 right-0 text-gray-600 hover:text-black"
+            aria-label="뒤로가기"
+          >
+            <FaArrowLeft size={20} />
+          </button>
           <div className="text-sm text-gray-600">현재 견적</div>
           <p>
             {quote.finished ? (
@@ -164,9 +173,14 @@ const handleSellerDeleteClick = async () => {
               <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
             </div>
           ) : (
-            <div className="mt-6 rq-button-group">
-              <button onClick={handleSellerCreateClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">입찰하기</button>
-            </div>
+            <div className="mt-6">
+            <Link
+              to={`/request/${ono}/bizregister`}
+              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+            >
+              입찰하기
+            </Link>
+          </div>
           )
         )}
       </div>
