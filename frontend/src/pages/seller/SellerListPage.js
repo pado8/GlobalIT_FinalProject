@@ -1,6 +1,6 @@
 import { useEffect, useState,useCallback,useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { useNavigate, useSearchParams} from "react-router-dom";
+import { FaPhoneAlt, FaMapMarkerAlt,FaStar, FaStarHalfAlt, FaRegStar} from "react-icons/fa";
 import { useAuth } from "../../contexts/Authcontext";
 import {
   getSellerList,
@@ -31,6 +31,14 @@ const SellerListPage = () => {
   const [reviewPage, setReviewPage] = useState(0);
   const [hasMoreReviews, setHasMoreReviews] = useState(true);
   const observer = useRef();
+  const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return "날짜 오류";
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const da = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${da}`;
+};
 
   const [seller_data, setSellerData] = useState({
     dtoList: [],
@@ -89,6 +97,21 @@ const SellerListPage = () => {
   } catch (err) {
     console.error("상세 불러오기 실패", err);
   }
+};
+
+const renderStars = (rating) => {
+  const stars = [];
+  const halfRating = rating / 2;
+  for (let i = 1; i <= 5; i++) {
+    if (halfRating >= i) {
+      stars.push(<FaStar key={i} className={styles.star} />);
+    } else if (halfRating >= i - 0.5) {
+      stars.push(<FaStarHalfAlt key={i} className={styles.star} />);
+    } else {
+      stars.push(<FaRegStar key={i} className={styles.star} />);
+    }
+  }
+  return stars;
 };
 
 const lastReviewElementRef = useCallback(
@@ -279,7 +302,7 @@ const lastReviewElementRef = useCallback(
 
   {showReviews && (
           <div className={styles["review_scroll_container"]}>
-            {reviews.length === 0 ? (
+            {Array.isArray(reviews) && reviews.length === 0 ? (
               <p>아직 리뷰가 없습니다.</p>
             ) : (
               <ul className={styles["review_list"]}>
@@ -292,14 +315,14 @@ const lastReviewElementRef = useCallback(
                       ref={isLast ? lastReviewElementRef : null}
                     >
                       <div className={styles["review_rating"]}>
-                        별점: {(rev.rating / 2).toFixed(1)} / 5
+                        {renderStars(rev.rating)} <span>{(rev.rating / 2).toFixed(1)} / 5</span>
                       </div>
                       <div className={styles["review_author"]}>
-                        작성자: {rev.userName || "익명"}
+                        작성자: {rev.username || "익명"}
                       </div>
                       <div className={styles["review_content"]}>{rev.rcontent}</div>
                       <div className={styles["review_date"]}>
-                        {new Date(rev.rregdate).toLocaleDateString()}
+                        {formatDate(rev.regDate)}
                       </div>
                     </li>
                   );

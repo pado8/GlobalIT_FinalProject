@@ -22,14 +22,23 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByMno(Long mno);
 
     //리뷰 가져오기
-  @Query("""
-  SELECT new com.sports.kickauction.dto.SellerReviewReadDTO(
-    r.writer.mno, m.nickname, r.rating, r.rcontent, r.regDate)
-  FROM Review r
-  JOIN Member m ON r.writer.mno = m.mno
-  WHERE r.mno = :sellerMno
-""")
+    @Query("""
+    SELECT new com.sports.kickauction.dto.SellerReviewReadDTO(
+        m.userName,
+        r.rating,
+        r.rcontent,
+        r.regDate as regdate
+    )
+    FROM Review r
+    JOIN Request o ON r.ono = o.ono
+    JOIN Member m ON o.mno = m.mno
+    WHERE r.mno = :sellerMno
+    """)
+
 Page<SellerReviewReadDTO> findReviewsBySellerMno(@Param("sellerMno") Long sellerMno, Pageable pageable);
+
+
+
 
 
 
