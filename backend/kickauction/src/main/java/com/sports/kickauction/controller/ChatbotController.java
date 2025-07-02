@@ -3,6 +3,7 @@ package com.sports.kickauction.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,7 @@ public class ChatbotController {
     private String openaiApiKey;
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> askChat(@RequestBody Map<String, Object> request) {
         Object promptObj = request.get("prompt");
         if (promptObj == null || !(promptObj instanceof String prompt) || prompt.trim().isEmpty()) {
