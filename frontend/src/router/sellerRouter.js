@@ -24,7 +24,23 @@ const sellerRouter = () => [
         <SellerRegister/>
       </Suspense>
     ),
-  }
+  },
+  {
+    path: "modify", // 임시 라우트 추가
+    element: (
+      <Suspense fallback={Loading}>
+        <SellerModify />
+      </Suspense>
+    ),
+  },
+  {
+    path: "bizregister", // 임시 라우트 추가
+    element: (
+      <Suspense fallback={Loading}>
+        <BizRegister ono={1}/>
+      </Suspense>
+    ),
+  },
 ];
 
 export default sellerRouter;
