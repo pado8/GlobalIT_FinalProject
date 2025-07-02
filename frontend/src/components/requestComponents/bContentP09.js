@@ -204,7 +204,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
 };
 
 
-const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
+const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {}, isSubmitting = false }) => {
   const navigate = useNavigate();
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [sidoList, setSidoList] = useState([]);
@@ -353,13 +353,15 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="cancel-button">
+              className="cancel-button"
+              disabled={isSubmitting}>
               취소
             </button>
             <button
               type="submit"
-              className="submit-button">
-              등록
+              className="submit-button"
+              disabled={isSubmitting}>
+              {isSubmitting ? '수정 중...' : '수정'}
             </button>
           </div>
         </div>
