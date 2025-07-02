@@ -95,18 +95,26 @@ const handleSellerDeleteClick = async () => {
           {/* 뒤로가기 버튼 (절대 위치 지정) */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-0 right-0 text-gray-600 hover:text-black"
+            className="rq-undo-btn"
             aria-label="뒤로가기"
           >
             <FaArrowLeft size={20} />
           </button>
           <div className="text-sm text-gray-600">현재 견적</div>
           <p>
-            {quote.finished ? (
-              <span style={{ color: 'red', fontWeight: 'bold' }}>마감됨</span>
-            ) : (
-              <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>진행중 : {quote.timeLeftStr}</span>
-            )}
+            {(() => {
+              if (quote.finished === 11) {
+                return <span style={{ color: 'green', fontWeight: 'bold' }}>확정을 완료했어요</span>;
+              }
+              if (quote.finished) {
+                return <span style={{ color: 'red', fontWeight: 'bold' }}>마감되었어요</span>;
+              }
+              return (
+                <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>
+                  진행중이에요 : {quote.timeLeftStr}
+                </span>
+              );
+            })()}
           </p>
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
