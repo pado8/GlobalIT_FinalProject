@@ -15,5 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Long countByMno(Long mno);
 
     // (선택) 특정 업체의 모든 리뷰가 필요하면
-    List<Review> findByMno(Long mno);
+    List<Review> findBizMnoByOno(Long ono);
+
 }

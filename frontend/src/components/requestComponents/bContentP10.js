@@ -99,6 +99,7 @@ const List = ({ title, quotes, type }) => {
       <ReviewModal
         isOpen={isModalOpen}
         onClose={closeModal}
+        mno={selectedQuote?.mno}
         onSubmit={({ rating, comment }) => {
           postReview({
             ono: selectedQuote.ono,
