@@ -19,4 +19,7 @@ public interface BizRepository extends JpaRepository<Biz, Long> {
         WHERE b.request.ono = :ono
     """)
     Long findSellerMnoByRequestOno(@Param("ono") Long ono);
+
+    // 입찰 여부 확인
+    boolean existsByRequest_OnoAndSeller_Mno(int ono, Long mno);
 }
