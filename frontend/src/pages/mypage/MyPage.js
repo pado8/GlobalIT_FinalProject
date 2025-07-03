@@ -26,7 +26,6 @@ const MyPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("[MyPage] 현재 로그인된 사용자:", user);
     const fetchCompanyInfo = async () => {
       if (!user?.mno || user.role !== "SELLER") return;
 
@@ -252,7 +251,7 @@ const MyPage = () => {
               ) : (
                 <>
                   <p className={styles.request_info}>
-                    현재 <strong className={styles.textcolor1}>{requestCounts.ongoing}</strong> 개의 의뢰를 모집 중이고,
+                    현재 <strong className={styles.textcolor1}>{requestCounts.ongoing}</strong> 개의 의뢰를 요청 중이고,
                   </p>
                   <p className={styles.request_info}>
                     지금까지 <strong className={styles.textcolor2}>{requestCounts.total}</strong> 번 킥옥션을 사용해 주셨어요!
