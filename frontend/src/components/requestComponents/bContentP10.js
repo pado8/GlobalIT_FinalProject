@@ -167,12 +167,13 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
         isOpen={isCreateModalOpen}
         onClose={closeAllModals}
         mno={selectedQuote?.mno}
-        onSubmit={async ({ rating, rcontent }) => {
+        onSubmit={async ({ rating, comment }) => {
           try {
             await postReview({
-              ono: selectedQuote.ono,
-              rating,
-              rcontent: rcontent
+             ono: selectedQuote.ono,
+            mno: selectedQuote.mno,
+            rating,
+            comment
             });
             alert("리뷰가 등록되었습니다!");
             closeAllModals();
