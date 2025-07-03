@@ -96,7 +96,7 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
                       style={{ textDecoration: 'none', color: 'inherit' }}
                     >
                       <span className="font-semibold text-lg">
-                        {displayOtitle} (글번호: {quote.ono})
+                        {displayOtitle}
                       </span>
                       <div className="text-sm text-gray-600">
                         {quote.playType} | {displayRegion} | {displayDate} {displayTime} | {displayPerson}
@@ -110,7 +110,7 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
                   ) : (
                     <div className="flex-1 mb-2 sm:mb-0 clickMyComponent">
                       <span className="font-semibold text-lg">
-                        {displayOtitle} (글번호: {quote.ono})
+                        {displayOtitle}
                       </span>
                       <div className="text-sm text-gray-600">
                         {quote.playType} | {displayRegion} | {displayDate} {displayTime} | {displayPerson}
@@ -175,7 +175,7 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
             rating,
             comment
             });
-            alert("리뷰가 등록되었습니다!");
+            // alert("리뷰가 등록되었습니다!");
             closeAllModals();
             if (onReviewUpdate) onReviewUpdate();
           } catch (err) {
@@ -193,7 +193,7 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
         onSubmit={async ({ rating, rcontent }) => {
           try {
             await updateReview({ ono: selectedQuote.ono, rating, rcontent });
-            alert("리뷰가 수정되었습니다!");
+            // alert("리뷰가 수정되었습니다!");
             closeAllModals();
             if (onReviewUpdate) onReviewUpdate();
           } catch (err) {

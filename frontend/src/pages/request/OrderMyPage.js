@@ -181,6 +181,8 @@ const OrderMyPage = () => {
             next={cancelledData.next}
           />
         )}
+
+        <div className='bottom-margin-setter'></div>
     </>
   );
 };
