@@ -223,8 +223,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestPageCustomResDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, RequestPageCustomReqDTO dto) {
         
-        // 페이징 처리된 목록을 조회하기 전에, 만료된 '취소' 상태의 견적을 먼저 삭제합니다.
-        // getMyOrdersByMemberNo() 메서드의 로직을 페이징 메서드에도 동일하게 적용
+        // '취소' 상태의 견적을 먼저 삭제 getMyOrdersByMemberNo() 메서드의 로직을 페이징 메서드에도 동일하게 적용
         List<Request> allOrdersForMember = requestRepository.findByMno(memberNo);
         LocalDateTime now = LocalDateTime.now();
 
