@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.sports.kickauction.entity.Biz;
+import com.sports.kickauction.entity.Request;
 
 public interface BizRepository extends JpaRepository<Biz, Long> {
   boolean existsBySeller_MnoAndRequest_Ono(Long mno, Long ono);
@@ -19,6 +20,12 @@ public interface BizRepository extends JpaRepository<Biz, Long> {
         WHERE b.request.ono = :ono
     """)
     Long findSellerMnoByRequestOno(@Param("ono") Long ono);
+
+    // 주석: order에 달린 개수
+    int countByRequest(Request request);
+
+    // 주석: 자신의 모든 biz 개수
+    int countBySeller_Mno(Long mno);
 
     // 입찰 여부 확인
     boolean existsByRequest_OnoAndSeller_Mno(int ono, Long mno);
