@@ -202,6 +202,8 @@
   align-items: flex-start;
   padding-top: 80px;
   z-index: 999;
+  overflow-y: auto;
+  padding-top: 80px;
 }
 
 .modal_content {
@@ -233,7 +235,26 @@
   color: #333;
   line-height: 1.5;
   position: relative;
+
+  max-height: 70vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-right: 12px; /* 스크롤바 가려짐 방지 */
 }
+
+.modal_body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal_body::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.modal_body::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
 
 .seller_inforeview {
   font-size: 0.8em;
@@ -323,6 +344,23 @@
 }
 
 /* 리뷰 */
+
+.toggle_review_btn {
+  background-color: #ffffff;
+  color: #1565c0;
+  border: 2px solid #1565c0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+}
+
+.toggle_review_btn:hover {
+  background-color: #1565c0;
+  color: white;
+}
 
 .review_section {
   margin-top: 20px;

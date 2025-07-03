@@ -31,6 +31,8 @@ const SellerListPage = () => {
   const [reviewPage, setReviewPage] = useState(0);
   const [hasMoreReviews, setHasMoreReviews] = useState(true);
   const observer = useRef();
+  const reviewSectionRef = useRef(null);
+
   const formatDate = (dateStr) => {
   const d = new Date(dateStr);
   if (isNaN(d)) return "날짜 오류";
@@ -304,23 +306,27 @@ const lastReviewElementRef = useCallback(
 
                   <hr />
 
-                 <div className={styles["review_section"]}>
-  <button
-  className={styles["toggle_review_btn"]}
-  onClick={async () => {
-    if (!showReviews) {
-      setReviews([]);           // 초기화 추가
-      setReviewPage(0);         // 초기화 추가
-      const data = await getReviewsBySeller(selected_seller.mno, 0);
-      setReviews(data.content);
-      setReviewPage(1);
-      setHasMoreReviews(!data.last);
-    }
-    setShowReviews(prev => !prev);
-  }}
->
-  {showReviews ? "리뷰 닫기" : "리뷰 보기"}
-</button>
+                 <div className={styles["review_section"]} ref={reviewSectionRef}>
+                    <button
+                    className={styles["toggle_review_btn"]}
+                    onClick={async () => {
+                      if (!showReviews) {
+                        setReviews([]);           // 초기화 추가
+                        setReviewPage(0);         // 초기화 추가
+                        const data = await getReviewsBySeller(selected_seller.mno, 0);
+                        setReviews(data.content);
+                        setReviewPage(1);
+                        setHasMoreReviews(!data.last);
+                      }
+                      setShowReviews(prev => !prev);
+
+                      setTimeout(() => {
+                        reviewSectionRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+                      }, 100); // 모달 렌더링 이후 이동하도록 약간 지연
+                    }}
+                  >
+                    {showReviews ? "리뷰 닫기" : "리뷰 보기"}
+                  </button>
 
 
   {showReviews && (
