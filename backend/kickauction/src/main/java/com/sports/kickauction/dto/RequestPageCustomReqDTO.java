@@ -14,11 +14,7 @@ import lombok.Data;
 public class RequestPageCustomReqDTO {
   private int page;
   private int size;
-
-  private String city;     
-  private String district;
-  private String playType;
-
+  
   private String status;   // "active", "closed", "cancelled" 등 상태 전달용
   private Integer finished; // finished 숫자 값 직접 전달용
 
