@@ -26,6 +26,7 @@ public class BizServiceImpl implements BizService {
     private final SellerRepository sellerRepository;
     private final RequestRepository requestRepository;
     private final BizRepository bizRepository;
+     private final MessageService messageService;
 
     @Override
     public Optional<Member> getLoggedInMember() {
@@ -68,6 +69,9 @@ public class BizServiceImpl implements BizService {
         if (bizRepository.existsByRequest_OnoAndSeller_Mno(dto.getOno(), mno)) {
             throw new IllegalArgumentException("이미 입찰하셨습니다.");
         }
+        if (request.getMno() == seller.getMember().getMno()) {
+            throw new IllegalArgumentException("자신이 작성한 요청에는 입찰할 수 없습니다.");
+        }
 
         Biz biz = Biz.builder()
                 .seller(seller)
@@ -78,6 +82,18 @@ public class BizServiceImpl implements BizService {
                 .build();
 
         bizRepository.save(biz);
+
+            // 메시지 수신자 조회 (request.getMno()는 int → long 변환)
+    Member receiver = memberRepository.findById((long) request.getMno())
+            .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
+
+    // 메시지 전송
+    messageService.sendSystemMessageForBiz(
+        seller.getMember(),
+        receiver,
+        request.getOtitle(),
+        dto.getPrice()
+);
     }
 
     @Override

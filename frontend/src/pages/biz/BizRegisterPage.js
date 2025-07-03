@@ -73,6 +73,11 @@ const BizRegisterPage = () => {
     navigate("/orderlist");
     return;
   }
+  if (data.mno === user.mno) {
+  alert("자신이 작성한 요청에는 입찰할 수 없습니다.");
+  navigate("/orderlist");
+  return;
+  }
 
   setOrder(data);
   setIsAllowed(true);

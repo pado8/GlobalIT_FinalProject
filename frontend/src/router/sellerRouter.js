@@ -1,12 +1,13 @@
 // src/router/sellerRouter.js
 import { Suspense, lazy } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const SellerList = lazy(() => import("../pages/seller/SellerListPage"));
 const SellerRegister = lazy(() => import("../pages/seller/SellerRegisterPage"));
 const SellerModify = lazy(() => import("../pages/seller/SellerModifyPage"));
 
 
-const Loading = <div>Loading...</div>;
+const Loading = <LoadingSpinner />;
 
 const sellerRouter = () => [
   {
