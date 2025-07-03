@@ -24,7 +24,7 @@ public class RequestPageCustomReqDTO {
 
   public RequestPageCustomReqDTO() {
         this.page = 1;
-        this.size = 5;  
+        this.size = 3;  
     }
 
   public Pageable getPageable(Sort sort) {
