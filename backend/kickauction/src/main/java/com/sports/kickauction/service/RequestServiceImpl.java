@@ -446,7 +446,7 @@ public class RequestServiceImpl implements RequestService {
     List<RequestReadDTO> dtoList = result.getContent().stream()
         .map(req -> RequestReadDTO.builder()
             .ono(req.getOno())
-            .ocontent(req.getOcontent())
+            .otitle(req.getOtitle())
             .playType(req.getPlayType())
             .olocation(req.getOlocation())
             .rentalDate(req.getRentalDate())
