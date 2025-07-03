@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./MobileChatRoom.css"; // 추후 스타일링
-import { formatTime } from "../utils/dateUtil";
+import "./MobileChatRoom.css";
+import { MdArrowBackIosNew } from "react-icons/md";
+import { formatTime } from "../api/dateUtil";
+import { getProfileImgUrl } from "../api/imageUtil";
+import "../css/Sharesheet.css";
 
-const MobileChatRoom = ({ room, onBack }) => {
+const MobileChatRoom = ({ room, onBack, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [content, setContent] = useState("");
   const scrollRef = useRef();
@@ -59,19 +62,41 @@ const MobileChatRoom = ({ room, onBack }) => {
     <div className="mobile-chatroom">
       <div className="chatroom-header">
         <button className="back-btn" onClick={onBack}>
-          ←
+          <MdArrowBackIosNew />
         </button>
-        <img src={`/upload/${room.partnerProfileImg || "baseprofile.png"}`} alt="profile" className="chatroom-header-avatar" />
+        <img src={getProfileImgUrl(room.partnerProfileImg)} alt="profile" className="chatroom-header-avatar" />
         <span className="chatroom-header-name">{room.partnerName}</span>
+
+        {/* 닫기 버튼 - 우측 정렬 */}
+        <button className="close-btn" onClick={onClose}>
+          &times;
+        </button>
       </div>
 
       <div className="chatroom-body">
-        {messages.map((msg) => (
-          <div key={msg.msgId} className={`chat-bubble ${msg.senderId === room.partnerMno ? "received" : "sent"}`}>
-            <div className="chat-content">{msg.content}</div>
-            <div className="chat-time">{formatTime(msg.sentAt)}</div>
-          </div>
-        ))}
+        {messages.map((msg) => {
+          const isPartner = msg.senderId === room.partnerMno;
+          const isAuto = msg.content.startsWith("[킥옥션 자동발송]");
+          const displayText = isAuto ? msg.content.replace("[킥옥션 자동발송]", "") : msg.content;
+
+          return (
+            <div key={msg.msgId}>
+              <div className={`chat-bubble ${isPartner ? "received" : "sent"}`}>
+                <div>
+                  {isAuto ? (
+                    <>
+                      <span className="pink">[킥옥션 자동발송]</span>
+                      {displayText}
+                    </>
+                  ) : (
+                    msg.content
+                  )}
+                </div>
+                <div className="chat-time">{formatTime(msg.sentAt)}</div>
+              </div>
+            </div>
+          );
+        })}
         <div ref={scrollRef} />
       </div>
 

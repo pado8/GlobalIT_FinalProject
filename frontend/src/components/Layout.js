@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import Chattingicon from "./Chatting";
 import MessengerPanel from "./MessengerPanel";
 import { useAuth } from "../contexts/Authcontext";
+import MessengerPanelMobile from "./MessengerPanelMobile";
 
 const Layout = () => {
   const [chatOpen, setChatOpen] = useState(false);
@@ -44,7 +45,7 @@ const Layout = () => {
         <Outlet context={{ openMessengerWithUser }} />
       </div>
       {user && !chatOpen && <Chattingicon onClick={() => setChatOpen(true)} />}
-      {chatOpen && <MessengerPanel onClose={() => setChatOpen(false)} />}
+      {chatOpen && (window.innerWidth <= 768 ? <MessengerPanelMobile onClose={() => setChatOpen(false)} /> : <MessengerPanel onClose={() => setChatOpen(false)} />)}
       <Footer />
     </>
   );
