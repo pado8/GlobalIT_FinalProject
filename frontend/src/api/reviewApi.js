@@ -15,7 +15,7 @@ export const postReview = ({ ono, mno, rating, comment }) => {
 };
 
 export const getReviewsBySeller = async (mno, page = 0, size = 5) => {
-  const res = await axios.get(`${prefix}/${mno}`, {
+  const res = await axios.get(`${prefix}/seller/${mno}`, {
     params: { page, size },
     withCredentials: true
   });
