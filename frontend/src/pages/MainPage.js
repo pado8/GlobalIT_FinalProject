@@ -145,7 +145,7 @@ const MainPage = () => {
                   className="order_item item"
                   onClick={() => navigate(`/request/read/${o.ono}`)}
                 >
-                  <div className="order_title">{o.ocontent}</div>
+                  <div className="order_title">{o.otitle}</div>
                   <div>
                     <p><FaRunning /> {o.playType}</p>
                     <p><FaMapMarkerAlt /> {o.olocation}</p>
@@ -162,7 +162,7 @@ const MainPage = () => {
                   className="order_item item"
                   onClick={() => navigate(`/request/read/${o.ono}`)}
                 >
-                  <div className="order_title">{o.ocontent}</div>
+                  <div className="order_title">{o.otitle}</div>
                   <div>
                     <p><FaRunning /> {o.playType}</p>
                     <p><FaMapMarkerAlt /> {o.olocation}</p>
