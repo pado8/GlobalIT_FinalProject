@@ -54,6 +54,21 @@ public class BizServiceImpl implements BizService {
         Request request = requestRepository.findById(dto.getOno())
                 .orElseThrow(() -> new IllegalArgumentException("요청 정보가 없습니다."));
 
+        
+                // 견적 상태 확인
+        if (request.getFinished() == 1) {
+            throw new IllegalArgumentException("이미 마감된 견적입니다.");
+        } else if (request.getFinished() == 2) {
+            throw new IllegalArgumentException("취소된 견적입니다.");
+        } else if (request.getFinished() == 11) {
+            throw new IllegalArgumentException("이미 낙찰된 견적입니다.");
+        }
+
+        // 이미 입찰한 경우
+        if (bizRepository.existsByRequest_OnoAndSeller_Mno(dto.getOno(), mno)) {
+            throw new IllegalArgumentException("이미 입찰하셨습니다.");
+        }
+
         Biz biz = Biz.builder()
                 .seller(seller)
                 .request(request)
