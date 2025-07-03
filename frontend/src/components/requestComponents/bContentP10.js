@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReviewModal from '../../components/ReviewModal';
 import ReviewModModal from '../../components/requestComponents/ReviewModModal';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'; // 스크롤 방지 훅 임포트
+import OrderItem from './bTimerComponent';
 import { postReview, getReview, updateReview } from "../../api/reviewApi";
 import "./requestDebugStyle.css";
 import { FaPencilAlt } from 'react-icons/fa';
@@ -73,65 +74,14 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
         )}
         <ul className="space-y-2">
           {quotes && quotes.length > 0 ? (
-            quotes.map((quote, idx) => {
-              const displayDate = quote.rentalDate
-                ? new Date(quote.rentalDate).toLocaleDateString('ko-KR')
-                : '날짜 null';
-              const displayOtitle = quote.otitle || '제목 null';
-              const displayTime = quote.rentalTime || '시간 null';
-              const displayPerson = quote.person
-                ? `${quote.person}명`
-                : '인원 null';
-              const displayRegion = quote.region || '지역 null';
-
-              return (
-                <li
-                  key={quote.ono || idx}
-                  className="bg-gray-100 p-3 rounded flex flex-col sm:flex-row justify-between items-start sm:items-center"
-                >
-                  {(type === 'active' || type === 'closed') ? (
-                    <Link
-                      to={`/request/read/${quote.ono}`}
-                      className="flex-1 mb-2 sm:mb-0 clickMyComponent"
-                      style={{ textDecoration: 'none', color: 'inherit' }}
-                    >
-                      <span className="font-semibold text-lg">
-                        {displayOtitle}
-                      </span>
-                      <div className="text-sm text-gray-600">
-                        {quote.playType} | {displayRegion} | {displayDate} {displayTime} | {displayPerson}
-                      </div>
-                      {type === 'active' && quote.isUrgent && (
-                        <div className="text-red-600 text-sm mt-1">
-                          마감 임박! {quote.timeLeftStr} 남았어요!
-                        </div>
-                      )}
-                    </Link>
-                  ) : (
-                    <div className="flex-1 mb-2 sm:mb-0 clickMyComponent">
-                      <span className="font-semibold text-lg">
-                        {displayOtitle}
-                      </span>
-                      <div className="text-sm text-gray-600">
-                        {quote.playType} | {displayRegion} | {displayDate} {displayTime} | {displayPerson}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex-shrink-0">
-                    {type === 'closed' && quote.finished === 11 && (
-                      <button
-                        // onClick={() => openModal(quote)}
-                        onClick={() => handleReviewClick(quote)}
-                        className={`rq-review-default-btn ${quote.hasReview ? 'rq-review-modify-btn' : ''}`}
-                      >
-                        {quote.hasReview ? '리뷰 수정' : '리뷰 작성'}
-                      </button>
-                    )}
-                  </div>
-                </li>
-              );
-            })
+            quotes.map((quote) => (
+              <OrderItem
+                key={quote.ono}
+                quote={quote}
+                type={type}
+                onReviewClick={handleReviewClick}
+              />
+            ))
           ) : (
             <li className="bg-gray-50 p-3 rounded text-gray-500 text-center">
               {title}이(가) 없습니다.
