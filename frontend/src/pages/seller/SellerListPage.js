@@ -30,6 +30,8 @@ const SellerListPage = () => {
   const [reviews, setReviews] = useState([]);
   const [reviewPage, setReviewPage] = useState(0);
   const [hasMoreReviews, setHasMoreReviews] = useState(true);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [preloadedImages, setPreloadedImages] = useState({});
   const observer = useRef();
   const reviewSectionRef = useRef(null);
 
@@ -53,13 +55,7 @@ const SellerListPage = () => {
     nextPage: 0,
   });
 
-  const get_safe_image = (simage) => {
-    if (!Array.isArray(simage)) return "default/default.png";
-    const first = simage[0]?.trim();
-    if (!first || first === "undefined") return "default/default.png";
-    return first;
-  };
-
+  
   useEffect(() => {
     if (!user || user.role !== "SELLER") return;
     const fetch_registration = async () => {
@@ -80,38 +76,54 @@ const SellerListPage = () => {
 
     fetchData();
   }, [page]);
-
+  
   useEffect(() => {
     setSearchParams({ page });
   }, [page]);
-
+  
   useEffect(() => {
     const page_from_url = parseInt(search_params.get("page") || "1", 10);
     setPage(page_from_url);
   }, [search_params]);
 
   useEffect(() => {
-  if (modal_open) {
+    if (modal_open) {
     document.body.style.overflow = "hidden";  // 스크롤 잠금
   } else {
     document.body.style.overflow = "auto";    // 스크롤 복원
   }
-
+  
   return () => {
     document.body.style.overflow = "auto";    // cleanup
   };
 }, [modal_open]);
 
 
-  const open_modal = async (mno) => {
+const open_modal = async (mno) => {
   try {
+    setModalLoading(true); // 스피너 on
+
     const detail = await getSellerDetail(mno);
+    await preloadImages(detail.simage); // 이미지 preload
     setSelectedSeller(detail);
     setSlideIndex(0);
-    setModalOpen(true);
+
+    setModalOpen(true); // 준비 다 되면 모달 열기
   } catch (err) {
     console.error("상세 불러오기 실패", err);
+  } finally {
+    setModalLoading(false); // 스피너 off
   }
+};
+
+
+const close_modal = () => {
+setModalOpen(false);
+setSelectedSeller(null);
+setReviews([]);
+setReviewPage(0);
+setHasMoreReviews(true);
+setShowReviews(false);  
 };
 
 const renderStars = (rating) => {
@@ -128,7 +140,14 @@ const renderStars = (rating) => {
   }
   return stars;
 };
+const go_to_register = () => navigate("/sellerlist/register");
 
+const get_safe_image = (simage) => {
+  if (!Array.isArray(simage)) return "default/default.png";
+  const first = simage[0]?.trim();
+  if (!first || first === "undefined") return "default/default.png";
+  return first;
+};
 const lastReviewElementRef = useCallback(
   node => {
     if (!showReviews || !hasMoreReviews) return;
@@ -152,15 +171,33 @@ const lastReviewElementRef = useCallback(
   [reviewPage, hasMoreReviews, showReviews, selected_seller]
 );
 
-    const close_modal = () => {
-    setModalOpen(false);
-    setSelectedSeller(null);
-    setReviews([]);
-    setReviewPage(0);
-    setHasMoreReviews(true);
-    setShowReviews(false);  
-  };
-  const go_to_register = () => navigate("/sellerlist/register");
+const preloadImages = async (simage) => {
+  const urls = Array.isArray(simage) ? simage.filter(Boolean) : [];
+  const loaded = {};
+
+  await Promise.all(urls.map(url =>
+    new Promise((resolve) => {
+      const img = new Image();
+      const fullUrl = getImageUrl(url.trim());
+      img.src = fullUrl;
+      img.onload = () => {
+        if (img.decode) {
+          img.decode().then(() => {
+            loaded[url] = fullUrl;
+            resolve();
+          }).catch(resolve);
+        } else {
+          loaded[url] = fullUrl;
+          resolve();
+        }
+      };
+      img.onerror = resolve;
+    })
+  ));
+
+  setPreloadedImages(loaded);
+};
+
 
   return (
     <div className={styles["page_wrapper"]}>
@@ -179,8 +216,6 @@ const lastReviewElementRef = useCallback(
 
      {loading ? (
   <div className={styles["loading_wrapper"]}>
-    <div className={styles["spinner"]}></div>
-    <div>불러오는 중입니다...</div>
   </div>
 ) : seller_data.dtoList.length === 0 ? (
   <div className={styles["no_data"]}>등록된 업체가 없습니다.</div>
@@ -233,6 +268,14 @@ const lastReviewElementRef = useCallback(
         }}
       />
 
+      {modalLoading && (
+  <div className={styles["modal_overlay"]}>
+    <div className={styles["modal_content_loading"]}>
+      <div className={styles["spinner"]}></div>
+      <p className={styles["modal_loading_text"]}>잠시만 기다려주세요...</p>
+    </div>
+  </div>
+)}
 
       {modal_open && selected_seller && (() => {
         const simage = selected_seller.simage;
@@ -256,7 +299,7 @@ const lastReviewElementRef = useCallback(
                       }
                     }}
                   >
-                    <img src={getImageUrl(main_img)} alt="대표" />
+                <img src={preloadedImages[main_img] || getImageUrl(main_img)} alt="대표"/>
                   </div>
                   <div className={styles["seller_info"]}>
                     <strong>{selected_seller.sname || "업체명 없음"}</strong>
@@ -281,7 +324,7 @@ const lastReviewElementRef = useCallback(
 
                     {simage.slice(1).slice(slide_index, slide_index + 3).filter(img => img?.trim()).map((img, i) => (
                       <div className={styles["img_box"]} key={i} onClick={() => setEnlargedImage(getImageUrl(img))}>
-                        <img src={getImageUrl(img)} alt={`소개 ${i}`} />
+                        <img src={preloadedImages[img] || getImageUrl(img)} alt={`소개 ${i}`} />
                       </div>
                     ))}
 
@@ -307,6 +350,7 @@ const lastReviewElementRef = useCallback(
                   <hr />
 
                  <div className={styles["review_section"]} ref={reviewSectionRef}>
+                  {(selected_seller.reviewCount || 0) > 0 && (
                     <button
                     className={styles["toggle_review_btn"]}
                     onClick={async () => {
@@ -327,6 +371,7 @@ const lastReviewElementRef = useCallback(
                   >
                     {showReviews ? "리뷰 닫기" : "리뷰 보기"}
                   </button>
+                  )}
 
 
   {showReviews && (
@@ -377,17 +422,11 @@ const lastReviewElementRef = useCallback(
               <h3>이미지 보기</h3>
               <button onClick={() => setEnlargedImage(null)}>✕</button>
             </div>
-            <div className={styles["modal_body"]} style={{ textAlign: "center" }}>
+            <div className={`${styles["modal_body"]} ${styles["centered_image_body"]}`}>
               <img
                 src={enlarged_image}
                 alt="확대 이미지"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxHeight: "70vh",
-                  objectFit: "contain",
-                  borderRadius: "12px",
-                }}
+                className={styles["enlarged_image"]}
               />
             </div>
           </div>
