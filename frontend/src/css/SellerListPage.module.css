@@ -4,6 +4,8 @@
   margin-top: 10px;
   padding: 20px;
   min-height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -177,14 +179,11 @@
 }
 
 .fixed_pagination {
-  position: absolute;
-  bottom: 50px;
-  left: 0;
-  width: 100%;
+  position: relative; 
+  padding-top: 30px;
+  margin-top: auto;
   text-align: center;
-  padding: 16px 0;
   background: transparent;
-  z-index: 999;
   box-shadow: none;
 }
 
@@ -525,7 +524,6 @@
   .fixed_pagination {
     position: relative;
     padding-top: 70px;
-    margin-bottom: -50px;
     z-index: 1;
   }
 }
