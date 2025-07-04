@@ -147,7 +147,7 @@ public class NewMemberTest {
                 .role("SELLER")
                 .social(0)
                 .userId("killer@naver.com")
-                .userName("동행복권")
+                .userName("래버리지20배율")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()
