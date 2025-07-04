@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { getSellerRegisterInfo, getSellerRegistered } from "../../api/SellerApi";
+import { getSellerDetail } from "../../api/SellerApi";
 import "../../css/Sharesheet.css";
 import styles from "../mypage/MyPage.module.css";
 
@@ -21,6 +22,7 @@ const MyPage = () => {
   const [agree, setAgree] = useState("");
   const [requestCounts, setRequestCounts] = useState({ ongoing: 0, completed: 0 });
   const [bizCount, setBizCount] = useState(0);
+  const [hiredCount, setHiredCount] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,6 +46,19 @@ const MyPage = () => {
 
     fetchCompanyInfo();
   }, [user?.mno]);
+
+  useEffect(() => {
+    const fetchHiredCount = async () => {
+      try {
+        const detail = await getSellerDetail(user.mno);
+        setHiredCount(detail.hiredCount || 0);
+      } catch (err) {
+        console.error("hiredCount 불러오기 실패", err);
+      }
+    };
+
+    if (user?.role === "SELLER") fetchHiredCount();
+  }, [user]);
 
   // 주석: 내정보탭- 진행중/완료된 견적 수 가져옴
   useEffect(() => {
@@ -246,7 +261,8 @@ const MyPage = () => {
             <div className={styles.request_texts}>
               {user?.role === "SELLER" ? (
                 <p className={styles.request_info}>
-                  지금까지 킥옥션과 함께 <strong className={styles.textcolor2}>{bizCount}</strong>번 입찰하셨어요!
+                  지금까지 킥옥션과 함께 <strong className={styles.textcolor2}>{bizCount}</strong>회 입찰하셨고,
+                  <br /> <strong className={styles.textcolor2}>{hiredCount}</strong>회 낙찰되셨어요!
                 </p>
               ) : (
                 <>
