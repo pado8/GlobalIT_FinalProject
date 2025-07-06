@@ -8,16 +8,11 @@ import { getImageUrl } from "../api/UploadImageApi";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../css/MainPage.css";
+import "../css/Sharesheet.css";
 import { FaRunning, FaMapMarkerAlt, FaRegCalendarAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const bannerImages = [
-  "img/banner1.png",
-  "img/banner2.png",
-  "img/banner3.jpg",
-  "img/banner4.png",
-  "img/banner5.png",
-];
+const bannerImages = ["img/banner1.png", "img/banner2.png", "img/banner3.png", "img/banner4.png"];
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -33,20 +28,20 @@ const MainPage = () => {
   const [enlargedImage, setEnlargedImage] = useState(null);
 
   // 기준 이하일 때 Slider 대신 flex 레이아웃으로
-  const orderSlides = 5;
-  const sellerSlides = 5;
+  const orderSlides = 4;
+  const sellerSlides = 4;
 
   useEffect(() => {
     getOrderList(1, 5)
-      .then(res => setOrders(res.dtoList))
+      .then((res) => setOrders(res.dtoList))
       .catch(console.error);
 
     getCommunityList({ page: 1, size: 5 })
-      .then(res => setCommunity(res.dtoList))
+      .then((res) => setCommunity(res.dtoList))
       .catch(console.error);
 
     getSellerList(1, 8)
-      .then(res => setSellers(res.dtoList))
+      .then((res) => setSellers(res.dtoList))
       .catch(console.error);
   }, []);
 
@@ -97,14 +92,14 @@ const MainPage = () => {
   };
 
   // 이미지 안전 처리 헬퍼
-  const getSafeImage = simage => {
+  const getSafeImage = (simage) => {
     if (!Array.isArray(simage)) return "default/default.png";
     const first = simage[0]?.trim();
-    return (first && first !== "undefined") ? first : "default/default.png";
+    return first && first !== "undefined" ? first : "default/default.png";
   };
 
   // 모달 열기/닫기 함수
-  const openModal = async mno => {
+  const openModal = async (mno) => {
     try {
       const detail = await getSellerDetail(mno);
       setSelectedSeller(detail);
@@ -123,14 +118,16 @@ const MainPage = () => {
   return (
     <div id="mainPage">
       {/* 배너 섹션 */}
-      <section className="banner_section">
-        <Slider {...bannerSettings}>
-          {bannerImages.map((src, idx) => (
-            <div key={idx} className="banner_item">
-              <img src={src} alt={`배너-${idx + 1}`} />
-            </div>
-          ))}
-        </Slider>
+      <section className="main_banner_area">
+        <div className="main_banner_slider">
+          <Slider {...bannerSettings}>
+            {bannerImages.map((src, idx) => (
+              <div key={idx} className="banner_item">
+                <img src={src} alt={`배너-${idx + 1}`} />
+              </div>
+            ))}
+          </Slider>
+        </div>
       </section>
 
       {/* 최근 주문 섹션 */}
@@ -139,34 +136,38 @@ const MainPage = () => {
         {orders.length > 0 ? (
           orders.length > orderSlides ? (
             <Slider {...multiSlideSettings}>
-              {orders.map(o => (
-                <div
-                  key={o.ono}
-                  className="order_item item"
-                  onClick={() => navigate(`/request/read/${o.ono}`)}
-                >
+              {orders.map((o) => (
+                <div key={o.ono} className="order_item item" onClick={() => navigate(`/request/read/${o.ono}`)}>
                   <div className="order_title">{o.otitle}</div>
                   <div>
-                    <p><FaRunning /> {o.playType}</p>
-                    <p><FaMapMarkerAlt /> {o.olocation}</p>
-                    <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}</p>
+                    <p>
+                      <FaRunning /> {o.playType}
+                    </p>
+                    <p>
+                      <FaMapMarkerAlt /> {o.olocation}
+                    </p>
+                    <p>
+                      <FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}
+                    </p>
                   </div>
                 </div>
               ))}
             </Slider>
           ) : (
             <div className="orderlist_simple">
-              {orders.map(o => (
-                <div
-                  key={o.ono}
-                  className="order_item item"
-                  onClick={() => navigate(`/request/read/${o.ono}`)}
-                >
+              {orders.map((o) => (
+                <div key={o.ono} className="order_item item" onClick={() => navigate(`/request/read/${o.ono}`)}>
                   <div className="order_title">{o.otitle}</div>
                   <div>
-                    <p><FaRunning /> {o.playType}</p>
-                    <p><FaMapMarkerAlt /> {o.olocation}</p>
-                    <p><FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}</p>
+                    <p>
+                      <FaRunning /> {o.playType}
+                    </p>
+                    <p>
+                      <FaMapMarkerAlt /> {o.olocation}
+                    </p>
+                    <p>
+                      <FaRegCalendarAlt /> {o.rentalDate?.slice(0, 10)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -182,12 +183,8 @@ const MainPage = () => {
         <h2>커뮤니티 최신글</h2>
         {community.length > 0 ? (
           <ul className="community_list">
-            {community.map(c => (
-              <li
-                key={c.pno}
-                className="community_item item"
-                onClick={() => navigate(`/community/read/${c.pno}`)}
-              >
+            {community.map((c) => (
+              <li key={c.pno} className="community_item item" onClick={() => navigate(`/community/read/${c.pno}`)}>
                 <div className="community_title">{c.ptitle}</div>
                 <div className="community_info">
                   <span>{c.writerName}</span>
@@ -207,19 +204,11 @@ const MainPage = () => {
         {sellers.length > 0 ? (
           sellers.length > sellerSlides ? (
             <Slider {...multiSlideSettings}>
-              {sellers.map(seller => {
+              {sellers.map((seller) => {
                 const thumb = getSafeImage(seller.simage);
                 return (
-                  <div
-                    key={seller.mno}
-                    className="seller_item item"
-                    onClick={() => openModal(seller.mno)}
-                  >
-                    <img
-                      src={getImageUrl(thumb)}
-                      alt={seller.sname}
-                      className="seller_thumb"
-                    />
+                  <div key={seller.mno} className="seller_item item" onClick={() => openModal(seller.mno)}>
+                    <img src={getImageUrl(thumb)} alt={seller.sname} className="seller_thumb" />
                     <h3 className="seller_name">{seller.sname}</h3>
                     <div>선정 횟수: {seller.hiredCount}</div>
                     <div>{seller.slocation || "주소 없음"}</div>
@@ -229,19 +218,11 @@ const MainPage = () => {
             </Slider>
           ) : (
             <div className="sellerlist_simple">
-              {sellers.map(seller => {
+              {sellers.map((seller) => {
                 const thumb = getSafeImage(seller.simage);
                 return (
-                  <div
-                    key={seller.mno}
-                    className="seller_item item"
-                    onClick={() => openModal(seller.mno)}
-                  >
-                    <img
-                      src={getImageUrl(thumb)}
-                      alt={seller.sname}
-                      className="seller_thumb"
-                    />
+                  <div key={seller.mno} className="seller_item item" onClick={() => openModal(seller.mno)}>
+                    <img src={getImageUrl(thumb)} alt={seller.sname} className="seller_thumb" />
                     <h3 className="seller_name">{seller.sname}</h3>
                     <div>선정 횟수: {seller.hiredCount}</div>
                     <div>{seller.slocation || "주소 없음"}</div>
@@ -256,52 +237,64 @@ const MainPage = () => {
       </section>
 
       {/* ◆ 모달창 */}
-      {modalOpen && selectedSeller && (() => {
-        const mainImg = getSafeImage(selectedSeller.simage);
-        return (
-          <div className="modal_overlay" onClick={closeModal}>
-            <div className="modal_content" onClick={e => e.stopPropagation()}>
-              <div className="modal_header">
-                <h3>업체 상세 정보</h3>
-                <button onClick={closeModal}>✕</button>
-              </div>
-              <div className="modal_body">
-                <div className="seller_top">
-                  <div
-                    className={`seller_image ${mainImg === "default/default.png" ? "non_clickable" : "clickable"}`}
-                    onClick={() => {
-                      if (mainImg !== "default/default.png") {
-                        setEnlargedImage(getImageUrl(mainImg));
-                      }
-                    }}
-                  >
-                    <img src={getImageUrl(mainImg)} alt="대표 이미지" />
-                  </div>
-                  <div className="seller_info">
-                    <strong>{selectedSeller.sname}</strong><br />
-                    연락처: {selectedSeller.phone || "정보 없음"}<br />
-                    주소: {selectedSeller.slocation || "정보 없음"}
-                  </div>
-                  <div className="seller_inforeview">
-                    <div>선정 횟수 : {selectedSeller.hiredCount || 0}</div>
-                    <div>리뷰 평점 : {selectedSeller.avgRating || 0}</div>
-                    <div>리뷰 개수 : {selectedSeller.reviewCount || 0}</div>
-                  </div>
+      {modalOpen &&
+        selectedSeller &&
+        (() => {
+          const mainImg = getSafeImage(selectedSeller.simage);
+          return (
+            <div className="modal_overlay" onClick={closeModal}>
+              <div className="modal_content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal_header">
+                  <h3>업체 상세 정보</h3>
+                  <button onClick={closeModal}>✕</button>
                 </div>
-                <div className="seller_detail">
-                  <p><strong>업체정보</strong><br />{selectedSeller.info || "정보 없음"}</p>
-                  <p><strong>업체소개</strong><br />{selectedSeller.introContent || "소개 없음"}</p>
+                <div className="modal_body">
+                  <div className="seller_top">
+                    <div
+                      className={`seller_image ${mainImg === "default/default.png" ? "non_clickable" : "clickable"}`}
+                      onClick={() => {
+                        if (mainImg !== "default/default.png") {
+                          setEnlargedImage(getImageUrl(mainImg));
+                        }
+                      }}
+                    >
+                      <img src={getImageUrl(mainImg)} alt="대표 이미지" />
+                    </div>
+                    <div className="seller_info">
+                      <strong>{selectedSeller.sname}</strong>
+                      <br />
+                      연락처: {selectedSeller.phone || "정보 없음"}
+                      <br />
+                      주소: {selectedSeller.slocation || "정보 없음"}
+                    </div>
+                    <div className="seller_inforeview">
+                      <div>선정 횟수 : {selectedSeller.hiredCount || 0}</div>
+                      <div>리뷰 평점 : {selectedSeller.avgRating || 0}</div>
+                      <div>리뷰 개수 : {selectedSeller.reviewCount || 0}</div>
+                    </div>
+                  </div>
+                  <div className="seller_detail">
+                    <p>
+                      <strong>업체정보</strong>
+                      <br />
+                      {selectedSeller.info || "정보 없음"}
+                    </p>
+                    <p>
+                      <strong>업체소개</strong>
+                      <br />
+                      {selectedSeller.introContent || "소개 없음"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
 
       {/* ◆ 이미지 확대 모달 */}
       {enlargedImage && (
         <div className="modal_overlay" onClick={closeModal}>
-          <div className="modal_content" onClick={e => e.stopPropagation()}>
+          <div className="modal_content" onClick={(e) => e.stopPropagation()}>
             <div className="modal_header">
               <h3>이미지 확대 보기</h3>
               <button onClick={closeModal}>✕</button>
@@ -315,7 +308,7 @@ const MainPage = () => {
                   height: "auto",
                   maxHeight: "70vh",
                   objectFit: "contain",
-                  borderRadius: "12px"
+                  borderRadius: "12px",
                 }}
               />
             </div>

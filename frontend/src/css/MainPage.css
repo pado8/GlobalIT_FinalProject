@@ -3,26 +3,40 @@
 #mainPage {
   max-width: 100%;
   max-width: 1200px;
-  overflow-x: hidden;
+  overflow-x: visible;
   margin: 0 auto;
-  padding: 2rem 2rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 2.5rem;
   box-sizing: border-box;
 }
 
 /* 배너 섹션 */
-.banner_section {
+
+.main_banner_area {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: -2rem;
+}
+
+.main_banner_slider {
   width: 100%;
-  aspect-ratio: 16 / 6;
-  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  overflow: visible;
+  position: relative;
+}
+.banner_section .banner_item,
+.main_banner_slider .banner_item {
+  height: 100%;
 }
 
 .banner_item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .item {
@@ -37,59 +51,48 @@
 }
 
 .orderlist_section h2 {
+  font-family: "PaperlogyMD";
   font-size: 2rem;
+  font-weight: bold;
+  border-left: 6px solid #15689a;
+  padding-left: 0.75rem;
   margin-bottom: 1rem;
 }
 
 .order_item {
-  background: #F6F7F9;
+  background: #f6f9ff;
+  border: 1px solid #cde3f8;
   border-radius: 1rem;
   padding: 1rem;
-  min-height: 10.5rem;
+  min-height: 10rem;
   display: flex !important;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid #F6F7F9;
-  margin: 8px 0;
   max-width: 226px;
-}
-
-.order_item .order_title {
-  max-height: 50px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  transition: background 250ms;
 }
 
 .order_item:hover {
-  border: 1px solid #909090;
-}
-
-.order_item h3 {
-  font-size: 1.25rem;
-  margin: 0;
+  background: #e0f1ff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .order_item p {
   font-size: 1rem;
-  color: #555;
-  flex-grow: 1;
+  color: #333;
 }
 
-.order_item span {
-  font-size: 0.875rem;
-  color: #999;
-  text-align: right;
+.order_item p svg {
+  color: #15689a;
+  margin-right: 4px;
 }
 
-/* MainPage.css 맨 아래에 추가 */
+/* slick-slider */
 .orderlist_section .slick-track {
   display: flex !important;
-  /* flexbox 강제 적용 */
   gap: 16px;
-  /* 아이템 사이 16px 간격 */
 }
 
-/* slick-slide 기본 margin 없애기 */
 .orderlist_section .slick-slide {
   margin: 0 !important;
 }
@@ -110,54 +113,50 @@
 }
 
 .community_section h2 {
+  font-family: "PaperlogyMD";
   font-size: 2rem;
-  margin-bottom: 1rem;
+  font-weight: bold;
+  border-left: 6px solid #ff5e57;
+  padding-left: 0.75rem;
 }
 
 .community_list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  padding-left: 0;
+  margin-left: 0;
   list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  gap: 1rem;
 }
 
 .community_item {
-  background: #fff;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-height: 7.5rem;
   justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+  background: white;
+  font-size: 0.95rem;
+  transition: background 0.3s;
 }
 
 .community_item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.community_item span {
-  font-size: 0.75rem;
-  color: #777;
+  background: #f7f9fc;
 }
 
 .community_item .community_title {
   font-weight: bold;
-  display: block;
-  width: 100%;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.community_item .community_info {
+.community_info {
   display: flex;
   flex-direction: column;
+  font-size: 0.8rem;
+  color: #999;
+  text-align: right;
 }
 
 /* 추천 업체 섹션 */
@@ -168,8 +167,11 @@
 }
 
 .sellerlist_section h2 {
+  font-family: "PaperlogyMD";
   font-size: 2rem;
-  margin-bottom: 1rem;
+  font-weight: bold;
+  border-left: 6px solid #28a745;
+  padding-left: 0.75rem;
 }
 
 .sellerlist_section .seller_item {
@@ -191,7 +193,7 @@
   font-weight: 600;
 }
 
-.sellerlist_section .seller_item>* {
+.sellerlist_section .seller_item > * {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -235,7 +237,6 @@
   object-fit: cover;
   object-position: center;
 }
-
 
 .banner_section .slick-dots {
   position: absolute;
@@ -306,7 +307,6 @@
   top: 20vh;
   background: white;
   width: 600px;
-  /* 기존 400px → 600px */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
@@ -314,15 +314,13 @@
 }
 
 .modal_header {
-  background-color: #15689A;
+  background-color: #15689a;
   color: white;
   padding: 16px 20px;
-  /* 패딩 증가 */
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 20px;
-  /* 폰트 키움 */
   font-weight: bold;
 }
 
@@ -372,7 +370,7 @@
   height: 30px;
   padding: 0 12px;
   font-size: 18px;
-  background-color: #15689A;
+  background-color: #15689a;
   color: white;
   border: none;
   border-radius: 6px;
@@ -385,7 +383,7 @@
 }
 
 .slider_button {
-  background: #15689A;
+  background: #15689a;
   color: white;
   border: none;
   border-radius: 6px;
@@ -420,11 +418,11 @@
 /* 반응형 조정 */
 @media (max-width: 992px) {
   .slick-prev {
-    left: -35px;
+    left: -20px;
   }
 
   .slick-next {
-    right: -35px;
+    right: -20px;
   }
 
   .community_list .community_item:nth-child(5) {
@@ -433,10 +431,12 @@
 }
 
 @media (max-width: 768px) {
-  .banner_section {
-    height: 50vh;
+  .main_banner_area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
   }
-
   .order_item,
   .community_item,
   .seller_item {
@@ -482,6 +482,14 @@
   .orderlist_simple .order_item,
   .sellerlist_simple .seller_item {
     flex: 1 1 100%;
-    max-width: 100%;
+  }
+
+  .order_item {
+    max-width: 275px;
+    margin-left: 0.85rem;
+  }
+
+  .orderlist_simple {
+    justify-content: center;
   }
 }
