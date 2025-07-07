@@ -255,6 +255,13 @@ const OrderReadPage = () => {
     return () => clearInterval(interval);
   }, [quoteDetail, ono]); // quoteDetail과 ono가 바뀔 때마다 타이머 재설정
 
+  //삭제 상태 갱신
+  const handleBidDeleted = (deletedMno) => {
+  setCompanies(prevCompanies =>
+    prevCompanies.filter(company => company.seller.mno !== deletedMno)
+  );
+};
+
   // 로딩, 에러, 견적 없음 메시지
   if (loading) return <div className="text-center mt-20">로딩 중...</div>;
   if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
@@ -270,6 +277,7 @@ const OrderReadPage = () => {
         isSeller={isSeller}
         hasSellerBid={hasSellerBid}
         onCompanyInfoClick={openCompanyModal}
+        onBidDeleted={handleBidDeleted}
       />
 
       {/* 업체 상세 정보 모달 (MainPage.js와 동일한 구조) */}

@@ -79,7 +79,10 @@ public class RequestServiceImpl implements RequestService {
                 .finished(order.getFinished())
                 .build();
 
-                List<Biz> bizList = bizRepository.findByRequest_Ono(ono);
+                //isDeleted()는 가져오지않음
+                List<Biz> bizList = bizRepository.findByRequest_Ono(ono).stream()
+                .filter(b -> !b.isDeleted())
+                .collect(Collectors.toList());
                 log.info("bizList: " + bizList);
                 List<RequestProposalResDTO> companies = bizList.stream().map(biz -> {
                     Seller bizSeller = biz.getSeller();
