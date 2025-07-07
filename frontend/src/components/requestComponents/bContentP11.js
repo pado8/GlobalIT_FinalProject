@@ -3,7 +3,6 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { FaArrowLeft } from 'react-icons/fa';
 
-import "./requestDebugStyle.css";
 
 
 
@@ -99,7 +98,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               if (quote.finished === 11) {
                 return <span style={{ color: 'green', fontWeight: 'bold' }}>확정을 완료했어요</span>;
               }
-              if (quote.finished) {
+              if (quote.finished === 1) {
                 return <span style={{ color: 'red', fontWeight: 'bold' }}>마감되었어요</span>;
               }
               if (quote.isUrgent) {
@@ -115,12 +114,12 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
           <div className="text-sm text-gray-500">작성자: {quote.writerNickname || '정보 없음'}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
-            <div>종목 : {quote.playType}</div>
-            <div>지역📍 : {displayRegion}</div>
-            <div>인원 : {displayPerson}</div>
-            <div>대여 장비 목록 : {displayRentalEquipment}</div>
-            <div>요청사항 : {displayOcontent}</div>
-            <div>시간📆 : {displayDate} {displayTime}</div>
+            <div>🏃‍♂️종목 : {quote.playType}</div>
+            <div>📍지역 : {displayRegion}</div>
+            <div>👥인원 : {displayPerson}</div>
+            <div>📃대여 장비 목록 : {displayRentalEquipment}</div>
+            <div>💡요청사항 : {displayOcontent}</div>
+            <div>📆시간 : {displayDate} {displayTime}</div>
           </div>
         </div>
 

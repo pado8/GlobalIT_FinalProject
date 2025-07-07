@@ -1,5 +1,6 @@
 
 .request-component{
+  font-family: "NotoSansKR";
   min-height: 100vh;
   /* background-color: skyblue; */
 }
@@ -67,6 +68,7 @@
 /* Titles ------------------------------------------------------------------------------------------------------ */
 
 .bHero-section {
+  font-family: "PaperlogyMD";
   background-size: cover;
   background-position: center;
   text-align: center;
