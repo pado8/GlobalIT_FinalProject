@@ -711,6 +711,9 @@
   border-radius: 0.25rem;
 }
 
+.rq-paging-btn:hover {
+  color: #2563EB;
+}
 .rq-paging-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;

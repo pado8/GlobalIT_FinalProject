@@ -10,7 +10,7 @@ import useBodyScrollLock from '../../hooks/useBodyScrollLock';
 import { postReview, getReview, updateReview } from "../../api/reviewApi";
 import { FaPencilAlt } from 'react-icons/fa';
 
-// calculateTimeLeft 헬퍼 함수 (OrderReadPage와 동일)
+// calculateTimeLeft 헬퍼 함수
 const calculateTimeLeft = (regDateStr) => {
   if (!regDateStr) {
     return { isFinished: true, isUrgent: false, timeLeftStr: "마감 정보 없음", rawTimeLeft: 0 };
@@ -120,16 +120,16 @@ const OrderMyPage = () => {
     fetchPaginatedOrders('cancelled', cancelledPage, setCancelledData);
   }, [cancelledPage, fetchPaginatedOrders]);
 
-  // --- Timer and Auto-Finish Logic (Centralized in OrderMyPage) ---
+
 useEffect(() => {
   if (!activeData || !activeData.dtoList || activeData.dtoList.length === 0) {
     return;
   }
 
-  const interval = setInterval(() => { // async 제거 - 비동기 처리 완료 후 목록 갱신
+  const interval = setInterval(() => {
     let requiresFullRefresh = false; // 하나의 플래그로 통합하여 전체 목록 갱신 여부 판단
     const updatedActiveList = activeData.dtoList.map(quote => {
-      if (quote.finished !== 0) { // 이미 마감된 견적 (백엔드에서 finished가 0이 아님)
+      if (quote.finished !== 0) { // 이미 마감된 견적
         return { ...quote, ...calculateTimeLeft(quote.oregdate) };
       }
 
@@ -137,11 +137,9 @@ useEffect(() => {
 
       if (timeInfo.isFinished && !isFinishingRefMap.current.get(quote.ono)) {
         isFinishingRefMap.current.set(quote.ono, true);
-        console.log(`견적 ${quote.ono} 마감 처리 시작...`);
 
         axios.patch(`/api/orders/finish/${quote.ono}`, {}, { withCredentials: true })
           .then(() => {
-            console.log(`견적 ${quote.ono} 성공적으로 마감 처리됨.`);
             requiresFullRefresh = true; // API 성공 시 전체 목록 갱신 필요
           })
           .catch(err => {
@@ -154,8 +152,8 @@ useEffect(() => {
           .finally(() => {
             isFinishingRefMap.current.delete(quote.ono); // 요청 완료 플래그 초기화
             // API 호출 완료 후에는 무조건 목록을 다시 불러오도록 함
-            // 이 부분이 핵심: 비동기 작업이 끝난 후에 목록 갱신 트리거
-            if (requiresFullRefresh) { // 성공적으로 마감된 경우만 갱신
+            // 조건체크를 통해 비동기 작업이 끝난 후에 목록 갱신 유도
+            if (requiresFullRefresh) { // 성공적으로 마감된 경우 갱신
                 fetchPaginatedOrders('active', activePage, setActiveData);
                 fetchPaginatedOrders('closed', closedPage, setClosedData);
             }
@@ -168,9 +166,6 @@ useEffect(() => {
 
     // 1초마다 시간 정보만 업데이트하여 UI 부드럽게 유지
     setActiveData(prev => ({ ...prev, dtoList: updatedActiveList }));
-
-    // 주의: 이곳에서는 fetchPaginatedOrders를 호출하지 않습니다.
-    // 이는 위의 `.finally` 블록에서 비동기적으로 처리될 것입니다.
   }, 1000);
 
   return () => clearInterval(interval);
@@ -208,8 +203,9 @@ useEffect(() => {
         <div className="text-sm text-gray-600">
           {quote.playType} | {quote.region || '지역 null'} | {displayDate} {quote.rentalTime || '시간 null'} | {quote.person ? `${quote.person}명` : '인원 null'}
         </div>
-        {type === 'active' && (
-          <div className={`text-sm mt-1 ${quote.isUrgent && !quote.isFinished ? 'text-red-600' : 'text-gray-500'}`}>
+        {/* '진행 견적'이면서 '마감 임박' 상태일 때만 타이머를 표시합니다. */}
+        {type === 'active' && quote.isUrgent && (
+          <div className={`text-sm mt-1 ${!quote.isFinished ? 'text-red-600' : 'text-gray-500'}`}>
             {quote.timeLeftStr}
           </div>
         )}
