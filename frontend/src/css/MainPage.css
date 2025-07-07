@@ -428,6 +428,11 @@
   .community_list .community_item:nth-child(5) {
     display: none;
   }
+   .orderlist_section .slick-list .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -456,6 +461,11 @@
   .community_list .community_item:nth-child(4),
   .community_list .community_item:nth-child(5) {
     display: none;
+  }
+   .orderlist_section .slick-list .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
@@ -491,5 +501,11 @@
 
   .orderlist_simple {
     justify-content: center;
+  }
+
+  .orderlist_section .slick-list .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
