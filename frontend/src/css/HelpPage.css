@@ -158,9 +158,9 @@
 
 @media (max-width: 450px) {
 
-    .search_box select,
-    .search_box input {
-        padding: 2px;
+    #help_page .search_box select,
+    #help_page .search_box input {
+         padding: 2px 8px;
         text-align: center;
         height: 5vh;
         min-width: 40px;
