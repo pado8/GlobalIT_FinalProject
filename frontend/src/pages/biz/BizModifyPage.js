@@ -7,6 +7,7 @@ import {
   FaRunning, FaMapMarkerAlt, FaToolbox, FaRegCalendarAlt, FaUsers, FaAlignLeft
 } from "react-icons/fa";
 import titleImage from "../../assets/img/title.png";
+import "../../css/Sharesheet.css"
 import styles from "../../css/BizModifyPage.module.css";
 
 const BizModifyPage = () => {
@@ -87,9 +88,9 @@ const BizModifyPage = () => {
     };
 
     try {
-      await updateBiz(ono, payload);
+      await updateBiz(payload);
       alert("입찰 제안이 수정되었습니다.");
-      navigate(`/request/content/${ono}`);
+      navigate(`/request/read/${ono}`);
     } catch (err) {
       alert("수정 실패");
       console.error(err);

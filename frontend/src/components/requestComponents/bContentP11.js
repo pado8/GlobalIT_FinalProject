@@ -190,26 +190,28 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               </button>
           </div>
         )}
+        
+
         {!isOwner && isSeller && quote.finished !== 11 && (
   hasSellerBid ? (
-    selectedCompanyId === user?.mno && (
+    selectedCompanyId === user?.mno ? (
       <div className="flex justify-between mt-6 rq-button-group">
-                  <button
-            className="md-button"
-            onClick={async () => {
-              try {
-                await checkBizModifiable(ono); 
-                navigate(`/request/${ono}/bizmodify`);
-              } catch (err) {
-                const msg = err?.response?.data || "입찰 수정이 불가합니다.";
-                alert(msg);
-              }
-            }}
-          >
-            수정
-          </button>
-
         <button
+          className="md-button"
+          onClick={async () => {
+            try {
+              await checkBizModifiable(ono);
+              navigate(`/request/${ono}/bizmodify`);
+            } catch (err) {
+              const msg = err?.response?.data || "입찰 수정이 불가합니다.";
+              alert(msg);
+            }
+          }}
+        >
+          수정
+        </button>
+        <button
+          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button"
           onClick={async () => {
             const confirmed = window.confirm("정말로 입찰을 포기하시겠습니까?\n삭제 후에는 복구할 수 없습니다.");
             if (!confirmed) return;
@@ -220,59 +222,38 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               onBidDeleted(user?.mno);
             } catch (err) {
               const msg = err?.response?.data || "입찰 삭제 중 오류가 발생했습니다.";
-               alert(msg);
+              alert(msg);
             }
           }}
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button"
         >
           포기
         </button>
       </div>
-    )
+    ) : null
   ) : (
-    <div className="mt-6">
-      <Link
-  to="#"
-  onClick={async (e) => {
-    e.preventDefault();
-    try {
-      const deleted = await checkDeletedBid(ono);
-      if (deleted) {
-        alert("이전에 입찰을 삭제하셨기 때문에 재입찰할 수 없습니다.");
-        return;
-      }
-      navigate(`/request/${ono}/bizregister`);
-    } catch (err) {
-      console.error(err);
-      alert("입찰 가능 여부 확인 중 오류가 발생했습니다.");
-    }
-  }}
-  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
->
-  입찰하기
-</Link>
-
+    <div className="mt-6 rq-button-group">
+      <button
+        onClick={async (e) => {
+          e.preventDefault();
+          try {
+            const deleted = await checkDeletedBid(ono);
+            if (deleted) {
+              alert("이전에 입찰을 포기하셨기 때문에 재입찰할 수 없습니다.");
+              return;
+            }
+            navigate(`/request/${ono}/bizregister`);
+          } catch (err) {
+            console.error(err);
+            alert("입찰 가능 여부 확인 중 오류가 발생했습니다.");
+          }
+        }}
+        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+      >
+        입찰하기
+      </button>
     </div>
   )
 )}
-
-        {!isOwner && isSeller && !(quote.finished===11) && (
-          hasSellerBid ? (
-            <div className="flex justify-between mt-6 rq-button-group">
-              <button  className="md-button">수정</button>
-              <button  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
-            </div>
-          ) : (
-            <div className="mt-6 rq-button-group">
-              <button
-                onClick={() => navigate(`/request/${ono}/bizregister`)}
-                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
-              >
-                입찰하기
-              </button>
-            </div>
-          )
-        )}
       </div>
     </div>
   );

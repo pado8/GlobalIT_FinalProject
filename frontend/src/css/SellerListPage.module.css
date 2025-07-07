@@ -26,7 +26,6 @@
 
 .header h2 {
   position: relative;
-  font-family: 'Anton';
   font-size: 40px;
   color: white;
   text-shadow:
@@ -38,14 +37,14 @@
 
 
 .page_title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: "PaperlogyMD";
   font-size: 36px;
   margin: 0;
   letter-spacing: 1px;
 }
 
 .page_subtitle {
-  font-family: 'Roboto', sans-serif;
+  font-family: "PaperlogyMD";
   font-size: 16px;
   color: #e0e0e0;
   margin-top: 6px;
@@ -60,6 +59,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-family: "PaperlogyMD";
 }
 
 .register_btn:hover {
@@ -171,6 +171,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9em;
+  font-family: "PaperlogyMD";
 }
 
 .pagination {
@@ -226,6 +227,7 @@
   font-size: 20px;
   /* 폰트 키움 */
   font-weight: bold;
+  font-family: "PaperlogyMD";
 }
 
 .modal_body {

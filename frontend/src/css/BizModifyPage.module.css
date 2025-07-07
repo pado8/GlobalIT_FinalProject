@@ -36,6 +36,7 @@
 .biz_title_container {
   max-width: 800px;
   margin-bottom: 40px;
+  font-family: "PaperlogyMD";
 }
 
 .biz_title_container h2 {
@@ -94,6 +95,7 @@
   margin-bottom: 20px;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
+  font-family: "PaperlogyMD";
 }
 
 .info_item {
@@ -141,6 +143,10 @@
   flex-direction: column;
   gap: 14px;
   text-align: left;
+}
+
+.biz_form_box h4 {
+  font-family: "PaperlogyMD";
 }
 
 .biz_form_box textarea {
@@ -200,6 +206,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-family: "PaperlogyMD";
 }
 
 .submit_btn.disabled {

@@ -10,6 +10,7 @@ import {
 import { getImageUrl } from "../../api/UploadImageApi";
 import {getReviewsBySeller} from "../../api/reviewApi"
 import Pagination from "../../components/paging/Pagination";
+import "../../css/Sharesheet.css"
 import styles from "../../css/SellerListPage.module.css";
 
 
