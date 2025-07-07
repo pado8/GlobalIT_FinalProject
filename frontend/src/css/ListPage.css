@@ -12,7 +12,6 @@
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
-    flex-direction: column;
 }
 
 .list_title {
@@ -287,6 +286,9 @@
 
     .btn {
         padding: 12px 14px;
+    }
+    .list_header {
+        flex-direction: column;
     }
 }
 
