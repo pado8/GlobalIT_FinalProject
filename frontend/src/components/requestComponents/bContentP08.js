@@ -233,8 +233,6 @@ const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
     }
   }, [formData.rental]);
 
-
-
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< region <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   useEffect(() => {
     fetch("/api/vworld/sido")
