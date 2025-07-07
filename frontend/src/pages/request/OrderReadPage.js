@@ -127,7 +127,11 @@ const OrderReadPage = () => {
       let currentFinishedStatus = data.finished; 
       if (timeLeft <= 0) {
         timeStr = "마감됨";
-        currentFinishedStatus = true; // 시간이 지났으면 무조건 마감으로 간주
+        if(data.finished === 11){
+          currentFinishedStatus = 11;
+        }else{
+          currentFinishedStatus = 1;
+        }
       } else {
         const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
         const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -341,6 +345,8 @@ const OrderReadPage = () => {
           </div>
         </div>
       )}
+
+      <div className='bottom-margin-setter'></div>
     </>
   );
 };
