@@ -206,28 +206,28 @@ public class CommentRepositoryTests {
 
         Comment c26 = Comment.builder()
                 .pno(9L).mno(2L)
-                .content("XX 실내 구장도 시설이 좋습니다.")
+                .content("가산 실내 구장도 시설이 좋습니다.")
                 .build();
         commentRepository.save(c26);
         log.info("Saved cno26: {}", c26.getCno());
 
         Comment c27 = Comment.builder()
                 .pno(9L).mno(8L)
-                .content("야외 구장으로는 YY 풋살장을 추천드립니다.")
+                .content("야외 구장으로는 종로 풋살장을 추천드립니다.")
                 .build();
         commentRepository.save(c27);
         log.info("Saved cno27: {}", c27.getCno());
 
         Comment c28 = Comment.builder()
                 .pno(9L).mno(12L)
-                .content("주차 공간은 ZZ 구장이 편리합니다.")
+                .content("주차 공간은 판교 구장이 편리합니다.")
                 .build();
         commentRepository.save(c28);
         log.info("Saved cno28: {}", c28.getCno());
 
         Comment c29 = Comment.builder()
                 .pno(9L).mno(3L)
-                .content("인조잔디 구장을 원하시면 AA 풋살장이 좋아요.")
+                .content("인조잔디 구장을 원하시면 강남 풋살장이 좋아요.")
                 .build();
         commentRepository.save(c29);
         log.info("Saved cno29: {}", c29.getCno());
