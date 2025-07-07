@@ -113,6 +113,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
             })()}
           </p>
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
+          <div className="text-sm text-gray-500">작성자: {quote.writerNickname || '정보 없음'}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
             <div>종목 : {quote.playType}</div>
             <div>지역📍 : {displayRegion}</div>
@@ -191,14 +192,14 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               <button  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
             </div>
           ) : (
-            <div className="mt-6">
-            <Link
-              to={`/request/${ono}/bizregister`}
-              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
-            >
-              입찰하기
-            </Link>
-          </div>
+            <div className="mt-6 rq-button-group">
+              <button
+                onClick={() => navigate(`/request/${ono}/bizregister`)}
+                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+              >
+                입찰하기
+              </button>
+            </div>
           )
         )}
       </div>
