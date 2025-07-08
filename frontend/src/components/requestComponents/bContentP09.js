@@ -314,7 +314,7 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
               <label className="block font-semibold mb-1">{field.label}</label>
               {
                 field.name === "region" ? (
-                  <div className="flex gap-4">
+                  <div className="modComponentStyle">
                     <select
                       value={selectedSido}
                       onChange={(e) => {
