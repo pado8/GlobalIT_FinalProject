@@ -226,6 +226,16 @@
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
+.modComponentStyle{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+@media (min-width: 750px) {
+  .modComponentStyle{
+    flex-direction: row; /* sm:flex-row */
+  }
+}
 /* 필드 라벨 */
 .request-body .form-card label {
   display: block;
