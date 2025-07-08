@@ -9,6 +9,7 @@ import { BsChatDotsFill } from "react-icons/bs";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { LuLogIn } from "react-icons/lu";
 import { BsPersonFillGear } from "react-icons/bs";
+import { IoReturnDownBackOutline } from "react-icons/io5";
 import { MdPersonAdd } from "react-icons/md";
 
 const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
@@ -208,7 +209,7 @@ const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
 
         <nav className={styles.sidebar_nav}>
           <Link className={styles.backtohome} to="/" onClick={handleLinkClick}>
-            ↩ 메인화면
+            <IoReturnDownBackOutline /> 메인화면
           </Link>
           <Link to="/request" onClick={handleLinkClick}>
             견적 요청

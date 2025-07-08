@@ -236,7 +236,12 @@ const MyPage = () => {
 
         {/* 프사 */}
         <div className={styles.profile_image_wrapper}>
-          <img key={user.profileimg} src={`http://192.168.219.247:8080/images/${user.profileimg || "baseprofile.png"}?t=${new Date().getTime()}`} alt="프로필 이미지" className={styles.profile_image} />
+          <img
+            key={user.profileimg}
+            src={`http://192.168.219.247:8080/images/${user.profileimg || "baseprofile.png"}?t=${new Date().getTime()}`}
+            alt="프로필 이미지"
+            className={styles.profile_image}
+          />
         </div>
         <div className={styles.myinfo_wrapper}>
           <p className={styles.user_name}>
