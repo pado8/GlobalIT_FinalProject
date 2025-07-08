@@ -65,26 +65,23 @@ public class CommunityController {
         return new ResponseEntity<>(service.list(pageRequestDTO), HttpStatus.OK);
     }
 
-    // 3) 게시글 등록 (로그인 필요)
-    @PostMapping(value = "", // or "/" 동일하게 동작함
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // 3) 게시글 등록
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Long>> register(
             @ModelAttribute CommunityDTO communityDTO,
-            @RequestParam(value = "pimageFile", required = false) MultipartFile pimageFile) {
-        // service.register는 CommunityDTO와 MultipartFile을 받아서 저장 후 DTO 리턴
+            @RequestParam(required = false) MultipartFile pimageFile) {
         CommunityDTO saved = service.register(communityDTO, pimageFile);
-        // 저장된 pno를 리턴
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(Map.of("PNO", saved.getPno()));
     }
 
-    // 4) 게시글 수정 (로그인 필요)
+    // 4) 게시글 수정
     @PutMapping(value = "/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> modify(
             @PathVariable Long pno,
             @ModelAttribute CommunityDTO communityDTO,
-            @RequestParam(value = "pimageFile", required = false) MultipartFile pimageFile) {
+            @RequestParam(required = false) MultipartFile pimageFile) {
         communityDTO.setPno(pno);
         log.info("Modify (multipart): {}", communityDTO);
         service.modify(communityDTO, pimageFile);
@@ -114,7 +111,7 @@ public class CommunityController {
         }
     }
 
-    // 7) 댓글 등록 (로그인 필요)
+    // 7) 댓글 등록
     @PostMapping("/{pno}/comments")
     public ResponseEntity<CommentDTO> writeComment(
             @PathVariable Long pno,
@@ -127,7 +124,7 @@ public class CommunityController {
         return ResponseEntity.ok(saved);
     }
 
-    // 8) 댓글 수정 (로그인 필요)
+    // 8) 댓글 수정
     @PatchMapping("/{pno}/comments/{cno}")
     public ResponseEntity<CommentDTO> updateComment(
             @PathVariable Long pno,
@@ -141,7 +138,7 @@ public class CommunityController {
         return ResponseEntity.ok(commentService.updateComment(pno, cno, content, auth));
     }
 
-    // 9) 댓글 삭제 (로그인 필요)
+    // 9) 댓글 삭제
     @DeleteMapping("/{pno}/comments/{cno}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long pno,
