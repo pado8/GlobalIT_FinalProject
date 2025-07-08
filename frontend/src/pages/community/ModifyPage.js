@@ -133,7 +133,7 @@ const ModifyPage = () => {
           {community.pimage && !file && (
             <img
               src={
-                (process.env.REACT_APP_API_URL || "http://localhost:8080") +
+                (process.env.REACT_APP_API_URL || "http://3.37.151.29:8080") +
                 community.pimage
               }
               alt="기존 첨부"
