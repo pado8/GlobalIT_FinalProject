@@ -122,7 +122,9 @@ const OrderMyPage = () => {
 
 
 useEffect(() => {
-  if (!activeData || !activeData.dtoList || activeData.dtoList.length === 0) {
+  // 타이머 실행 전, activeData와 그 안의 dtoList가 유효한지 더 안전하게 확인합니다.
+  // API 응답이 예상과 다르거나, 데이터가 비어있는 경우 타이머를 실행하지 않습니다.
+  if (!activeData || !Array.isArray(activeData.dtoList) || activeData.dtoList.length === 0) {
     return;
   }
 
