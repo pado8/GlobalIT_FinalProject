@@ -40,6 +40,7 @@ public class CommunityController {
     private final CommunityService service;
     private final CommentService commentService;
 
+    // 1) 단일 게시글 조회: pno(PathVariable)로 요청받아 이전글/다음글 포함하여 반환
     @GetMapping("/{pno}")
     public ResponseEntity<CommunityDTO> getOne(@PathVariable Long pno) {
         CommunityDTO dto = service.get(pno);
@@ -61,11 +62,13 @@ public class CommunityController {
         return ResponseEntity.ok(dto);
     }
 
+    // 2) 게시글 목록 조회: 페이징, 검색 파라미터 처리 후 서비스 호출
     @GetMapping("/list")
     public ResponseEntity<PageResponseDTO<CommunityDTO>> list(PageRequestDTO pageRequestDTO) {
         return new ResponseEntity<>(service.list(pageRequestDTO), HttpStatus.OK);
     }
 
+    
     @PostMapping(value = "", // or "/" 동일하게 동작함
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Long>> register(
