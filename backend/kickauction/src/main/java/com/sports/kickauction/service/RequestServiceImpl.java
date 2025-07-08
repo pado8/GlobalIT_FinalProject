@@ -93,10 +93,17 @@ public class RequestServiceImpl implements RequestService {
         List<Biz> bizList = bizRepository.findByRequest_Ono(ono).stream()
         .filter(b -> !b.isDeleted())
         .collect(Collectors.toList());
-        log.info("bizList: " + bizList);
+
+        // N+1 문제 해결: 필요한 SellerIntro 정보를 한번의 쿼리로 가져옵니다.
+        List<Long> sellerMnos = bizList.stream()
+                .map(biz -> biz.getSeller().getMno())
+                .collect(Collectors.toList());
+
+        Map<Long, SellerIntro> sellerIntroMap = sellerIntroRepository.findAllById(sellerMnos).stream()
+                .collect(Collectors.toMap(SellerIntro::getMno, intro -> intro));
+
         List<RequestProposalResDTO> companies = bizList.stream().map(biz -> {
             Seller bizSeller = biz.getSeller();
-            // Member member = bizSeller.getMember(); // 이 변수는 사용되지 않습니다.
             BizRegisterDTO bizDTO = BizRegisterDTO.builder()
                 .ono(biz.getRequest().getOno())
                 .price(biz.getPrice())
@@ -104,14 +111,13 @@ public class RequestServiceImpl implements RequestService {
                 .banswer(biz.getBanswer())
                 .build();
 
-            Long mno = biz.getSeller().getMno();
-            SellerIntro intro = sellerIntroRepository.findById(mno)
-                .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
-            Seller seller = intro.getSeller();
+            SellerIntro intro = sellerIntroMap.get(bizSeller.getMno());
+            if (intro == null) return null; // 혹시 모를 예외 상황 방지
+
             SellerReadDTO sellerDTO = SellerReadDTO.builder()
-                .mno(seller.getMno())
-                .sname(seller.getSname())
-                .slocation(seller.getSlocation())
+                .mno(bizSeller.getMno())
+                .sname(bizSeller.getSname())
+                .slocation(bizSeller.getSlocation())
                 .hiredCount(intro.getHiredCount())
                 .build();
 
@@ -119,7 +125,7 @@ public class RequestServiceImpl implements RequestService {
                 .biz(bizDTO)
                 .seller(sellerDTO)
                 .build();
-        }).collect(Collectors.toList());
+        }).filter(java.util.Objects::nonNull).collect(Collectors.toList());
         dto.getAttributes().put("companies", companies);
         
         return dto;
