@@ -44,21 +44,18 @@ public class CommunityController {
     @GetMapping("/{pno}")
     public ResponseEntity<CommunityDTO> getOne(@PathVariable Long pno) {
         CommunityDTO dto = service.get(pno);
-
         // 2) 이전글 정보
         CommunityDTO prev = service.getPrevious(pno);
         if (prev != null) {
             dto.setPrevPno(prev.getPno());
             dto.setPrevTitle(prev.getPtitle());
         }
-
         // 3) 다음글 정보
         CommunityDTO next = service.getNext(pno);
         if (next != null) {
             dto.setNextPno(next.getPno());
             dto.setNextTitle(next.getPtitle());
         }
-
         return ResponseEntity.ok(dto);
     }
 
@@ -68,7 +65,7 @@ public class CommunityController {
         return new ResponseEntity<>(service.list(pageRequestDTO), HttpStatus.OK);
     }
 
-    
+    // 3) 게시글 등록 (로그인 필요)
     @PostMapping(value = "", // or "/" 동일하게 동작함
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Long>> register(
@@ -82,6 +79,7 @@ public class CommunityController {
                 .body(Map.of("PNO", saved.getPno()));
     }
 
+    // 4) 게시글 수정 (로그인 필요)
     @PutMapping(value = "/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> modify(
             @PathVariable Long pno,
@@ -89,13 +87,11 @@ public class CommunityController {
             @RequestParam(value = "pimageFile", required = false) MultipartFile pimageFile) {
         communityDTO.setPno(pno);
         log.info("Modify (multipart): {}", communityDTO);
-
-        // service.modify 메서드도 MultipartFile 파라미터를 받도록 오버로딩하거나 수정해야 합니다.
         service.modify(communityDTO, pimageFile);
-
         return ResponseEntity.ok(Map.of("RESULT", "SUCCESS"));
     }
 
+    // 5) 게시글 삭제
     @DeleteMapping("/{pno}")
     public Map<String, String> remove(@PathVariable(name = "pno") Long pno) {
         log.info("Remove:  " + pno);
@@ -103,7 +99,7 @@ public class CommunityController {
         return Map.of("RESULT", "SUCCESS");
     }
 
-    // 1) 댓글 목록 조회 (로그인 없이 가능)
+    // 6) 댓글 목록 조회
     @GetMapping("/{pno}/comments")
     public ResponseEntity<?> getComments(@PathVariable Long pno) {
         try {
@@ -118,7 +114,7 @@ public class CommunityController {
         }
     }
 
-    // 2) 댓글 등록 (로그인 필요)
+    // 7) 댓글 등록 (로그인 필요)
     @PostMapping("/{pno}/comments")
     public ResponseEntity<CommentDTO> writeComment(
             @PathVariable Long pno,
@@ -131,6 +127,7 @@ public class CommunityController {
         return ResponseEntity.ok(saved);
     }
 
+    // 8) 댓글 수정 (로그인 필요)
     @PatchMapping("/{pno}/comments/{cno}")
     public ResponseEntity<CommentDTO> updateComment(
             @PathVariable Long pno,
@@ -144,6 +141,7 @@ public class CommunityController {
         return ResponseEntity.ok(commentService.updateComment(pno, cno, content, auth));
     }
 
+    // 9) 댓글 삭제 (로그인 필요)
     @DeleteMapping("/{pno}/comments/{cno}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long pno,
