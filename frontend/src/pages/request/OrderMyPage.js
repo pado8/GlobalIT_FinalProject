@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
 import Hero from "../../components/requestComponents/bHero";
@@ -7,6 +6,7 @@ import Pagination from '../../components/requestComponents/bPagination';
 import ReviewModal from '../../components/ReviewModal';
 import ReviewModModal from '../../components/requestComponents/ReviewModModal';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock';
+import { fetchMyOrders, finishOrder } from '../../api/orderApi';
 import { postReview, getReview, updateReview } from "../../api/reviewApi";
 import { FaPencilAlt } from 'react-icons/fa';
 
@@ -83,11 +83,8 @@ const OrderMyPage = () => {
     if (isRedirecting.current) return;
 
     try {
-      const response = await axios.get(`/api/orders/my-orders/paginated`, {
-        params: { status, page, size: 3 },
-        withCredentials: true,
-      });
-      setter(response.data);
+      const data = await fetchMyOrders({ status, page, size: 3 });
+      setter(data);
     } catch (err) {
       if (err.response && err.response.status === 401) {
         if (!isRedirecting.current) {
@@ -140,7 +137,7 @@ useEffect(() => {
       if (timeInfo.isFinished && !isFinishingRefMap.current.get(quote.ono)) {
         isFinishingRefMap.current.set(quote.ono, true);
 
-        axios.patch(`/api/orders/finish/${quote.ono}`, {}, { withCredentials: true })
+        finishOrder(quote.ono)
           .then(() => {
             requiresFullRefresh = true; // API 성공 시 전체 목록 갱신 필요
           })
