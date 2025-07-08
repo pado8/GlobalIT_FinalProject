@@ -54,7 +54,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public CommunityDTO register(CommunityDTO dto, MultipartFile pimageFile) {
-        // 1) DEBUG: uploadDir 주입 값 확인
+        // 1) DEBUG: 업로드 경로 확인
         System.out.println("[DEBUG] uploadDir = " + uploadDir);
 
         // 2) 이미지 저장
@@ -62,12 +62,12 @@ public class CommunityServiceImpl implements CommunityService {
             try {
                 Path uploadPath = Paths.get(uploadDir, "community");
                 if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+                    Files.createDirectories(uploadPath); //community 폴더 없으면 생성
                 }
 
                 String filename = UUID.randomUUID() + "_" + pimageFile.getOriginalFilename();
                 Path filePath = uploadPath.resolve(filename);
-                pimageFile.transferTo(filePath.toFile());
+                pimageFile.transferTo(filePath.toFile()); // 디스크에 파일 저장
 
                 dto.setPimage("/images/community/" + filename);
             } catch (IOException e) {

@@ -30,6 +30,7 @@ import com.sports.kickauction.service.CommunityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 
 @RestController
@@ -67,6 +68,7 @@ public class CommunityController {
 
     // 3) 게시글 등록
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Long>> register(
             @ModelAttribute CommunityDTO communityDTO,
             @RequestParam(required = false) MultipartFile pimageFile) {
@@ -78,6 +80,7 @@ public class CommunityController {
 
     // 4) 게시글 수정
     @PutMapping(value = "/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, String>> modify(
             @PathVariable Long pno,
             @ModelAttribute CommunityDTO communityDTO,
@@ -90,6 +93,7 @@ public class CommunityController {
 
     // 5) 게시글 삭제
     @DeleteMapping("/{pno}")
+    @PreAuthorize("isAuthenticated()")
     public Map<String, String> remove(@PathVariable(name = "pno") Long pno) {
         log.info("Remove:  " + pno);
         service.remove(pno);

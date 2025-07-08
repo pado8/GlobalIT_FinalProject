@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import com.sports.kickauction.dto.ReviewDTO;
@@ -30,6 +31,7 @@ public class ReviewController {
 
     // 2) 리뷰 등록
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> createReview(@RequestBody ReviewDTO dto) {
         Long sellerMno = bizService.getSellerMnoByOrderOno(dto.getOno());
         reviewService.registerReview(
@@ -42,6 +44,7 @@ public class ReviewController {
 
     // 3) 리뷰 수정
     @PutMapping("/{ono}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> updateReview(@PathVariable("ono") Long ono, @RequestBody ReviewDTO reviewDTO) {
         log.info("리뷰 조회 요청: ono=" + ono);
         reviewService.updateReview(ono, reviewDTO);
