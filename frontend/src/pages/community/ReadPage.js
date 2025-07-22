@@ -192,7 +192,7 @@ const ReadPage = () => {
         <div className="read_content">
           {community.pimage && (
             <div>
-              <img src={`${process.env.REACT_APP_API_URL || "http://192.168.219.247:8080"}${community.pimage}`} alt="첨부 이미지" />
+              <img src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${community.pimage}`} alt="첨부 이미지" />
             </div>
           )}
           {community.pcontent}
@@ -207,7 +207,7 @@ const ReadPage = () => {
               <div className="comment_content">
                 <span className="comment_profile">
                   <img
-                    src={`${process.env.REACT_APP_API_URL || "http://192.168.219.247:8080"}/images/${c.mprofileimg || "baseprofile.png"}?t=${Date.now()}`}
+                    src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}/images/${c.mprofileimg || "baseprofile.png"}?t=${Date.now()}`}
                     alt={`${c.writerName || "기본"} 프로필`}
                   />
                 </span>
