@@ -1,0 +1,10 @@
+node_modules
+frontend/node_modules
+*.log
+*.md
+.git
+.gitignore
+.vscode
+.gradle
+build
+bin
