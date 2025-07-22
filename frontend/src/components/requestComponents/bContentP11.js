@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { deleteBiz,checkBizModifiable,checkDeletedBid } from "../../api/BizApi";
 import { deleteOrder, confirmCompanySelection } from "../../api/orderApi";
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaRunning, FaMapMarkerAlt, FaUsers, FaClipboardList, FaLightbulb, FaCalendarAlt } from 'react-icons/fa';
 
 
 
@@ -114,13 +114,14 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
           </p>
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
           <div className="text-sm text-gray-500">작성자: {quote.writerNickname || '정보 없음'}</div>
-          <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
-            <div>🏃‍♂️종목 : {quote.playType}</div>
-            <div>📍지역 : {displayRegion}</div>
-            <div>👥인원 : {displayPerson}</div>
-            <div>📃대여 장비 목록 : {displayRentalEquipment}</div>
-            <div>💡요청사항 : {displayOcontent}</div>
-            <div>📆시간 : {displayDate} {displayTime}</div>
+          {/* 견적 요약 정보 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 mt-2">
+            <div className="flex items-center"><FaRunning className="mr-2 text-gray-500" /><span><strong>종목:</strong> {quote.playType}</span></div>
+            <div className="flex items-center"><FaMapMarkerAlt className="mr-2 text-gray-500" /><span><strong>지역:</strong> {displayRegion}</span></div>
+            <div className="flex items-center"><FaUsers className="mr-2 text-gray-500" /><span><strong>인원:</strong> {displayPerson}</span></div>
+            <div className="flex items-center"><FaCalendarAlt className="mr-2 text-gray-500" /><span><strong>시간:</strong> {displayDate} {displayTime}</span></div>
+            <div className="sm:col-span-2 flex items-start"><FaClipboardList className="mr-2 mt-1 flex-shrink-0 text-gray-500" /><span><strong>대여 장비 목록:</strong> {displayRentalEquipment}</span></div>
+            <div className="sm:col-span-2 flex items-start"><FaLightbulb className="mr-2 mt-1 flex-shrink-0 text-gray-500" /><span><strong>요청사항:</strong> {displayOcontent}</span></div>
           </div>
         </div>
 
