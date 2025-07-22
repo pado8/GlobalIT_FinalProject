@@ -48,3 +48,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+    archiveFileName = 'kickauction-0.0.1-SNAPSHOT.jar'
+}
